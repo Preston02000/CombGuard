@@ -98,10 +98,12 @@
   @media (max-width: 780px) { .nav-links a:not(.btn) { display: none; } }
 
   /* ---------- Hero (dusk) ---------- */
+  .dive { position: relative; height: 260vh; }
   .hero {
-    min-height: 100vh; min-height: 100svh;
+    position: sticky; top: 0;
+    height: 100vh; height: 100svh;
     display: grid; align-items: center;
-    padding: 120px 0 80px; overflow: hidden;
+    padding: 90px 0 60px; overflow: hidden;
     background:
       radial-gradient(1200px 600px at 30% 55%, rgba(var(--blue), 0.22), transparent 65%),
       var(--bg);
@@ -122,7 +124,7 @@
     filter: blur(2px); pointer-events: none;
   }
   .hero-art svg { position: relative; z-index: 1; }
-  .stars { position: absolute; inset: 0; pointer-events: none; opacity: calc(0.45 + (1 - var(--dusk)) * 0.55);
+  .stars { position: absolute; inset: 0; pointer-events: none; opacity: var(--stars, 0.5);
     -webkit-mask-image: linear-gradient(transparent 22%, #000 55%); mask-image: linear-gradient(transparent 22%, #000 55%); }
   .stars i { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #dfe6ff; opacity: 0.5; animation: twinkle 5s ease-in-out infinite; }
   @keyframes twinkle { 50% { opacity: 0.1; } }
@@ -131,7 +133,19 @@
   .hero h1 { max-width: 760px; }
   .hero .lead { margin-top: 30px; }
   .hero-art { position: relative; }
-  .hero-art svg { width: 100%; height: auto; overflow: visible; }
+  .hero-art svg { width: 100%; height: auto; overflow: visible; transform-origin: 50% 57%; will-change: transform; }
+  .hero-copy { will-change: opacity, transform; }
+  /* inside the hive */
+  .inside {
+    position: absolute; inset: 0; pointer-events: none; opacity: 0; z-index: 3;
+    background: radial-gradient(circle at 50% 52%, rgba(233, 162, 59, 0.16), rgba(5, 5, 6, 0.92) 46%, var(--bg) 72%);
+  }
+  .inside-line {
+    position: absolute; left: 0; right: 0; top: 50%; z-index: 4; text-align: center; padding: 0 24px;
+    transform: translateY(-50%); opacity: 0; pointer-events: none;
+  }
+  .inside-line h2 { font-size: clamp(2.4rem, 5.6vw, 4.6rem); }
+  .inside-line .cap { display: block; margin-top: 18px; font-size: 1.05rem; color: var(--text-2); }
   .glow-core { animation: breathe 6s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
   @keyframes breathe { 50% { opacity: 0.6; transform: scale(0.94); } }
   .blink { animation: blink 2.6s ease-in-out infinite; }
@@ -142,7 +156,8 @@
   @keyframes cue { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
   @media (max-width: 900px) {
     .hero-grid { grid-template-columns: 1fr; }
-    .hero-art { max-width: 380px; margin: 10px auto 0; }
+    .hero-art { max-width: 250px; margin: 0 auto; }
+    .hero { padding-top: 80px; }
     .scroll-cue { display: none; }
   }
 
@@ -332,12 +347,51 @@
   /* ---------- Reveal ---------- */
   .reveal { opacity: 0; transform: translateY(28px); transition: opacity 1.1s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1.1s cubic-bezier(0.2, 0.8, 0.2, 1); }
   .reveal.in { opacity: 1; transform: none; }
+  h2.display.reveal {
+    opacity: 1; transform: translateY(0.3em);
+    clip-path: inset(-0.2em -0.2em 100% -0.2em);
+    transition: clip-path 1.3s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  h2.display.reveal.in { transform: none; clip-path: inset(-0.2em -0.2em -0.35em -0.2em); }
+
+  /* Night clock */
+  .clock {
+    position: fixed; left: 22px; bottom: 22px; z-index: 40;
+    display: flex; align-items: baseline; gap: 10px;
+    padding: 9px 16px 12px; border-radius: 14px;
+    background: rgba(10, 11, 14, 0.62); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--line);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+  .clock.hide { opacity: 0; transform: translateY(12px); pointer-events: none; }
+  @media (max-width: 600px) {
+    .clock { left: 12px; bottom: 12px; padding: 6px 12px 9px; gap: 8px; }
+    .clock .t { font-size: 0.72rem; } .clock .ph { font-size: 0.82rem; }
+    .clock .bar { left: 12px; right: 12px; bottom: 4px; }
+    .inside-line h2 { font-size: 2.1rem; }
+  }
+  .clock .t { font-size: 0.8rem; font-weight: 500; letter-spacing: 0.06em; color: var(--ivory); font-variant-numeric: tabular-nums; }
+  .clock .ph { font-family: var(--caption); font-style: italic; font-weight: 300; font-size: 0.92rem; color: var(--text-2); }
+  .clock .t, .clock .ph { transition: opacity 0.35s; }
+  .clock.swap .t, .clock.swap .ph { opacity: 0; }
+  .clock .bar { position: absolute; left: 16px; right: 16px; bottom: 6px; height: 1px; background: rgba(255, 255, 255, 0.08); }
+  .clock .bar i { display: block; height: 100%; width: 0; background: var(--amber); box-shadow: 0 0 6px var(--amber); transition: width 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+  /* Gentle section snapping so each part of the story lands in view */
+  html { scroll-snap-type: y proximity; }
+  .snap { scroll-snap-align: start; }
+  .step { scroll-snap-align: center; }
   .delay-1 { transition-delay: 0.12s; } .delay-2 { transition-delay: 0.24s; } .delay-3 { transition-delay: 0.36s; }
 
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     *, *::before, *::after { animation: none !important; }
     .reveal, .notif { opacity: 1; transform: none; transition: none; }
+    h2.display.reveal { clip-path: none; }
+    html { scroll-snap-type: none; }
+    .dive { height: auto; }
+    .hero { position: relative; height: auto; min-height: 100vh; }
+    .inside, .inside-line { display: none; }
     .draw path, .draw line, .draw rect, .draw polyline, .draw circle.ring { stroke-dashoffset: 0; transition: none; }
   }
 </style>
@@ -371,13 +425,14 @@
 <main>
 
   <!-- ============ DUSK ============ -->
+  <div class="dive snap" id="dive" data-time="7:48 PM" data-phase="Dusk">
   <section class="hero" id="top">
     <div class="sunset" aria-hidden="true"></div>
     <div class="sun" aria-hidden="true"></div>
     <div class="stars" id="stars" aria-hidden="true"></div>
     <div class="horizon" aria-hidden="true"></div>
     <div class="wrap hero-grid">
-      <div>
+      <div class="hero-copy">
         <p class="eyebrow reveal">CombGuard Hive Monitor</p>
         <h1 class="display reveal delay-1">The hive's first<br><em>line of defense.</em></h1>
         <p class="lead reveal delay-2">Most hives don't fail overnight. It only looks that way when you finally lift the lid. CombGuard watches every hour in between.</p>
@@ -419,13 +474,19 @@
         </svg>
       </div>
     </div>
-    <div class="scroll-cue" aria-hidden="true">Scroll<span></span></div>
+    <div class="scroll-cue" aria-hidden="true">Scroll to go inside<span></span></div>
+    <div class="inside" aria-hidden="true"></div>
+    <div class="inside-line">
+      <h2 class="display">Inside the hive, <em>it's always night.</em></h2>
+      <span class="cap">Bees live and work in total darkness. That's where trouble starts, too.</span>
+    </div>
   </section>
+  </div>
 
   <!-- ============ THE DARK ============ -->
-  <section class="dark">
+  <section class="dark snap" data-time="9:40 PM" data-phase="Nightfall">
     <div class="wrap dark-grid">
-      <div class="number reveal">39.9<em>%</em></div>
+      <div class="number reveal" id="lossNum"><span>39.9</span><em>%</em></div>
       <div class="reveal delay-1">
         <p class="big">of managed U.S. honey bee colonies were lost between April 2025 and April 2026.</p>
         <p class="lead" style="font-size:1.05rem">Almost none of it happens in plain sight. It starts inside a closed box, in the days between inspections.</p>
@@ -436,9 +497,9 @@
   </section>
 
   <!-- ============ THE WATCH ============ -->
-  <section class="watch" id="watch">
+  <section class="watch" id="watch" data-time="11:15 PM" data-phase="On watch">
     <div class="wrap">
-      <div class="watch-head center">
+      <div class="watch-head center snap">
         <p class="eyebrow reveal">The watch</p>
         <h2 class="display reveal delay-1">It sees what <em>you can't.</em></h2>
       </div>
@@ -513,7 +574,7 @@
   </section>
 
   <!-- ============ 2:14 AM ============ -->
-  <section class="night">
+  <section class="night snap" data-time="2:14 AM" data-phase="The alert">
     <div class="wrap night-grid">
       <div>
         <p class="eyebrow reveal">2:14 AM</p>
@@ -545,7 +606,7 @@
   </section>
 
   <!-- ============ DAWN ============ -->
-  <section class="dawn">
+  <section class="dawn snap" data-time="6:21 AM" data-phase="Dawn">
     <div class="wrap">
       <div class="center">
         <p class="eyebrow reveal">Dawn</p>
@@ -588,7 +649,7 @@
   </section>
 
   <!-- ============ AT A GLANCE ============ -->
-  <section class="glance center">
+  <section class="glance center snap" data-time="7:05 AM" data-phase="Morning">
     <div class="wrap">
       <p class="eyebrow reveal">The dashboard</p>
       <h2 class="display reveal delay-1">Your colony, <em>at a glance.</em></h2>
@@ -629,7 +690,7 @@
   </section>
 
   <!-- ============ BUILT BY HAND ============ -->
-  <section class="built" id="built">
+  <section class="built snap" id="built" data-phase="">
     <div class="wrap built-head">
       <div>
         <p class="eyebrow reveal">Our build</p>
@@ -677,7 +738,7 @@
   </section>
 
   <!-- ============ GEN 2 ============ -->
-  <section class="gen2-sec" id="gen2">
+  <section class="gen2-sec snap" id="gen2" data-phase="">
     <div class="wrap">
       <p class="eyebrow reveal">Generation 2</p>
       <h2 class="display reveal delay-1">Forged for <em>the field.</em></h2>
@@ -692,7 +753,7 @@
   </section>
 
   <!-- ============ CREED ============ -->
-  <section class="creed center">
+  <section class="creed center snap" data-phase="">
     <div class="wrap">
       <blockquote class="reveal">Every colony already posts guards at its gate. <em>CombGuard is one more.</em></blockquote>
       <span class="cap reveal delay-1">The idea behind our name</span>
@@ -700,23 +761,24 @@
   </section>
 
   <!-- ============ CTA ============ -->
-  <section class="cta center">
+  <section class="cta center snap" data-phase="">
     <div class="wrap">
       <p class="eyebrow reveal">Stand watch with us</p>
       <h2 class="display reveal delay-1">Help shape <em>CombGuard.</em></h2>
       <p class="lead reveal delay-2">Are you a beekeeper? Tell us what you need in a 4-minute survey, or get in touch about testing CombGuard on your hives.</p>
       <div class="actions reveal delay-3">
-        <!-- TODO: paste your Google Form link in place of # -->
-        <a href="https://forms.gle/NgrxeMNaFKUFa8xGA" target="_blank" class="btn btn-amber">Take the survey</a>
+        <a href="https://forms.gle/yDhAXinGf1WT7gVK9" target="_blank" rel="noopener" class="btn btn-amber">Take the survey</a>
         <!-- TODO: change to your team's CombGuard email address -->
-        <a href="mailto:team@combguard.com" class="btn btn-ghost">Contact us</a>
+        <a href="mailto:hello@combguard.com" class="btn btn-ghost">Contact us</a>
       </div>
     </div>
   </section>
 
 </main>
 
-<footer>
+<div class="clock" id="clock" aria-hidden="true"><span class="t">7:48 PM</span><span class="ph">Dusk</span><span class="bar"><i></i></span></div>
+
+<footer data-phase="">
   <div class="wrap">
     <a href="/" class="logo" aria-label="CombGuard home">
       <svg><use href="#shield"/></svg>
@@ -740,16 +802,93 @@
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
 
-  // Dusk turns to night as you scroll
-  const hero = document.getElementById("top");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const setDusk = () => {
-    const p = Math.min(1, Math.max(0, window.scrollY / (hero.offsetHeight * 0.75)));
-    hero.style.setProperty("--dusk", (1 - p).toFixed(3));
-    if (!reduce) hero.style.setProperty("--sun-drop", (p * 90).toFixed(1) + "px");
-  };
-  setDusk();
-  window.addEventListener("scroll", setDusk, { passive: true });
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t); };
+
+  // ----- The dive: sunset, then into the hive -----
+  const dive = document.getElementById("dive");
+  const hero = document.getElementById("top");
+  const copy = hero.querySelector(".hero-copy");
+  const hive = hero.querySelector(".hero-art svg");
+  const inside = hero.querySelector(".inside");
+  const line = hero.querySelector(".inside-line");
+  const cue = hero.querySelector(".scroll-cue");
+  let gx = 0, gy = 0, diveP = 0;
+
+  function measure() {
+    const prev = hive.style.transform;
+    hive.style.transform = "none";
+    const b = hive.getBoundingClientRect(), h = hero.getBoundingClientRect();
+    gx = b.left + b.width * 0.5 - h.left;
+    gy = b.top + b.height * 0.57 - h.top;
+    hive.style.transform = prev;
+  }
+
+  function updateDive() {
+    const total = dive.offsetHeight - window.innerHeight;
+    const p = total > 0 ? clamp(-dive.getBoundingClientRect().top / total) : 0;
+    diveP = p;
+    hero.style.setProperty("--dusk", (1 - smooth(0, 0.45, p)).toFixed(3));
+    hero.style.setProperty("--sun-drop", (p * 260).toFixed(1) + "px");
+    hero.style.setProperty("--stars", ((1 - smooth(0.35, 0.6, p)) * (0.45 + p)).toFixed(3));
+    copy.style.opacity = (1 - smooth(0, 0.28, p)).toFixed(3);
+    copy.style.transform = `translateY(${(-p * 140).toFixed(1)}px)`;
+    if (cue) cue.style.opacity = (1 - smooth(0, 0.08, p)).toFixed(3);
+
+    const z = smooth(0.12, 0.85, p);
+    const hrect = hero.getBoundingClientRect();
+    const dx = (hrect.width / 2 - gx) * z, dy = (hrect.height / 2 - gy) * z;
+    const sc = 1 + z * z * 11;
+    hive.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(${sc.toFixed(3)})`;
+    inside.style.opacity = smooth(0.45, 0.78, p).toFixed(3);
+    const lp = smooth(0.62, 0.8, p);
+    line.style.opacity = lp.toFixed(3);
+    line.style.transform = `translateY(calc(-50% + ${((1 - lp) * 30).toFixed(1)}px))`;
+  }
+
+  // ----- Night clock: the night passes as you scroll -----
+  const clock = document.getElementById("clock");
+  const tEl = clock.querySelector(".t"), phEl = clock.querySelector(".ph"), bar = clock.querySelector(".bar i");
+  const marks = [...document.querySelectorAll("[data-phase]")];
+  const story = marks.filter((m) => m.dataset.phase);
+  let current = "";
+  function updateClock() {
+    let el = marks[0];
+    for (const m of marks) if (m.getBoundingClientRect().top < window.innerHeight * 0.55) el = m;
+    let time = el.dataset.time || "", phase = el.dataset.phase || "";
+    if (el === dive && diveP > 0.6) { time = "8:30 PM"; phase = "Inside the hive"; }
+    const key = time + phase;
+    clock.classList.toggle("hide", !phase);
+    if (key === current || !phase) return;
+    current = key;
+    clock.classList.add("swap");
+    setTimeout(() => { tEl.textContent = time; phEl.textContent = phase; clock.classList.remove("swap"); }, 250);
+    const idx = Math.max(0, story.indexOf(el)) + (el === dive && diveP > 0.6 ? 0.5 : 0);
+    bar.style.width = ((idx + 1) / (story.length + 0.5) * 100).toFixed(1) + "%";
+  }
+
+  let ticking = false;
+  function onFrame() { ticking = false; if (!reduce) updateDive(); updateClock(); }
+  window.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(onFrame); } }, { passive: true });
+  window.addEventListener("resize", () => { measure(); onFrame(); });
+  measure(); onFrame();
+
+  // ----- Count up the loss number -----
+  const num = document.querySelector("#lossNum span");
+  const numIO = new IntersectionObserver((entries) => {
+    if (!entries[0].isIntersecting) return;
+    numIO.disconnect();
+    if (reduce) return;
+    const start = performance.now(), dur = 1600;
+    const tick = (now) => {
+      const t = clamp((now - start) / dur), e = 1 - Math.pow(1 - t, 3);
+      num.textContent = (39.9 * e).toFixed(1);
+      if (t < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, { threshold: 0.4 });
+  numIO.observe(num);
 
   // Stars in the dusk sky
   const stars = document.getElementById("stars");
@@ -763,12 +902,23 @@
   }
 
   // Reveal + line drawing on scroll
+  // (clipped headlines are watched through their parent, since a fully clipped
+  // element never counts as "visible")
+  const proxy = new Map();
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => {
-      if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      if (!e.isIntersecting) return;
+      (proxy.get(e.target) || [e.target]).forEach((el) => el.classList.add("in"));
+      io.unobserve(e.target);
     });
   }, { threshold: 0.15, rootMargin: "0px 0px -40px 0px" });
-  document.querySelectorAll(".reveal, .draw").forEach((el) => io.observe(el));
+  document.querySelectorAll(".reveal, .draw").forEach((el) => {
+    if (el.matches("h2.display")) {
+      const parent = el.parentElement;
+      if (!proxy.has(parent)) { proxy.set(parent, []); io.observe(parent); }
+      proxy.get(parent).push(el);
+    } else io.observe(el);
+  });
   // Hero hive draws in right away
   requestAnimationFrame(() => setTimeout(() => document.getElementById("heroHive").classList.add("in"), 300));
 
