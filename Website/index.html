@@ -1,22 +1,456 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CombGuard</title>
-  <style>
-    body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
-           font-family:Arial, sans-serif; background:#1a1408; color:#f5e6c4; text-align:center; padding:16px; }
-    h1 { font-size:3rem; margin:0; color:#f2b632; }
-    p  { font-size:1.2rem; max-width:520px; line-height:1.5; }
-    .tag { color:#c9a96e; font-size:0.95rem; margin-top:24px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CombGuard Dashboard</title>
+<meta name="description" content="Live readings from CombGuard hive monitors.">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #111214;
+    --panel: #1a1c20;
+    --panel-2: #22252a;
+    --border: #2c3036;
+    --text: #eceef1;
+    --muted: #9aa1ab;
+    --honey: #f5a524;
+    --outside: #7aa2c8;
+    --green: #3fb67b;
+    --yellow: #e8b931;
+    --red: #e5534b;
+    --none: #5c626b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.45;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 20px 16px 48px; }
+
+  header {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.35rem; }
+  .brand svg { width: 30px; height: 30px; }
+  .brand span { color: var(--honey); }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; }
+  select, button {
+    font: inherit; color: var(--text);
+    background: var(--panel-2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 7px 12px; cursor: pointer;
+  }
+  button.active { background: var(--honey); color: #1a1300; border-color: var(--honey); font-weight: 600; }
+
+  .status {
+    display: flex; gap: 16px; align-items: center;
+    background: var(--panel); border: 1px solid var(--border);
+    border-left: 6px solid var(--none);
+    border-radius: 12px; padding: 18px 20px; margin-bottom: 18px;
+  }
+  .status.green { border-left-color: var(--green); }
+  .status.yellow { border-left-color: var(--yellow); }
+  .status.red { border-left-color: var(--red); }
+  .dot { width: 18px; height: 18px; border-radius: 50%; background: var(--none); flex: none; }
+  .green .dot { background: var(--green); box-shadow: 0 0 12px var(--green); }
+  .yellow .dot { background: var(--yellow); box-shadow: 0 0 12px var(--yellow); }
+  .red .dot { background: var(--red); box-shadow: 0 0 12px var(--red); }
+  .status h2 { margin: 0; font-size: 1.25rem; }
+  .status ul { margin: 6px 0 0; padding-left: 18px; color: var(--muted); }
+  .status .when { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+
+  .cards {
+    display: grid; gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+    margin-bottom: 26px;
+  }
+  .card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-top: 3px solid var(--none);
+    border-radius: 12px; padding: 14px 16px;
+  }
+  .card.green { border-top-color: var(--green); }
+  .card.yellow { border-top-color: var(--yellow); }
+  .card.red { border-top-color: var(--red); }
+  .card .label { color: var(--muted); font-size: 0.85rem; }
+  .card .value { font-size: 1.6rem; font-weight: 700; margin: 2px 0; }
+  .card .value small { font-size: 0.9rem; font-weight: 500; color: var(--muted); margin-left: 2px; }
+  .card .note { color: var(--muted); font-size: 0.78rem; }
+
+  .section-head {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    align-items: center; justify-content: space-between; margin-bottom: 12px;
+  }
+  .section-head h3 { margin: 0; font-size: 1.1rem; }
+  .charts {
+    display: grid; gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr));
+  }
+  .chart-box {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 14px 8px;
+  }
+  .chart-box h4 { margin: 0 0 8px; font-size: 0.95rem; font-weight: 600; }
+  .chart-box .canvas-wrap { position: relative; height: 220px; }
+  .empty { color: var(--muted); text-align: center; padding: 40px 0; }
+
+  .message {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px; margin-bottom: 18px; color: var(--muted);
+  }
+  footer { margin-top: 28px; color: var(--muted); font-size: 0.8rem; }
+  footer a { color: var(--honey); }
+</style>
 </head>
 <body>
-  <div>
-    <h1>🛡️ CombGuard</h1>
-    <p>A solar-powered hive monitor that tracks temperature, humidity, CO₂, weight and sound to warn beekeepers of problems early.</p>
-    <p class="tag">Live hive dashboard coming soon · team@combguard.com</p>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M16 2 28 9v14L16 30 4 23V9z" fill="none" stroke="#f5a524" stroke-width="2.5"/>
+        <path d="M16 9l6 3.5v7L16 23l-6-3.5v-7z" fill="#f5a524"/>
+      </svg>
+      <div>Comb<span>Guard</span></div>
+    </div>
+    <div class="controls">
+      <select id="hiveSelect" aria-label="Choose hive"></select>
+      <button id="unitBtn" type="button" title="Switch units">°F / lb</button>
+    </div>
+  </header>
+
+  <div id="message" class="message" hidden></div>
+
+  <div id="status" class="status">
+    <div class="dot"></div>
+    <div>
+      <h2 id="statusTitle">Loading…</h2>
+      <ul id="statusReasons"></ul>
+      <div class="when" id="statusWhen"></div>
+    </div>
   </div>
+
+  <div class="cards" id="cards"></div>
+
+  <div class="section-head">
+    <h3>History</h3>
+    <div class="controls" id="rangeBtns">
+      <button type="button" data-hours="24" class="active">24 hours</button>
+      <button type="button" data-hours="168">7 days</button>
+      <button type="button" data-hours="720">30 days</button>
+    </div>
+  </div>
+
+  <div class="charts">
+    <div class="chart-box"><h4>Temperature</h4><div class="canvas-wrap"><canvas id="chartTemp"></canvas></div></div>
+    <div class="chart-box"><h4>Humidity</h4><div class="canvas-wrap"><canvas id="chartRh"></canvas></div></div>
+    <div class="chart-box"><h4>CO₂</h4><div class="canvas-wrap"><canvas id="chartCo2"></canvas></div></div>
+    <div class="chart-box"><h4>Hive weight</h4><div class="canvas-wrap"><canvas id="chartWeight"></canvas></div></div>
+  </div>
+
+  <footer>
+    Status ranges are early estimates and will be adjusted with input from bee researchers.
+    Data updates every 5 minutes.
+  </footer>
+</div>
+
+<script>
+// ================= Settings =================
+const API = "https://api.combguard.com";
+const REFRESH_MS = 5 * 60 * 1000;
+
+// Status ranges (Celsius, %, ppm, kg, volts, minutes).
+// These are STARTING POINTS - confirm with Jaevyn / the Bee Lab and adjust.
+const T = {
+  brood:   { green: [32, 36],   yellow: [30, 37] },     // brood nest temperature
+  rh:      { green: [50, 70],   yellow: [40, 80] },     // inside humidity
+  co2:     { green: [0, 6000],  yellow: [0, 10000] },   // inside CO2
+  battery: { green: [3.7, 5],   yellow: [3.5, 5] },     // LiPo voltage
+  weightDrop: { yellow: 1, red: 2 },                    // kg lost in 24 h (swarm / robbing)
+  staleMin:   { yellow: 45, red: 180 },                 // minutes since last reading
+};
+
+// ================= State =================
+let hiveId = null;
+let hours = 24;
+let imperial = loadPref("cg-imperial", "true") === "true";
+const charts = {};
+
+function loadPref(key, fallback) {
+  try { return localStorage.getItem(key) ?? fallback; } catch { return fallback; }
+}
+function savePref(key, value) {
+  try { localStorage.setItem(key, value); } catch {}
+}
+
+// ================= Helpers =================
+const $ = (id) => document.getElementById(id);
+
+function rangeLevel(v, r) {
+  if (v === null || v === undefined) return "none";
+  if (v >= r.green[0] && v <= r.green[1]) return "green";
+  if (v >= r.yellow[0] && v <= r.yellow[1]) return "yellow";
+  return "red";
+}
+const rank = { none: 0, green: 1, yellow: 2, red: 3 };
+const worst = (levels) => levels.reduce((a, b) => (rank[b] > rank[a] ? b : a), "green");
+
+const temp = (c) => (c === null || c === undefined ? null : imperial ? c * 9 / 5 + 32 : c);
+const weight = (kg) => (kg === null || kg === undefined ? null : imperial ? kg * 2.20462 : kg);
+const tUnit = () => (imperial ? "°F" : "°C");
+const wUnit = () => (imperial ? "lb" : "kg");
+const fmt = (v, d = 1) => (v === null || v === undefined ? "—" : Number(v).toFixed(d));
+
+function ago(date) {
+  const min = Math.round((Date.now() - date) / 60000);
+  if (min < 1) return "just now";
+  if (min < 60) return `${min} min ago`;
+  const h = Math.floor(min / 60);
+  if (h < 48) return `${h} hr ago`;
+  return `${Math.floor(h / 24)} days ago`;
+}
+
+function timeLabel(date) {
+  return hours <= 24
+    ? date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+    : date.toLocaleDateString([], { month: "short", day: "numeric" }) + " " +
+      date.toLocaleTimeString([], { hour: "numeric" });
+}
+
+async function getJSON(path) {
+  const res = await fetch(API + path);
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`API returned ${res.status}`);
+  return res.json();
+}
+
+function showMessage(text) {
+  $("message").textContent = text;
+  $("message").hidden = !text;
+}
+
+// ================= Status + cards =================
+function render(latest, readings) {
+  const status = $("status");
+  const reasons = [];
+
+  if (!latest) {
+    status.className = "status";
+    $("statusTitle").textContent = "No readings yet";
+    $("statusReasons").replaceChildren();
+    $("statusWhen").textContent = "Waiting for this hive's first reading.";
+    $("cards").replaceChildren();
+    return;
+  }
+
+  const when = new Date(latest.recorded_at);
+  const ageMin = (Date.now() - when) / 60000;
+
+  const lv = {
+    brood: rangeLevel(latest.brood_temp_c, T.brood),
+    rh: rangeLevel(latest.inside_rh, T.rh),
+    co2: rangeLevel(latest.co2_ppm, T.co2),
+    battery: rangeLevel(latest.battery_v, T.battery),
+    weight: "none",
+    stale: ageMin > T.staleMin.red ? "red" : ageMin > T.staleMin.yellow ? "yellow" : "green",
+  };
+
+  // Weight change over the last 24 hours
+  let drop = null;
+  const dayAgo = Date.now() - 24 * 3600 * 1000;
+  const dayWeights = readings
+    .filter((r) => r.weight_kg !== null && new Date(r.recorded_at) >= dayAgo)
+    .map((r) => r.weight_kg);
+  if (latest.weight_kg !== null && dayWeights.length > 1) {
+    drop = Math.max(...dayWeights) - latest.weight_kg;
+    lv.weight = drop >= T.weightDrop.red ? "red" : drop >= T.weightDrop.yellow ? "yellow" : "green";
+  } else if (latest.weight_kg !== null) {
+    lv.weight = "green";
+  }
+
+  if (lv.brood !== "green" && lv.brood !== "none") reasons.push(`Brood temperature is ${fmt(temp(latest.brood_temp_c))} ${tUnit()}`);
+  if (lv.rh !== "green" && lv.rh !== "none") reasons.push(`Inside humidity is ${fmt(latest.inside_rh, 0)}%`);
+  if (lv.co2 !== "green" && lv.co2 !== "none") reasons.push(`CO₂ is ${latest.co2_ppm} ppm`);
+  if (lv.weight !== "green" && lv.weight !== "none") reasons.push(`Hive lost ${fmt(weight(drop))} ${wUnit()} in 24 hours (possible swarm or robbing)`);
+  if (lv.battery !== "green" && lv.battery !== "none") reasons.push(`Battery is low (${fmt(latest.battery_v, 2)} V)`);
+  if (lv.stale !== "green") reasons.push(`No new reading for ${ago(when).replace(" ago", "")}`);
+
+  const overall = worst(Object.values(lv));
+  status.className = "status " + overall;
+  $("statusTitle").textContent =
+    overall === "green" ? "Hive looks healthy" :
+    overall === "yellow" ? "Worth checking soon" : "Needs attention";
+  $("statusReasons").replaceChildren(...reasons.map((r) => {
+    const li = document.createElement("li"); li.textContent = r; return li;
+  }));
+  $("statusWhen").textContent = `Last reading ${ago(when)} · ${when.toLocaleString()}`;
+
+  const cards = [
+    { label: "Brood temperature", value: fmt(temp(latest.brood_temp_c)), unit: tUnit(), level: lv.brood,
+      note: `Healthy: ${fmt(temp(T.brood.green[0]), 0)}–${fmt(temp(T.brood.green[1]), 0)} ${tUnit()}` },
+    { label: "Inside humidity", value: fmt(latest.inside_rh, 0), unit: "%", level: lv.rh,
+      note: `Healthy: ${T.rh.green[0]}–${T.rh.green[1]}%` },
+    { label: "CO₂", value: latest.co2_ppm ?? "—", unit: "ppm", level: lv.co2,
+      note: "Rises with colony size and activity" },
+    { label: "Hive weight", value: fmt(weight(latest.weight_kg)), unit: wUnit(), level: lv.weight,
+      note: drop === null ? "Shows honey stores" : `24 h change: ${drop > 0 ? "−" : "+"}${fmt(weight(Math.abs(drop)))} ${wUnit()}` },
+    { label: "Outside", value: fmt(temp(latest.outside_temp_c)), unit: tUnit(), level: "none",
+      note: `Humidity ${fmt(latest.outside_rh, 0)}%` },
+    { label: "Battery", value: fmt(latest.battery_v, 2), unit: "V", level: lv.battery,
+      note: latest.wifi_rssi !== null ? `Wi-Fi signal ${latest.wifi_rssi} dBm` : "" },
+  ];
+
+  $("cards").replaceChildren(...cards.map((c) => {
+    const el = document.createElement("div");
+    el.className = "card " + c.level;
+    const label = document.createElement("div"); label.className = "label"; label.textContent = c.label;
+    const value = document.createElement("div"); value.className = "value"; value.textContent = c.value;
+    const unit = document.createElement("small"); unit.textContent = c.unit; value.append(unit);
+    const note = document.createElement("div"); note.className = "note"; note.textContent = c.note;
+    el.append(label, value, note);
+    return el;
+  }));
+}
+
+// ================= Charts =================
+Chart.defaults.color = "#9aa1ab";
+Chart.defaults.borderColor = "#2c3036";
+Chart.defaults.font.family = "system-ui, -apple-system, Segoe UI, Roboto, sans-serif";
+
+function drawChart(id, labels, datasets, unit) {
+  if (charts[id]) charts[id].destroy();
+  const canvas = $(id);
+  const wrap = canvas.parentElement;
+  wrap.querySelector(".empty")?.remove();
+
+  const hasData = datasets.some((d) => d.data.some((v) => v !== null));
+  canvas.hidden = !hasData;
+  if (!hasData) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "No data for this time range";
+    wrap.append(empty);
+    return;
+  }
+
+  charts[id] = new Chart(canvas, {
+    type: "line",
+    data: {
+      labels,
+      datasets: datasets.map((d) => ({
+        ...d,
+        borderWidth: 2,
+        pointRadius: labels.length < 30 ? 3 : 0,
+        tension: 0.3,
+        spanGaps: true,
+      })),
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
+      plugins: {
+        legend: { display: datasets.length > 1, labels: { boxWidth: 12 } },
+        tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${c.parsed.y.toFixed(1)} ${unit}` } },
+      },
+      scales: {
+        x: { ticks: { maxTicksLimit: 6, maxRotation: 0 } },
+        y: { ticks: { callback: (v) => `${v} ${unit}` } },
+      },
+    },
+  });
+}
+
+function renderCharts(readings) {
+  const labels = readings.map((r) => timeLabel(new Date(r.recorded_at)));
+  const col = (key, conv = (v) => v) => readings.map((r) => (r[key] === null ? null : conv(r[key])));
+
+  drawChart("chartTemp", labels, [
+    { label: "Brood", data: col("brood_temp_c", temp), borderColor: "#f5a524", backgroundColor: "#f5a524" },
+    { label: "Outside", data: col("outside_temp_c", temp), borderColor: "#7aa2c8", backgroundColor: "#7aa2c8" },
+  ], tUnit());
+  drawChart("chartRh", labels, [
+    { label: "Inside", data: col("inside_rh"), borderColor: "#f5a524", backgroundColor: "#f5a524" },
+    { label: "Outside", data: col("outside_rh"), borderColor: "#7aa2c8", backgroundColor: "#7aa2c8" },
+  ], "%");
+  drawChart("chartCo2", labels, [
+    { label: "CO₂", data: col("co2_ppm"), borderColor: "#f5a524", backgroundColor: "#f5a524" },
+  ], "ppm");
+  drawChart("chartWeight", labels, [
+    { label: "Weight", data: col("weight_kg", weight), borderColor: "#f5a524", backgroundColor: "#f5a524" },
+  ], wUnit());
+}
+
+// ================= Loading =================
+async function loadHives() {
+  const hives = (await getJSON("/hives")) || [];
+  const select = $("hiveSelect");
+  select.replaceChildren(...hives.map((h) => {
+    const o = document.createElement("option");
+    o.value = h.id; o.textContent = h.name;
+    return o;
+  }));
+  select.hidden = hives.length < 2;
+  const saved = loadPref("cg-hive", "");
+  hiveId = hives.some((h) => h.id === saved) ? saved : hives[0]?.id ?? null;
+  if (hiveId) select.value = hiveId;
+}
+
+async function refresh() {
+  if (!hiveId) { render(null, []); return; }
+  try {
+    const [latest, hist] = await Promise.all([
+      getJSON(`/latest?hive=${encodeURIComponent(hiveId)}`),
+      getJSON(`/history?hive=${encodeURIComponent(hiveId)}&hours=${Math.max(hours, 24)}`),
+    ]);
+    const readings = hist?.readings || [];
+    const cutoff = Date.now() - hours * 3600 * 1000;
+    showMessage("");
+    render(latest, readings);
+    renderCharts(readings.filter((r) => new Date(r.recorded_at) >= cutoff));
+  } catch (err) {
+    showMessage("Can't reach the CombGuard API right now. Showing the last data loaded. (" + err.message + ")");
+  }
+}
+
+// ================= Controls =================
+$("hiveSelect").addEventListener("change", (e) => {
+  hiveId = e.target.value;
+  savePref("cg-hive", hiveId);
+  refresh();
+});
+
+function setUnitLabel() { $("unitBtn").textContent = imperial ? "Switch to °C / kg" : "Switch to °F / lb"; }
+$("unitBtn").addEventListener("click", () => {
+  imperial = !imperial;
+  savePref("cg-imperial", String(imperial));
+  setUnitLabel();
+  refresh();
+});
+
+$("rangeBtns").addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-hours]");
+  if (!btn) return;
+  hours = Number(btn.dataset.hours);
+  document.querySelectorAll("#rangeBtns button").forEach((b) => b.classList.toggle("active", b === btn));
+  refresh();
+});
+
+(async function start() {
+  setUnitLabel();
+  try {
+    await loadHives();
+  } catch (err) {
+    showMessage("Can't reach the CombGuard API right now. (" + err.message + ")");
+  }
+  await refresh();
+  setInterval(refresh, REFRESH_MS);
+})();
+</script>
 </body>
 </html>
