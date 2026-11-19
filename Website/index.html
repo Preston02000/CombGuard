@@ -171,6 +171,7 @@
 
   /* ---------- The dark (problem) ---------- */
   .dark { padding: 180px 0 160px; }
+  .dark .number span { display: inline-block; }
   .dark .number { font-family: var(--display); font-size: clamp(7rem, 22vw, 17rem); line-height: 0.85; letter-spacing: -0.03em; color: var(--ivory); }
   .dark .number em { font-style: normal; color: var(--amber); }
   .dark-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 64px; align-items: end; }
@@ -247,11 +248,21 @@
   @media (max-width: 860px) { .night-grid { grid-template-columns: 1fr; gap: 60px; } .night { padding: 110px 0; } }
 
   /* ---------- Dawn ---------- */
+  .dawn { --rise: 0; }
+  .sunrise {
+    position: absolute; left: 50%; bottom: 0; width: 640px; height: 640px; border-radius: 50%; pointer-events: none;
+    transform: translate(-50%, calc(80% - var(--rise) * 40%));
+    opacity: calc(0.2 + var(--rise) * 0.6);
+    background: radial-gradient(circle, rgba(255, 222, 165, 0.75) 0%, rgba(248, 170, 92, 0.45) 22%, rgba(232, 112, 62, 0.16) 45%, transparent 68%);
+    filter: blur(4px);
+  }
+  .dawn::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 160px; pointer-events: none;
+    background: linear-gradient(transparent, var(--bg)); }
   .dawn {
     padding: 170px 0 150px; overflow: hidden;
     background:
-      radial-gradient(1100px 520px at 50% 108%, rgba(var(--amber-rgb), 0.38), transparent 62%),
-      linear-gradient(var(--bg), #0b0f1b 45%, #160f0a);
+      radial-gradient(1100px 520px at 50% 92%, rgba(var(--amber-rgb), 0.3), transparent 62%),
+      linear-gradient(var(--bg), #0b0f1b 45%, #140e0a);
   }
   .features { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 90px; border-top: 1px solid var(--line); }
   .feature { padding: 34px 28px 34px 0; border-bottom: 1px solid var(--line); }
@@ -393,7 +404,7 @@
       <a href="#watch">The watch</a>
       <a href="#built">Our build</a>
       <a href="#gen2">Gen 2</a>
-      <a href="/dashboard" class="btn btn-amber btn-sm">Live dashboard</a>
+      <a href="/dashboard" class="btn btn-amber btn-sm">Log in</a>
     </div>
   </div>
 </nav>
@@ -414,7 +425,7 @@
         <p class="lead reveal delay-2">Most hives don't fail overnight. It only looks that way when you finally lift the lid. CombGuard watches every hour in between.</p>
         <div class="actions reveal delay-3">
           <a href="#watch" class="btn btn-amber">See how it watches</a>
-          <a href="/dashboard" class="btn btn-ghost">Live dashboard</a>
+          <a href="/dashboard" class="btn btn-ghost">Team log in</a>
         </div>
       </div>
 
@@ -462,7 +473,7 @@
   <!-- ============ THE DARK ============ -->
   <section class="dark">
     <div class="wrap dark-grid">
-      <div class="number reveal">39.9<em>%</em></div>
+      <div data-speed="0.12"><div class="number reveal" id="lossNum"><span>39.9</span><em>%</em></div></div>
       <div class="reveal delay-1">
         <p class="big">of managed U.S. honey bee colonies were lost between April 2025 and April 2026.</p>
         <p class="lead" style="font-size:1.05rem">Almost none of it happens in plain sight. It starts inside a closed box, in the days between inspections.</p>
@@ -563,7 +574,7 @@
         </div>
       </div>
       <div class="reveal" id="phone">
-        <div class="phone" aria-label="Example CombGuard alert on a phone lock screen">
+        <div class="phone" data-speed="0.1" data-tilt="1" aria-label="Example CombGuard alert on a phone lock screen">
           <div class="screen">
             <div class="date">Tuesday, June 9</div>
             <div class="time">2:14</div>
@@ -583,7 +594,8 @@
 
   <!-- ============ DAWN ============ -->
   <section class="dawn">
-    <div class="wrap">
+    <div class="sunrise" aria-hidden="true"></div>
+    <div class="wrap" style="position:relative;z-index:1">
       <div class="center">
         <p class="eyebrow reveal">Dawn</p>
         <h2 class="display reveal delay-1">By morning, <em>you already know.</em></h2>
@@ -631,7 +643,7 @@
       <h2 class="display reveal delay-1">Your colony, <em>at a glance.</em></h2>
       <p class="lead reveal delay-2" style="margin-top:26px">One clear status and every reading, from anywhere.</p>
 
-      <div class="panel reveal" aria-hidden="true">
+      <div data-speed="0.05" data-grow="1"><div class="panel reveal" aria-hidden="true">
         <div class="panel-top">
           <span class="chip">All clear</span>
           <span class="cap">Test Hive 1 · last reading 4 minutes ago</span>
@@ -657,10 +669,10 @@
           </svg>
           <div class="chart-labels"><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>12 AM</span><span>Now</span></div>
         </div>
-      </div>
+      </div></div>
 
       <div class="actions reveal">
-        <a href="/dashboard" class="btn btn-amber">Open the live dashboard</a>
+        <a href="/dashboard" class="btn btn-amber">Open the dashboard</a>
       </div>
     </div>
   </section>
@@ -731,7 +743,7 @@
   <!-- ============ CREED ============ -->
   <section class="creed center">
     <div class="wrap">
-      <blockquote class="reveal">Every colony already posts guards at its gate. <em>CombGuard is one more.</em></blockquote>
+      <div data-speed="0.06"><blockquote class="reveal">Every colony already posts guards at its gate. <em>CombGuard is one more.</em></blockquote></div>
       <span class="cap reveal delay-1">The idea behind our name</span>
     </div>
   </section>
@@ -831,13 +843,13 @@
 
   if (!reduce) {
     const diveEnd = () => dive.offsetHeight - window.innerHeight;
-    const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    const ease = (t) => 1 - Math.pow(1 - t, 3);   // quick start, soft landing
     let gliding = false, quietUntil = 0;
 
     function glide(to) {
       gliding = true;
       const from = window.scrollY, dist = to - from, start = performance.now();
-      const dur = 900 + Math.min(500, Math.abs(dist) * 0.35);
+      const dur = 720 + Math.min(260, Math.abs(dist) * 0.2);
       const step = (now) => {
         const t = clamp((now - start) / dur);
         window.scrollTo({ top: from + dist * ease(t), behavior: "instant" });
@@ -878,6 +890,76 @@
       const down = ["ArrowDown", "PageDown", " "].includes(e.key), up = ["ArrowUp", "PageUp"].includes(e.key);
       if ((down || up) && !gliding && intent(down ? 1 : -1)) e.preventDefault();
     });
+  }
+
+  // ----- Scroll-linked motion, smoothed so it glides instead of jumping -----
+  if (!reduce) {
+    const movers = [...document.querySelectorAll("[data-speed]")];
+    const dawn = document.querySelector(".dawn");
+    let smoothY = window.scrollY, running = false;
+    const base = new Map();
+
+    function cache() {
+      movers.forEach((el) => {
+        el.style.transform = "none";
+        const r = el.getBoundingClientRect();
+        base.set(el, { mid: r.top + window.scrollY + r.height / 2 });
+      });
+      render(true);
+    }
+
+    function render(force) {
+      const target = window.scrollY;
+      smoothY += (target - smoothY) * 0.14;
+      if (Math.abs(target - smoothY) < 0.3) smoothY = target;
+      const center = smoothY + window.innerHeight / 2;
+
+      movers.forEach((el) => {
+        const b = base.get(el); if (!b) return;
+        const d = b.mid - center;                       // distance from screen center
+        if (Math.abs(d) > window.innerHeight * 1.6) return;
+        const speed = parseFloat(el.dataset.speed);
+        let t = `translate3d(0, ${(-d * speed).toFixed(1)}px, 0)`;
+        if (el.dataset.tilt) t += ` rotate(${clamp(d * 0.006, -5, 5).toFixed(2)}deg)`;
+        if (el.dataset.grow) t += ` scale(${(1 - Math.min(0.08, Math.abs(d) / window.innerHeight * 0.1)).toFixed(3)})`;
+        el.style.transform = t;
+      });
+
+      // The sun comes back up at dawn
+      const r = dawn.getBoundingClientRect();
+      const q = clamp((window.innerHeight - r.top - (smoothY - target)) / (r.height + window.innerHeight * 0.2));
+      dawn.style.setProperty("--rise", q.toFixed(3));
+
+      if (smoothY !== target || force) { running = true; requestAnimationFrame(() => render(false)); }
+      else running = false;
+    }
+
+    window.addEventListener("scroll", () => { if (!running) { running = true; requestAnimationFrame(() => render(false)); } }, { passive: true });
+    window.addEventListener("resize", cache);
+    (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(cache);
+  }
+
+  // ----- Count up the loss number, smoothly and without the text shifting -----
+  const num = document.querySelector("#lossNum span");
+  if (num) {
+    const lock = () => { num.style.minWidth = num.getBoundingClientRect().width + "px"; };
+    (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(lock);
+    if (!reduce) {
+      num.textContent = "0.0";
+      const numIO = new IntersectionObserver((entries) => {
+        if (!entries[0].isIntersecting) return;
+        numIO.disconnect();
+        const start = performance.now(), dur = 1500;
+        const tick = (now) => {
+          const t = clamp((now - start) / dur);
+          const e = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);   // fast start, soft landing
+          num.textContent = (39.9 * e).toFixed(1);
+          if (t < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }, { threshold: 0.5 });
+      numIO.observe(num.parentElement);
+    }
   }
 
   // Stars in the dusk sky
