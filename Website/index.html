@@ -4,1015 +4,624 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CombGuard: The hive's first line of defense</title>
-<meta name="description" content="CombGuard is a solar-powered hive monitor that keeps watch over your colony every hour, so you know about trouble long before you lift the lid.">
-<meta name="theme-color" content="#050506">
+<meta name="description" content="CombGuard is a solar-powered beehive monitor that checks brood temperature, humidity, CO2 and weight every 15 minutes and alerts beekeepers early.">
+<link rel="canonical" href="https://combguard.com/">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CombGuard">
+<meta property="og:title" content="CombGuard: The hive's first line of defense">
+<meta property="og:description" content="CombGuard is a solar-powered beehive monitor that checks brood temperature, humidity, CO2 and weight every 15 minutes and alerts beekeepers early.">
+<meta property="og:url" content="https://combguard.com/">
+<meta property="og:image" content="https://combguard.com/assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,300;1,9..144,400&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700&family=Inter:wght@400;500;600&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
 <style>
-  :root {
-    --bg: #050506;
-    --night: #0a1020;
-    --blue: 43, 74, 138;
-    --amber: #e9a23b;
-    --amber-hi: #f6c56b;
-    --amber-rgb: 233, 162, 59;
-    --ivory: #f1ece2;
-    --text-2: #a9afba;
-    --text-3: #6d7480;
-    --line: rgba(255, 255, 255, 0.08);
-    --display: "Instrument Serif", Georgia, serif;
-    --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-    --caption: "Fraunces", Georgia, serif;
-    --max: 1180px;
-  }
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ivory);
-    font-family: var(--sans);
-    font-size: 17px;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-  }
-  a { color: inherit; text-decoration: none; }
-  img, svg { display: block; max-width: 100%; }
-  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+/* ===== HERO: sunset, then the dive into the hive (scrubbed by scroll) ===== */
+.dive { height: 240vh; position: relative; }
+.dive-stick { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: #000; }
+.sky { position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(900px 520px at 50% -8%, rgba(255, 196, 120, 0.75), rgba(232, 112, 62, 0.32) 42%, transparent 72%),
+    linear-gradient(#3a1d14, #1a0f12 34%, #06060a 62%, #000 80%);
+  opacity: clamp(0, calc(1 - var(--p, 0) * 2.4), 1); }
+.sun { position: absolute; left: 50%; top: 0; width: 360px; height: 360px; border-radius: 50%; pointer-events: none;
+  transform: translate(-50%, calc(-62% + var(--p, 0) * 260px));
+  background: radial-gradient(circle, #fff1d6 0%, #ffcf8a 20%, rgba(246, 150, 80, 0.5) 42%, transparent 68%);
+  opacity: clamp(0, calc(1 - var(--p, 0) * 2.2), 1); }
+.night-blue { position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(1000px 600px at 50% 40%, rgba(var(--blue-rgb), 0.35), transparent 70%);
+  opacity: clamp(0, calc((var(--p, 0) - 0.15) * 3), 0.9); }
+.stars { position: absolute; inset: 0 0 40% 0; pointer-events: none; opacity: clamp(0, calc((var(--p, 0) - 0.05) * 3), 1); }
+.stars i { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #e6ecff; animation: tw 4s ease-in-out infinite; }
+@keyframes tw { 50% { opacity: 0.2; } }
+.hero-copy { position: relative; z-index: 2; text-align: center; padding: 118px 22px 0;
+  opacity: clamp(0, calc(1 - var(--p, 0) * 3.4), 1); transform: translateY(calc(var(--p, 0) * -140px)); }
+.hero-copy .lead { margin-top: 18px; }
+.hero-copy .actions { margin-top: 28px; justify-content: center; }
+.stage { position: absolute; left: 50%; top: calc(100% - 38vh); z-index: 1;
+  width: min(900px, 88vw); aspect-ratio: 16 / 9; border-radius: 34px; overflow: hidden;
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  transform-origin: 50% 74%;
+  transform: translate(-50%, calc(clamp(0, var(--p, 0) * 2.2, 1) * -48vh)) scale(calc(1 + clamp(0, (var(--p, 0) - 0.12) * 4.2, 2.6)));
+  border-radius: calc(34px - clamp(0, var(--p, 0) * 60, 34) * 1px); }
+.stage img { width: 100%; height: 100%; object-fit: cover; }
+.stage .tag { position: absolute; left: 18px; bottom: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); font-size: 0.78rem; color: var(--text-2); opacity: clamp(0, calc(1 - var(--p, 0) * 6), 1); }
+.inside { position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, rgba(var(--gold-rgb), 0.22), rgba(0, 0, 0, 0.9) 45%, #000 75%);
+  opacity: clamp(0, calc((var(--p, 0) - 0.4) * 3.2), 1); }
+.inside-line { position: absolute; inset: 0; z-index: 4; display: grid; place-content: center; text-align: center; padding: 0 22px; pointer-events: none;
+  opacity: clamp(0, calc((var(--p, 0) - 0.58) * 4.5), 1); transform: translateY(calc((1 - clamp(0, (var(--p, 0) - 0.58) * 4.5, 1)) * 40px)); }
+.inside-line p { color: var(--text-2); font-size: 1.15rem; margin: 18px auto 0; max-width: 520px; font-weight: 500; }
+.cue { position: absolute; left: 50%; bottom: 22px; z-index: 5; transform: translateX(-50%); font-size: 0.75rem; color: var(--text-2); letter-spacing: 0.08em; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: clamp(0, calc(1 - var(--p, 0) * 8), 1); }
+.cue span { width: 22px; height: 34px; border: 1.5px solid rgba(255,255,255,.4); border-radius: 12px; position: relative; }
+.cue span::after { content: ""; position: absolute; left: 50%; top: 7px; width: 3px; height: 7px; border-radius: 2px; background: #fff; transform: translateX(-50%); animation: wheel 1.8s ease-in-out infinite; }
+@keyframes wheel { 0% { opacity: 0; transform: translate(-50%, 0); } 30% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, 10px); } }
+@media (max-width: 640px) { .stage { top: calc(100% - 30vh); width: 92vw; border-radius: 22px; } .hero-copy { padding-top: 100px; } }
 
-  /* ---------- Type ---------- */
-  h1, h2, h3 { margin: 0; font-weight: 400; }
-  .display { font-family: var(--display); letter-spacing: -0.012em; line-height: 0.98; }
-  .display em { font-style: italic; color: var(--amber); }
-  h1.display { font-size: clamp(3.1rem, 7.2vw, 6.6rem); }
-  h1.display em { white-space: nowrap; }
-  h2.display { font-size: clamp(2.6rem, 6.4vw, 5.4rem); }
-  h3 { font-size: 1.15rem; font-weight: 500; letter-spacing: -0.01em; }
-  .lead { font-size: clamp(1.05rem, 1.7vw, 1.3rem); color: var(--text-2); max-width: 600px; line-height: 1.6; }
-  .eyebrow {
-    display: inline-flex; align-items: center; gap: 10px;
-    font-size: 0.74rem; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase;
-    color: var(--text-2); margin: 0 0 26px;
-  }
-  .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 10px var(--amber); }
-  .cap { font-family: var(--caption); font-style: italic; font-weight: 300; color: var(--text-3); font-size: 0.98rem; letter-spacing: 0.005em; }
-  .center { text-align: center; }
-  .center .lead { margin-left: auto; margin-right: auto; }
-  section { position: relative; }
+/* ===== 01 THE BLIND SPOT ===== */
+.loss { text-align: center; padding: 44px 30px 34px; }
+.loss .num { font-family: var(--head); font-weight: 700; font-size: clamp(4.4rem, 11vw, 7.6rem); letter-spacing: -0.05em; line-height: 0.9; color: var(--text); }
+.loss .num span { display: inline-block; min-width: 3.3ch; text-align: right; font-variant-numeric: tabular-nums; }
+.loss .num em { font-style: normal; color: var(--gold); }
+.hexes { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; max-width: 360px; margin: 30px auto 6px; }
+.hexes i { aspect-ratio: 1 / 1.1547; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  background: var(--gold); box-shadow: 0 0 12px rgba(var(--gold-rgb), 0.6); transition: background 0.5s, opacity 0.5s, transform 0.5s; }
+.hexes i:nth-child(20n + 11), .hexes i:nth-child(20n + 12), .hexes i:nth-child(20n + 13), .hexes i:nth-child(20n + 14), .hexes i:nth-child(20n + 15),
+.hexes i:nth-child(20n + 16), .hexes i:nth-child(20n + 17), .hexes i:nth-child(20n + 18), .hexes i:nth-child(20n + 19), .hexes i:nth-child(20n + 20) { transform: translateX(50%); }
+.hexes i.lost { background: #2a2a2e; box-shadow: none; }
+.timeline { padding: 40px 34px; display: flex; flex-direction: column; }
+.tl { position: relative; margin: auto 0; padding-top: 130px; }
+.tl-bar { height: 14px; border-radius: 6px; background: #222226; position: relative; }
+.tl-gap { position: absolute; left: 4%; right: 4%; top: 0; bottom: 0; border-radius: 6px; background: repeating-linear-gradient(90deg, #2c2c31 0 10px, #222226 10px 20px); }
+.tl-end { position: absolute; top: 50%; width: 22px; height: 22px; border-radius: 50%; background: var(--text); transform: translate(-50%, -50%); box-shadow: 0 0 0 5px var(--tile); }
+.tl-labels { display: flex; justify-content: space-between; margin-top: 16px; font-size: 0.82rem; color: var(--text-2); font-weight: 500; }
+.ev { position: absolute; bottom: 30px; transform: translateX(-50%); text-align: center; width: 130px; font-size: 0.95rem; font-weight: 500; color: var(--text-2); line-height: 1.3;
+  opacity: 0; translate: 0 10px; transition: opacity 0.5s, translate 0.5s; }
+.ev::after { content: ""; display: block; width: 1px; height: 22px; margin: 8px auto 0; background: linear-gradient(var(--gold), transparent); }
+.ev b { display: block; color: var(--gold); font-family: var(--head); font-size: 0.9rem; margin-bottom: 4px; }
+.ev.on { opacity: 1; translate: 0 0; }
+.ev:nth-child(2) { bottom: 92px; }
+.ev:nth-child(2)::after { height: 84px; }
+.tl-mid { position: absolute; left: 50%; top: 100%; transform: translate(-50%, 34px); font-family: var(--head); font-weight: 600; color: var(--text-3); font-size: 0.9rem; white-space: nowrap; }
 
-  /* ---------- Buttons ---------- */
-  .btn {
-    display: inline-flex; align-items: center; gap: 10px;
-    padding: 13px 24px; border-radius: 999px;
-    font-size: 0.95rem; font-weight: 500;
-    transition: transform 0.25s, background 0.25s, border-color 0.25s, box-shadow 0.25s;
-  }
-  .btn-amber { background: var(--amber); color: #120b00; box-shadow: 0 0 0 rgba(var(--amber-rgb), 0); }
-  .btn-amber:hover { background: var(--amber-hi); box-shadow: 0 8px 40px rgba(var(--amber-rgb), 0.35); transform: translateY(-1px); }
-  .btn-ghost { border: 1px solid rgba(255, 255, 255, 0.16); color: var(--ivory); }
-  .btn-ghost:hover { border-color: rgba(255, 255, 255, 0.4); }
-  .btn-sm { padding: 8px 16px; font-size: 0.85rem; }
-  .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 40px; }
-  .center .actions { justify-content: center; }
+/* ===== 02 THE WATCH (pinned, steps change as you scroll) ===== */
+.watch { height: 460vh; position: relative; }
+.watch-stick { position: sticky; top: 0; height: 100vh; height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: 70px 0 30px; overflow: hidden; }
+.watch-top { text-align: center; margin-bottom: 26px; }
+.watch-top .h2 { font-size: clamp(2rem, 4.4vw, 3.4rem); }
+.watch-body { display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 18px; align-items: stretch; min-height: 0; flex: 1; max-height: 640px; }
+.viewer { position: relative; border-radius: var(--radius); overflow: hidden; background: radial-gradient(800px 500px at 50% 30%, #12172a, #07080c 70%); }
+.cam { position: absolute; inset: 0; display: grid; place-items: center; transition: transform 1.1s cubic-bezier(0.65, 0, 0.35, 1); }
+.cam-inner { position: relative; height: 92%; aspect-ratio: 600 / 640; }
+.cam-inner img { width: 100%; height: 100%; }
+.pin { position: absolute; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 4px rgba(var(--gold-rgb), 0.25); opacity: 0.35; transition: opacity 0.5s, transform 0.5s; }
+.pin.on { opacity: 1; animation: ping 1.8s ease-out infinite; }
+@keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(var(--gold-rgb), 0.7); } 100% { box-shadow: 0 0 0 18px rgba(var(--gold-rgb), 0); } }
+.viewer-tag { position: absolute; left: 18px; top: 16px; z-index: 2; padding: 6px 12px; border-radius: 999px; background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); font-size: 0.78rem; color: var(--text-2); }
+.cards { position: relative; display: flex; flex-direction: column; }
+.progress { display: flex; gap: 6px; margin-bottom: 14px; }
+.progress span { flex: 1; height: 4px; border-radius: 3px; background: #26262a; overflow: hidden; }
+.progress span i { display: block; height: 100%; width: 0; background: var(--gold); }
+.card-stack { position: relative; flex: 1; }
+.step { position: absolute; inset: 0; background: var(--tile); border-radius: var(--radius); padding: 34px; display: flex; flex-direction: column; justify-content: flex-end;
+  opacity: 0; transform: translateY(24px); transition: opacity 0.6s, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); pointer-events: none; }
+.step.on { opacity: 1; transform: none; pointer-events: auto; }
+.step .k { font-family: var(--head); font-weight: 700; color: var(--gold); font-size: 0.9rem; margin-bottom: auto; }
+.step .big-n { position: absolute; right: 26px; top: 14px; font-family: var(--head); font-weight: 700; font-size: 7rem; line-height: 1; letter-spacing: -0.06em; color: rgba(255,255,255,0.05); }
+.step h3 { font-size: clamp(1.6rem, 2.6vw, 2.2rem); margin-bottom: 12px; }
+.step p { color: var(--text-2); margin: 0; font-size: 1.02rem; }
+.step .reads { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.step .reads span { padding: 6px 12px; border-radius: 999px; background: var(--tile-2); font-size: 0.8rem; color: var(--text); }
+@media (max-width: 860px) {
+  .watch-body { grid-template-columns: 1fr; grid-template-rows: 1fr auto; max-height: none; }
+  .viewer { min-height: 0; }
+  .card-stack { min-height: 230px; flex: none; }
+  .step { padding: 24px; }
+  .watch-top { margin-bottom: 14px; }
+}
 
-  /* ---------- Nav ---------- */
-  nav {
-    position: fixed; inset: 0 0 auto 0; z-index: 50;
-    transition: background 0.4s, border-color 0.4s;
-    border-bottom: 1px solid transparent;
-  }
-  nav.scrolled {
-    background: rgba(5, 5, 6, 0.7);
-    backdrop-filter: saturate(160%) blur(20px);
-    -webkit-backdrop-filter: saturate(160%) blur(20px);
-    border-color: var(--line);
-  }
-  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
-  .logo { display: flex; align-items: center; gap: 10px; }
-  .logo svg { width: 22px; height: 26px; color: var(--amber); }
-  .wordmark { font-family: var(--display); font-size: 1.55rem; letter-spacing: 0; line-height: 1; }
-  .nav-links { display: flex; align-items: center; gap: 30px; font-size: 0.88rem; color: rgba(241, 236, 226, 0.82); text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35); }
-  .nav-links a:not(.btn):hover { color: var(--ivory); }
-  @media (max-width: 780px) { .nav-links a:not(.btn) { display: none; } }
+/* ===== 03 THE ALERT (realistic phone) ===== */
+.alert-sec { overflow: hidden; background: radial-gradient(900px 600px at 50% 60%, rgba(var(--blue-rgb), calc(0.12 + var(--p, 0) * 0.3)), transparent 70%), #04050a; }
+.phone-wrap { position: relative; display: grid; place-items: center; margin-top: 60px; }
+.alert-glow { position: absolute; width: 520px; height: 520px; border-radius: 50%; background: radial-gradient(closest-side, rgba(var(--gold-rgb), 0.45), transparent);
+  opacity: clamp(0, calc((var(--p, 0) - 0.42) * 6), 1); transform: scale(calc(0.7 + clamp(0, (var(--p, 0) - 0.42) * 3, 0.3))); }
+.iphone { position: relative; width: 320px; height: 660px; border-radius: 62px; padding: 5px;
+  background: linear-gradient(145deg, #6b6b70, #2a2a2d 22%, #47474b 50%, #1f1f22 78%, #5a5a5e);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.25), 0 60px 120px rgba(0, 0, 0, 0.75);
+  transform: translateY(calc((0.5 - var(--p, 0)) * 120px)) rotate(calc((0.5 - var(--p, 0)) * -6deg)); }
+.iphone::before, .iphone::after { content: ""; position: absolute; width: 4px; border-radius: 2px; background: linear-gradient(90deg, #3a3a3e, #6a6a6f); }
+.iphone::before { left: -3px; top: 150px; height: 64px; box-shadow: 0 -52px 0 -12px #4a4a4e, 0 80px 0 0 #4a4a4e; }
+.iphone::after { right: -3px; top: 190px; height: 96px; }
+.bezel { height: 100%; border-radius: 57px; background: #000; padding: 9px; }
+.screen { position: relative; height: 100%; border-radius: 49px; overflow: hidden;
+  background: radial-gradient(120% 80% at 30% 0%, #2c3f7a, transparent 60%), radial-gradient(100% 70% at 90% 100%, #3a1f4f, transparent 60%), linear-gradient(#101a3a, #090c1c); }
+.island { position: absolute; left: 50%; top: 11px; width: 112px; height: 33px; border-radius: 20px; background: #000; transform: translateX(-50%); z-index: 3; }
+.lock { position: absolute; left: 0; right: 0; top: 62px; text-align: center; color: rgba(255, 255, 255, 0.92); }
+.lock svg { margin: 0 auto 6px; }
+.lock .d { font-size: 1.02rem; font-weight: 600; }
+.lock .t { font-family: var(--head); font-weight: 700; font-size: 88px; line-height: 1; letter-spacing: -0.02em; margin-top: 2px; }
+.notif { position: absolute; left: 12px; right: 12px; top: 270px; padding: 13px 14px; border-radius: 22px; display: grid; grid-template-columns: 36px 1fr; gap: 10px;
+  background: rgba(52, 54, 66, 0.62); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); color: #fff;
+  opacity: clamp(0, calc((var(--p, 0) - 0.4) * 7), 1);
+  transform: translateY(calc((1 - clamp(0, (var(--p, 0) - 0.4) * 7, 1)) * -30px)) scale(calc(0.94 + clamp(0, (var(--p, 0) - 0.4) * 7, 1) * 0.06)); }
+.notif .ic { width: 36px; height: 36px; border-radius: 9px; background: #0b0b0c; display: grid; place-items: center; }
+.notif .ic svg { width: 22px; height: 22px; color: #f5f5f7; }
+.notif .top { display: flex; justify-content: space-between; font-size: 0.76rem; opacity: 0.7; }
+.notif strong { display: block; font-size: 0.9rem; margin-top: 1px; }
+.notif p { margin: 2px 0 0; font-size: 0.84rem; line-height: 1.32; opacity: 0.9; }
+.quick { position: absolute; bottom: 38px; width: 50px; height: 50px; border-radius: 50%; background: rgba(255, 255, 255, 0.14); backdrop-filter: blur(10px); display: grid; place-items: center; }
+.quick.l { left: 40px; } .quick.r { right: 40px; }
+.home-ind { position: absolute; left: 50%; bottom: 9px; width: 130px; height: 5px; border-radius: 3px; background: rgba(255, 255, 255, 0.85); transform: translateX(-50%); }
+.log { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; max-width: 760px; margin: 60px auto 0; }
+.log div { background: var(--tile); border-radius: 20px; padding: 18px 20px; font-size: 0.92rem; color: var(--text-2); }
+.log b { display: block; font-family: var(--head); color: var(--text); font-size: 1.05rem; margin-bottom: 2px; }
+.log .hot b { color: var(--gold); }
+@media (max-width: 640px) { .iphone { width: 280px; height: 578px; } .lock .t { font-size: 76px; } .notif { top: 240px; } .log { grid-template-columns: 1fr; } }
 
-  /* ---------- Hero (dusk) ---------- */
-  .dive { position: relative; height: 200vh; }
-  .hero {
-    position: sticky; top: 0;
-    height: 100vh; height: 100svh;
-    display: grid; align-items: center;
-    padding: 90px 0 60px; overflow: hidden;
-    background:
-      radial-gradient(1200px 600px at 30% 55%, rgba(var(--blue), 0.22), transparent 65%),
-      var(--bg);
-  }
-  .hero { --dusk: 1; }
-  .sunset {
-    position: absolute; inset: 0; pointer-events: none; opacity: var(--dusk);
-    background:
-      radial-gradient(1000px 460px at 50% 0%, rgba(250, 170, 90, 0.55), rgba(214, 96, 64, 0.28) 40%, transparent 72%),
-      linear-gradient(to bottom, rgba(196, 92, 58, 0.5) 0%, rgba(140, 58, 70, 0.32) 16%, rgba(70, 42, 92, 0.22) 34%, rgba(24, 30, 64, 0.18) 52%, transparent 78%);
-  }
-  .horizon { position: absolute; left: 0; right: 0; bottom: 0; height: 30%; pointer-events: none;
-    background: linear-gradient(transparent, var(--bg)); }
-  .sun {
-    position: absolute; left: 50%; top: 0; width: 420px; height: 420px; border-radius: 50%;
-    transform: translate(-50%, calc(-58% + var(--sun-drop, 0px))); opacity: var(--dusk);
-    background: radial-gradient(circle, rgba(255, 222, 165, 0.95) 0%, rgba(248, 170, 92, 0.8) 18%, rgba(232, 112, 62, 0.32) 42%, transparent 68%);
-    filter: blur(2px); pointer-events: none;
-  }
-  .hero-art svg { position: relative; z-index: 1; }
-  .stars { position: absolute; inset: 0; pointer-events: none; opacity: var(--stars, 0.5);
-    -webkit-mask-image: linear-gradient(transparent 22%, #000 55%); mask-image: linear-gradient(transparent 22%, #000 55%); }
-  .stars i { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #dfe6ff; opacity: 0.5; animation: twinkle 5s ease-in-out infinite; }
-  @keyframes twinkle { 50% { opacity: 0.1; } }
-  .hero-grid { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 40px; align-items: center; }
-  .hero-grid { position: relative; z-index: 2; }
-  .hero h1 { max-width: 760px; }
-  .hero .lead { margin-top: 30px; }
-  .hero-art { position: relative; }
-  .hero-art svg { width: 100%; height: auto; overflow: visible; transform-origin: 50% 57%; will-change: transform; }
-  .hero-copy { will-change: opacity, transform; }
-  /* inside the hive */
-  .inside {
-    position: absolute; inset: 0; pointer-events: none; opacity: 0; z-index: 3;
-    background: radial-gradient(circle at 50% 52%, rgba(233, 162, 59, 0.16), rgba(5, 5, 6, 0.92) 46%, var(--bg) 72%);
-  }
-  .inside-line {
-    position: absolute; left: 0; right: 0; top: 50%; z-index: 4; text-align: center; padding: 0 24px;
-    transform: translateY(-50%); opacity: 0; pointer-events: none;
-  }
-  .inside-line h2 { font-size: clamp(2.4rem, 5.6vw, 4.6rem); }
-  .inside-line .cap { display: block; margin-top: 18px; font-size: 1.05rem; color: var(--text-2); }
-  .glow-core { animation: breathe 6s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
-  @keyframes breathe { 50% { opacity: 0.6; transform: scale(0.94); } }
-  .hero-art .blink { opacity: var(--dots, 1); }
-  .blink { animation: blink 2.6s ease-in-out infinite; }
-  .blink.d2 { animation-delay: 0.9s; } .blink.d3 { animation-delay: 1.7s; }
-  @keyframes blink { 50% { filter: brightness(0.4); } }
-  .scroll-cue { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); color: var(--text-3); font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-  .scroll-cue span { width: 1px; height: 42px; background: linear-gradient(var(--text-3), transparent); animation: cue 2.4s ease-in-out infinite; transform-origin: top; }
-  @keyframes cue { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
-  @media (max-width: 900px) {
-    .hero-grid { grid-template-columns: 1fr; }
-    .hero-art { max-width: 250px; margin: 0 auto; }
-    .hero { padding-top: 80px; }
-    .scroll-cue { display: none; }
-  }
+/* ===== 04 THE PLAN + DAWN ===== */
+.plan-sec { overflow: hidden; padding-bottom: 220px; }
+.plan .tile { padding: 34px; min-height: 260px; display: flex; flex-direction: column; }
+.plan .n { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: rgba(var(--gold-rgb), 0.14); color: var(--gold); font-family: var(--head); font-weight: 700; margin-bottom: auto; }
+.plan h3 { font-size: 1.5rem; margin-top: 30px; }
+.cover { margin-top: 18px; padding: 36px; }
+.cover-bar { position: relative; height: 34px; border-radius: 10px; background: #1f1f23; overflow: hidden; margin-top: 22px; }
+.cover-fill { position: absolute; inset: 0; width: calc(clamp(0, (var(--p, 0) - 0.2) * 2.6, 1) * 100%);
+  background: repeating-linear-gradient(90deg, rgba(var(--blue-rgb), 0.95) 0 2px, rgba(var(--blue-rgb), 0.35) 2px 6px); box-shadow: 0 0 24px rgba(var(--blue-rgb), 0.6); }
+.cover-row { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px; }
+.cover-row .big { font-family: var(--head); font-weight: 700; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.04em; }
+.cover-row .big span { color: #8fb0ff; }
+.sunrise { position: absolute; left: 50%; bottom: 0; width: 900px; height: 900px; border-radius: 50%; pointer-events: none;
+  transform: translate(-50%, calc(88% - clamp(0, (var(--p, 0) - 0.35) * 1.4, 1) * 40%));
+  background: radial-gradient(circle, rgba(255, 220, 160, 0.85) 0%, rgba(246, 160, 80, 0.45) 18%, rgba(232, 112, 62, 0.14) 40%, transparent 64%);
+  opacity: clamp(0, calc((var(--p, 0) - 0.3) * 2.2), 1); }
+.dawn-line { position: relative; text-align: center; margin-top: 130px;
+  opacity: clamp(0, calc((var(--p, 0) - 0.5) * 4), 1); }
 
-  /* Line drawing animation */
-  .draw path, .draw line, .draw rect, .draw polyline, .draw circle.ring {
-    stroke-dasharray: 1; stroke-dashoffset: 1;
-    transition: stroke-dashoffset 2.4s cubic-bezier(0.65, 0, 0.35, 1);
-  }
-  .draw.in path, .draw.in line, .draw.in rect, .draw.in polyline, .draw.in circle.ring { stroke-dashoffset: 0; }
+/* ===== DEMO ===== */
+.panel { max-width: 980px; margin: 0 auto; background: var(--tile); border-radius: var(--radius); padding: 26px; text-align: left; }
+.panel-top { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.chip { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; background: rgba(52, 199, 89, 0.12); color: #7fe0a0; font-size: 0.86rem; font-weight: 500; }
+.chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #34c759; box-shadow: 0 0 10px #34c759; }
+.reads4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 18px; }
+.reads4 div { background: var(--tile-2); border-radius: 18px; padding: 16px; }
+.reads4 small { color: var(--text-3); font-size: 0.8rem; }
+.reads4 b { display: block; font-family: var(--head); font-size: 1.7rem; letter-spacing: -0.03em; margin-top: 2px; }
+.reads4 b em { font-style: normal; font-size: 0.85rem; color: var(--text-3); font-weight: 500; margin-left: 3px; }
+.panel svg { width: 100%; height: 160px; margin-top: 16px; }
+.panel .line { stroke-dasharray: 1; stroke-dashoffset: calc(1 - clamp(0, (var(--p, 0) - 0.15) * 2.4, 1)); }
+@media (max-width: 640px) { .reads4 { grid-template-columns: 1fr 1fr; } }
 
-  /* ---------- The dark (problem) ---------- */
-  .dark { padding: 180px 0 160px; }
-  .dark .number span { display: inline-block; }
-  .dark .number { font-family: var(--display); font-size: clamp(7rem, 22vw, 17rem); line-height: 0.85; letter-spacing: -0.03em; color: var(--ivory); }
-  .dark .number em { font-style: normal; color: var(--amber); }
-  .dark-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 64px; align-items: end; }
-  .dark p.big { font-size: clamp(1.4rem, 2.6vw, 2rem); line-height: 1.35; margin: 0 0 22px; color: var(--ivory); letter-spacing: -0.01em; }
-  .threats { display: flex; flex-wrap: wrap; gap: 10px; margin: 28px 0 26px; }
-  .threats span { border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font-size: 0.85rem; color: var(--text-2); }
-  .cap a { text-decoration: underline; text-underline-offset: 3px; }
-  @media (max-width: 860px) { .dark-grid { grid-template-columns: 1fr; gap: 30px; } .dark { padding: 120px 0; } }
+/* ===== GEN 1 CAROUSEL ===== */
+.track { display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+  padding: 0 max(22px, calc((100vw - var(--max)) / 2 + 22px)); scroll-padding: 0 max(22px, calc((100vw - var(--max)) / 2 + 22px)); }
+.track::-webkit-scrollbar { display: none; }
+.slide { position: relative; flex: 0 0 min(380px, 82vw); height: 500px; border-radius: var(--radius); overflow: hidden; scroll-snap-align: start; background: var(--tile); cursor: pointer; }
+.slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.slide:hover img { transform: scale(1.04); }
+.slide::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(0, 0, 0, 0.65), transparent 40%, transparent 60%, rgba(0, 0, 0, 0.4)); }
+.slide .cap { position: absolute; left: 26px; right: 26px; top: 26px; z-index: 1; }
+.slide .cap small { color: var(--gold); font-weight: 600; font-size: 0.82rem; }
+.slide .cap h3 { font-size: 1.55rem; margin-top: 6px; line-height: 1.1; }
+.plus { position: absolute; right: 18px; bottom: 18px; z-index: 1; width: 38px; height: 38px; border-radius: 50%; border: 0; background: rgba(245, 245, 247, 0.9); color: #000; font-size: 24px; line-height: 1; cursor: pointer; display: grid; place-items: center; transition: transform 0.25s; }
+.slide:hover .plus { transform: scale(1.08); }
+.slide.text { background: linear-gradient(160deg, #1a1a1d, #0d0d0f); display: flex; align-items: flex-end; padding: 26px; }
+.slide.text::after { display: none; }
+.car-nav { display: flex; justify-content: flex-end; gap: 12px; margin-top: 22px; }
+.car-nav button { width: 44px; height: 44px; border-radius: 50%; border: 0; background: #2a2a2e; color: var(--text); cursor: pointer; display: grid; place-items: center; transition: background 0.2s, opacity 0.2s; }
+.car-nav button:hover { background: #3a3a3e; }
+.car-nav button:disabled { opacity: 0.35; cursor: default; }
 
-  /* ---------- The watch (sticky sensors) ---------- */
-  .watch { padding: 60px 0 120px; }
-  .watch-head { margin-bottom: 40px; }
-  .watch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
-  .watch-art { position: sticky; top: 90px; height: calc(100vh - 140px); display: flex; align-items: center; justify-content: center; }
-  .watch-art svg { width: 100%; max-width: 460px; height: auto; max-height: 100%; }
-  .part { opacity: 0.18; transition: opacity 0.7s, filter 0.7s; }
-  .watch-art[data-active="pod"] .p-pod,
-  .watch-art[data-active="probes"] .p-probes,
-  .watch-art[data-active="scale"] .p-scale,
-  .watch-art[data-active="solar"] .p-solar,
-  .watch-art[data-active="all"] .part { opacity: 1; filter: drop-shadow(0 0 10px rgba(var(--amber-rgb), 0.8)); }
-  .steps { padding: 6vh 0 10vh; }
-  .step { min-height: 72vh; display: flex; flex-direction: column; justify-content: center; opacity: 0.25; transition: opacity 0.6s; }
-  .step.active { opacity: 1; }
-  .step .num { font-family: var(--caption); font-style: italic; font-weight: 300; color: var(--amber); font-size: 1.1rem; margin-bottom: 14px; }
-  .step h3 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 4vw, 3.3rem); line-height: 1; margin-bottom: 18px; letter-spacing: -0.01em; }
-  .step p { color: var(--text-2); max-width: 440px; margin: 0 0 14px; font-size: 1.05rem; }
-  @media (max-width: 860px) {
-    .watch-grid { grid-template-columns: 1fr; gap: 0; }
-    .watch-art { position: relative; top: auto; height: auto; padding: 10px 0 30px; }
-    .watch-art .part { opacity: 1; filter: drop-shadow(0 0 8px rgba(var(--amber-rgb), 0.7)); }
-    .steps { padding: 0; }
-    .step { min-height: 0; opacity: 1; padding: 38px 0; border-top: 1px solid var(--line); }
-  }
+/* ===== GEN 2 BENTO ===== */
+.bento { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.bento .tile { min-height: 220px; display: flex; flex-direction: column; justify-content: flex-end; }
+.bento .wide { grid-column: span 2; grid-row: span 2; justify-content: space-between; background: radial-gradient(500px 300px at 80% 0%, rgba(var(--gold-rgb), 0.16), transparent 70%), var(--tile); }
+.bento .v { font-family: var(--head); font-weight: 700; font-size: clamp(2.2rem, 4vw, 3.2rem); letter-spacing: -0.045em; line-height: 1; }
+.bento .v em { font-style: normal; color: var(--gold); font-size: 0.5em; margin-left: 4px; letter-spacing: -0.02em; }
+.sensors { list-style: none; padding: 0; margin: 22px 0 0; display: grid; gap: 10px; }
+.sensors li { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--line); color: var(--text-2); font-size: 0.95rem; }
+.sensors li b { color: var(--text); font-weight: 500; }
+.status { display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--gold); font-weight: 600; }
+.status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); animation: ping 1.8s ease-out infinite; }
+@media (max-width: 900px) { .bento { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .bento { grid-template-columns: 1fr; } .bento .wide { grid-column: auto; } }
 
-  /* ---------- 2:14 AM ---------- */
-  .night {
-    padding: 160px 0;
-    background:
-      radial-gradient(900px 600px at 80% 50%, rgba(var(--blue), 0.28), transparent 65%),
-      var(--bg);
-    border-top: 1px solid var(--line);
-  }
-  .night-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: center; }
-  .log { margin-top: 34px; padding-left: 18px; border-left: 1px solid rgba(var(--amber-rgb), 0.35); display: grid; gap: 8px; }
-  .phone {
-    width: min(330px, 86vw); aspect-ratio: 9 / 18.5; margin: 0 auto;
-    border-radius: 48px; padding: 12px;
-    background: linear-gradient(160deg, #24262c, #0c0d10);
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 50px 120px rgba(0, 0, 0, 0.8), 0 0 120px rgba(var(--blue), 0.25);
-  }
-  .screen {
-    height: 100%; border-radius: 38px; overflow: hidden; position: relative;
-    background:
-      radial-gradient(120% 70% at 50% 0%, rgba(var(--blue), 0.75), transparent 70%),
-      linear-gradient(#0b1530, #05070d);
-    display: flex; flex-direction: column; align-items: center; padding: 64px 14px 0;
-  }
-  .screen .date { font-size: 0.85rem; color: rgba(241, 236, 226, 0.75); }
-  .screen .time { font-family: var(--sans); font-weight: 600; font-size: 4.6rem; line-height: 1; letter-spacing: -0.03em; color: rgba(241, 236, 226, 0.92); margin-top: 4px; }
-  .notif {
-    margin-top: 42px; width: 100%;
-    background: rgba(30, 32, 40, 0.72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-    border-radius: 20px; padding: 13px 14px; display: grid; grid-template-columns: 34px 1fr; gap: 11px;
-    opacity: 0; transform: translateY(-18px) scale(0.97);
-    transition: opacity 0.8s 0.4s, transform 0.8s 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  .in .notif { opacity: 1; transform: none; }
-  .notif .icon { width: 34px; height: 34px; border-radius: 9px; background: #0b0b0c; display: grid; place-items: center; border: 1px solid rgba(var(--amber-rgb), 0.4); }
-  .notif .icon svg { width: 16px; height: 19px; color: var(--amber); }
-  .notif .top { display: flex; justify-content: space-between; font-size: 0.72rem; color: rgba(241, 236, 226, 0.6); }
-  .notif strong { display: block; font-size: 0.86rem; font-weight: 600; margin-top: 1px; }
-  .notif p { margin: 1px 0 0; font-size: 0.82rem; line-height: 1.35; color: rgba(241, 236, 226, 0.82); }
-  @media (max-width: 860px) { .night-grid { grid-template-columns: 1fr; gap: 60px; } .night { padding: 110px 0; } }
-
-  /* ---------- Dawn ---------- */
-  .dawn { --rise: 0; }
-  .sunrise {
-    position: absolute; left: 50%; bottom: 0; width: 640px; height: 640px; border-radius: 50%; pointer-events: none;
-    transform: translate(-50%, calc(80% - var(--rise) * 40%));
-    opacity: calc(0.2 + var(--rise) * 0.6);
-    background: radial-gradient(circle, rgba(255, 222, 165, 0.75) 0%, rgba(248, 170, 92, 0.45) 22%, rgba(232, 112, 62, 0.16) 45%, transparent 68%);
-    filter: blur(4px);
-  }
-  .dawn::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 160px; pointer-events: none;
-    background: linear-gradient(transparent, var(--bg)); }
-  .dawn {
-    padding: 170px 0 150px; overflow: hidden;
-    background:
-      radial-gradient(1100px 520px at 50% 92%, rgba(var(--amber-rgb), 0.3), transparent 62%),
-      linear-gradient(var(--bg), #0b0f1b 45%, #140e0a);
-  }
-  .features { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 90px; border-top: 1px solid var(--line); }
-  .feature { padding: 34px 28px 34px 0; border-bottom: 1px solid var(--line); }
-  .feature svg { width: 28px; height: 28px; margin-bottom: 20px; }
-  .feature h3 { margin-bottom: 6px; }
-  .feature p { margin: 0; color: var(--text-2); font-size: 0.97rem; max-width: 300px; }
-  @media (max-width: 860px) { .features { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 560px) { .features { grid-template-columns: 1fr; } }
-
-  /* ---------- Dashboard preview ---------- */
-  .glance { padding: 150px 0; border-top: 1px solid var(--line); }
-  .panel {
-    margin: 70px auto 0; max-width: 960px; border-radius: 24px; padding: 28px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
-    border: 1px solid var(--line);
-    box-shadow: 0 60px 140px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-    text-align: left;
-  }
-  .panel-top { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; }
-  .chip { display: inline-flex; align-items: center; gap: 9px; padding: 7px 14px; border-radius: 999px; background: rgba(52, 199, 89, 0.1); color: #7fe0a0; font-size: 0.85rem; font-weight: 500; }
-  .chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #34c759; box-shadow: 0 0 10px #34c759; }
-  .panel-top .cap { font-size: 0.9rem; }
-  .readings { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin-top: 24px; background: var(--line); border-radius: 16px; overflow: hidden; }
-  .reading { background: #0a0b0e; padding: 18px; }
-  .reading small { color: var(--text-3); font-size: 0.78rem; letter-spacing: 0.02em; }
-  .reading div { font-size: 1.7rem; font-weight: 500; letter-spacing: -0.02em; margin-top: 4px; }
-  .reading div span { font-size: 0.85rem; color: var(--text-3); margin-left: 3px; font-weight: 400; }
-  .chart { margin-top: 22px; position: relative; }
-  .chart svg { width: 100%; height: 200px; }
-  .chart-labels { display: flex; justify-content: space-between; color: var(--text-3); font-size: 0.75rem; margin-top: 8px; }
-  @media (max-width: 640px) { .readings { grid-template-columns: 1fr 1fr; } .panel { padding: 18px; } }
-
-  /* ---------- Built by hand (slider) ---------- */
-  .built { padding: 150px 0 140px; border-top: 1px solid var(--line); }
-  .built-head { display: flex; flex-wrap: wrap; gap: 24px; align-items: end; justify-content: space-between; }
-  .slider-btns { display: flex; gap: 10px; }
-  .slider-btns button {
-    width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.16);
-    background: transparent; color: var(--ivory); cursor: pointer; display: grid; place-items: center;
-    transition: border-color 0.2s, background 0.2s;
-  }
-  .slider-btns button:hover { border-color: rgba(255, 255, 255, 0.45); background: rgba(255, 255, 255, 0.04); }
-  .track {
-    display: flex; gap: 22px; overflow-x: auto; scroll-snap-type: x mandatory;
-    padding: 56px max(24px, calc((100vw - var(--max)) / 2 + 24px)) 10px;
-    scrollbar-width: none;
-  }
-  .track::-webkit-scrollbar { display: none; }
-  .slide { flex: 0 0 min(440px, 80vw); scroll-snap-align: start; scroll-margin-left: max(24px, calc((100vw - var(--max)) / 2 + 24px)); }
-  .slide .img {
-    aspect-ratio: 4 / 3; border-radius: 20px; overflow: hidden; position: relative;
-    background: #0d0e11; border: 1px solid var(--line);
-  }
-  .slide .img img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.82) saturate(0.85); transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.6s; }
-  .slide:hover .img img { filter: none; }
-  .slide:hover .img img { transform: scale(1.04); }
-  .slide .img::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 55%, rgba(5, 5, 6, 0.55)); }
-  .slide .cap { margin-top: 18px; display: block; }
-  .slide h3 { margin-top: 4px; font-size: 1.2rem; }
-  .slide.gen2 .img { display: grid; place-items: center; background: radial-gradient(circle at 50% 60%, rgba(var(--amber-rgb), 0.18), transparent 60%), #08090b; }
-  .slide.gen2 .img::after { display: none; }
-
-  /* ---------- Gen 2 ---------- */
-  .gen2-sec { padding: 150px 0; border-top: 1px solid var(--line); }
-  .specs { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 80px; }
-  .spec { padding-right: 24px; border-left: 1px solid var(--line); padding-left: 24px; }
-  .spec:first-child { border-left: 0; padding-left: 0; }
-  .spec .v { font-family: var(--display); font-size: clamp(2.8rem, 5vw, 4.4rem); line-height: 1; }
-  .spec .v small { font-family: var(--sans); font-size: 1rem; color: var(--amber); margin-left: 4px; }
-  .spec p { color: var(--text-2); margin: 12px 0 0; font-size: 0.95rem; }
-  @media (max-width: 760px) {
-    .specs { grid-template-columns: 1fr 1fr; row-gap: 44px; }
-    .spec:nth-child(3) { border-left: 0; padding-left: 0; }
-  }
-
-  /* ---------- Creed ---------- */
-  .creed { padding: 170px 0; border-top: 1px solid var(--line); background: radial-gradient(700px 400px at 50% 50%, rgba(var(--blue), 0.18), transparent 70%); }
-  .creed blockquote { margin: 0 auto; max-width: 920px; font-family: var(--display); font-size: clamp(2.2rem, 5vw, 4.2rem); line-height: 1.08; letter-spacing: -0.01em; }
-  .creed blockquote em { color: var(--amber); }
-  .creed .cap { margin-top: 30px; display: block; }
-
-  /* ---------- CTA ---------- */
-  .cta { padding: 150px 0 160px; border-top: 1px solid var(--line); overflow: hidden; }
-  .cta::before { content: ""; position: absolute; left: 50%; bottom: -320px; width: 900px; height: 600px; transform: translateX(-50%); background: radial-gradient(closest-side, rgba(var(--amber-rgb), 0.22), transparent); pointer-events: none; }
-  .cta .wrap { position: relative; }
-  .cta .lead { margin-top: 24px; }
-
-  /* ---------- Footer ---------- */
-  footer { border-top: 1px solid var(--line); padding: 44px 0 60px; font-size: 0.86rem; color: var(--text-3); }
-  footer .wrap { display: flex; flex-wrap: wrap; gap: 22px; align-items: center; justify-content: space-between; }
-  footer .links { display: flex; flex-wrap: wrap; gap: 24px; }
-  footer a:hover { color: var(--ivory); }
-
-  /* ---------- Reveal ---------- */
-  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 1.1s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1.1s cubic-bezier(0.2, 0.8, 0.2, 1); }
-  .reveal.in { opacity: 1; transform: none; }
-  h2.display.reveal, .number.reveal {
-    opacity: 1; transform: translateY(0.3em);
-    clip-path: inset(-0.2em -0.2em 100% -0.2em);
-    transition: clip-path 1.3s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  h2.display.reveal.in, .number.reveal.in { transform: none; clip-path: inset(-0.2em -0.2em -0.35em -0.2em); }
-
-  @media (max-width: 600px) { .inside-line h2 { font-size: 2.1rem; } }
-
-
-  .delay-1 { transition-delay: 0.12s; } .delay-2 { transition-delay: 0.24s; } .delay-3 { transition-delay: 0.36s; }
-
-  @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-    *, *::before, *::after { animation: none !important; }
-    .reveal, .notif { opacity: 1; transform: none; transition: none; }
-    h2.display.reveal, .number.reveal { clip-path: none; }
-    .dive { height: auto; }
-    .hero { position: relative; height: auto; min-height: 100vh; }
-    .inside, .inside-line { display: none; }
-    .draw path, .draw line, .draw rect, .draw polyline, .draw circle.ring { stroke-dashoffset: 0; transition: none; }
-  }
+/* ===== CTA ===== */
+.cta { text-align: center; overflow: hidden; }
+.cta::before { content: ""; position: absolute; left: 50%; bottom: -380px; width: 1000px; height: 700px; transform: translateX(-50%); pointer-events: none;
+  background: radial-gradient(closest-side, rgba(var(--gold-rgb), 0.22), transparent); }
+.cta .wrap { position: relative; }
 </style>
 </head>
 <body>
-
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <symbol id="shield" viewBox="0 0 52 60">
-      <path d="M26 2 48 9v20c0 14-9.5 23.5-22 29C13.5 52.5 4 43 4 29V9z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-      <path d="M26 17l10 5.8v11.5L26 40l-10-5.8V22.8z" fill="currentColor"/>
-    </symbol>
-  </defs>
-</svg>
-
-<nav id="nav">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="cg-logo" viewBox="0 0 64 64"><path d="M32 4 56 18v28L32 60 8 46V18z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><rect x="17" y="26" width="30" height="6.5" rx="3.25" fill="#e9a23b"/><path d="M32 32v15" stroke="#e9a23b" stroke-width="5" stroke-linecap="round"/></symbol>
+</defs></svg>
+<header class="nav">
   <div class="wrap">
-    <a href="/" class="logo" aria-label="CombGuard home">
-      <svg><use href="#shield"/></svg>
-      <span class="wordmark">CombGuard</span>
-    </a>
-    <div class="nav-links">
-      <a href="#watch">The watch</a>
-      <a href="#built">Our build</a>
-      <a href="#gen2">Gen 2</a>
-      <a href="/dashboard" class="btn btn-amber btn-sm">Log in</a>
-    </div>
+    <a href="/" class="brand" aria-label="CombGuard home"><svg><use href="#cg-logo"/></svg>CombGuard</a>
+    <button class="menu-btn" aria-label="Menu" aria-expanded="false"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 7h14M3 13h14"/></svg></button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="/about">About</a>
+      <a href="/gen1">Gen 1</a>
+      <a href="/gen2">Gen 2</a>
+      <a href="/dashboard?demo=1">Live demo</a>
+      <a href="/dashboard" class="btn btn-gold btn-sm">Log in</a>
+    </nav>
   </div>
-</nav>
+</header>
 
 <main>
 
-  <!-- ============ DUSK ============ -->
-  <div class="dive" id="dive">
-  <section class="hero" id="top">
-    <div class="sunset" aria-hidden="true"></div>
-    <div class="sun" aria-hidden="true"></div>
-    <div class="stars" id="stars" aria-hidden="true"></div>
-    <div class="horizon" aria-hidden="true"></div>
-    <div class="wrap hero-grid">
-      <div class="hero-copy">
-        <p class="eyebrow reveal">CombGuard Hive Monitor</p>
-        <h1 class="display reveal delay-1">The hive's first<br><em>line of defense.</em></h1>
-        <p class="lead reveal delay-2">Most hives don't fail overnight. It only looks that way when you finally lift the lid. CombGuard watches every hour in between.</p>
-        <div class="actions reveal delay-3">
-          <a href="#watch" class="btn btn-amber">See how it watches</a>
-          <a href="/dashboard" class="btn btn-ghost">Team log in</a>
-        </div>
-      </div>
-
-      <div class="hero-art reveal delay-2" aria-hidden="true">
-        <svg viewBox="0 0 440 500">
-          <defs>
-            <radialGradient id="core" cx="50%" cy="55%" r="50%">
-              <stop offset="0" stop-color="#f6c56b" stop-opacity="0.85"/>
-              <stop offset="0.45" stop-color="#e9a23b" stop-opacity="0.35"/>
-              <stop offset="1" stop-color="#e9a23b" stop-opacity="0"/>
-            </radialGradient>
-            <clipPath id="boxes"><rect x="92" y="150" width="256" height="240"/></clipPath>
-          </defs>
-          <!-- warm life inside the hive -->
-          <g clip-path="url(#boxes)">
-            <ellipse class="glow-core" cx="220" cy="285" rx="150" ry="120" fill="url(#core)"/>
-          </g>
-          <g class="draw" id="heroHive" fill="none" stroke="#e9a23b" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
-            <path pathLength="1" d="M76 128h288l14 22H62z"/>
-            <path pathLength="1" d="M86 128v-8h268v8"/>
-            <rect pathLength="1" x="92" y="150" width="256" height="118"/>
-            <rect pathLength="1" x="92" y="268" width="256" height="122"/>
-            <path pathLength="1" d="M196 205h48M196 325h48" stroke-opacity="0.6"/>
-            <path pathLength="1" d="M84 390h272v14H84z"/>
-            <path pathLength="1" d="M190 397h60" stroke-opacity="0.7"/>
-            <path pathLength="1" d="M104 404v52M336 404v52M96 456h20M324 456h20" stroke-opacity="0.75"/>
-            <path pathLength="1" d="M20 458h400" stroke-opacity="0.3"/>
-          </g>
-          <!-- sensors -->
-          <circle class="blink" cx="220" cy="156" r="3" fill="#f6c56b"/>
-          <circle class="blink d2" cx="180" cy="300" r="3" fill="#f6c56b"/>
-          <circle class="blink d3" cx="260" cy="300" r="3" fill="#f6c56b"/>
-        </svg>
-      </div>
+<!-- ================= HERO: sunset, then into the hive ================= -->
+<section class="dive" id="dive" data-scene="sticky">
+  <div class="dive-stick">
+    <div class="sky"></div>
+    <div class="sun"></div>
+    <div class="night-blue"></div>
+    <div class="stars" id="stars"></div>
+    <div class="hero-copy">
+      <h1 class="h1">The hive's first<br><span class="acc">line of defense.</span></h1>
+      <p class="lead" style="margin-left:auto;margin-right:auto">CombGuard watches inside your hive every 15 minutes and warns you early, while there's still time to act.</p>
+      <div class="actions"><a href="/dashboard?demo=1" class="btn btn-gold">See the live demo</a><a href="https://forms.gle/yDhAXinGf1WT7gVK9" target="_blank" rel="noopener" class="btn btn-ghost">Take the survey</a></div>
     </div>
-    <div class="scroll-cue" aria-hidden="true">Scroll to go inside<span></span></div>
+    <!-- Hero image: replace images/hero.jpg with a Higgsfield render of CombGuard on a hive at dusk (16:9) -->
+    <div class="stage"><img src="images/hero.jpg" alt="Illustration of a beehive at dusk with the CombGuard case and solar panel"><span class="tag">Illustration</span></div>
     <div class="inside" aria-hidden="true"></div>
     <div class="inside-line">
-      <h2 class="display">Inside the hive, <em>it's always night.</em></h2>
-      <span class="cap">Bees live and work in total darkness. That's where trouble starts, too.</span>
+      <h2 class="h2">Inside the hive,<br><span class="acc">it's always night.</span></h2>
+      <p>Bees live and work in total darkness. Trouble starts there too, where no one can see it.</p>
     </div>
-  </section>
+    <div class="cue" aria-hidden="true"><span></span>Scroll</div>
   </div>
+</section>
 
-  <!-- ============ THE DARK ============ -->
-  <section class="dark">
-    <div class="wrap dark-grid">
-      <div data-speed="0.12"><div class="number reveal" id="lossNum"><span>39.9</span><em>%</em></div></div>
-      <div class="reveal delay-1">
-        <p class="big">of managed U.S. honey bee colonies were lost between April 2025 and April 2026.</p>
-        <p class="lead" style="font-size:1.05rem">Almost none of it happens in plain sight. It starts inside a closed box, in the days between inspections.</p>
-        <div class="threats"><span>Varroa mites</span><span>Heat stress</span><span>Queen failure</span><span>Starvation</span><span>Swarming</span></div>
-        <span class="cap">Source: <a href="https://wire.auburn.edu/content/agriculture/2026/06/honeybeecolony0626.php" target="_blank" rel="noopener">U.S. Beekeeping Survey, Auburn University</a></span>
-      </div>
+<!-- ================= 01 THE BLIND SPOT ================= -->
+<section class="section band" id="blind" data-scene="pass">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="label"><b>01</b>The blind spot</div>
+      <h2 class="h2">Trouble doesn't wait<br>for <span class="acc">inspection day.</span></h2>
+      <p class="lead" style="margin-left:auto;margin-right:auto">Most beekeepers open the hive every week or two. Everything in between happens out of sight, and that's where colonies are lost.</p>
     </div>
-  </section>
-
-  <!-- ============ THE WATCH ============ -->
-  <section class="watch" id="watch">
-    <div class="wrap">
-      <div class="watch-head center">
-        <p class="eyebrow reveal">The watch</p>
-        <h2 class="display reveal delay-1">It sees what <em>you can't.</em></h2>
+    <div class="grid-2">
+      <div class="tile loss rv">
+        <div class="num"><span id="lossNum">0.0</span><em>%</em></div>
+        <p style="max-width:380px;margin:12px auto 0">of managed U.S. honey bee colonies were lost between April 2025 and April 2026.</p>
+        <div class="hexes" id="hexes" aria-hidden="true"></div>
+        <p class="small">Each cell is one colony out of 100. Source: <a href="https://wire.auburn.edu/content/agriculture/2026/06/honeybeecolony0626.php" target="_blank" rel="noopener" style="text-decoration:underline">U.S. Beekeeping Survey, Auburn University</a></p>
       </div>
-      <div class="watch-grid">
-        <div class="watch-art" id="watchArt" data-active="pod" aria-hidden="true">
-          <svg viewBox="0 0 420 520">
-            <g fill="none" stroke="#3a3d45" stroke-width="1.3" stroke-linejoin="round">
-              <path d="M70 110h280l14 22H56z"/>
-              <rect x="78" y="132" width="264" height="10"/>
-              <rect x="78" y="142" width="264" height="130"/>
-              <rect x="78" y="272" width="264" height="140"/>
-              <path d="M112 152v110M146 152v110M180 152v110M214 152v110M248 152v110M282 152v110M316 152v110" stroke="#24262c"/>
-              <path d="M112 282v120M146 282v120M180 282v120M214 282v120M248 282v120M282 282v120M316 282v120" stroke="#24262c"/>
-              <path d="M70 412h280v14H70z"/>
-              <path d="M90 426v46M330 426v46M40 472h340" stroke="#2a2c33"/>
-            </g>
-            <!-- 1 sensor pod -->
-            <g class="part p-pod">
-              <rect x="176" y="142" width="68" height="14" rx="4" fill="#e9a23b"/>
-              <path d="M210 128v-30" stroke="#e9a23b" stroke-width="1" stroke-dasharray="3 4"/>
-              <circle cx="210" cy="92" r="4" fill="#e9a23b"/>
-            </g>
-            <!-- 2 brood probes -->
-            <g class="part p-probes" stroke="#e9a23b" stroke-width="2.6" stroke-linecap="round">
-              <path d="M163 274v80M231 274v80M197 274v60"/>
-              <circle cx="163" cy="354" r="4.5" fill="#e9a23b" stroke="none"/>
-              <circle cx="231" cy="354" r="4.5" fill="#e9a23b" stroke="none"/>
-              <circle cx="197" cy="334" r="4.5" fill="#e9a23b" stroke="none"/>
-            </g>
-            <!-- 3 scale -->
-            <g class="part p-scale">
-              <rect x="160" y="430" width="100" height="16" rx="3" fill="none" stroke="#e9a23b" stroke-width="2"/>
-              <path d="M180 438h60" stroke="#e9a23b" stroke-width="2"/>
-            </g>
-            <!-- 4 solar -->
-            <g class="part p-solar">
-              <path d="M296 38l78-18 14 42-78 18z" fill="rgba(233,162,59,0.12)" stroke="#e9a23b" stroke-width="2"/>
-              <path d="M315 34l12 38M335 30l12 38M356 25l12 38M300 52l80-18" stroke="#e9a23b" stroke-width="1" stroke-opacity="0.6"/>
-              <path d="M330 80v30" stroke="#e9a23b" stroke-width="1" stroke-dasharray="3 4"/>
-            </g>
-          </svg>
-        </div>
-
-        <div class="steps">
-          <div class="step" data-part="pod">
-            <div class="num">I.</div>
-            <h3>The air inside</h3>
-            <p>A small sensor pod rests under the inner cover, reading CO₂, humidity and temperature. Together they tell you how big and how busy the colony is.</p>
-            <span class="cap">Too damp, too dry, too still: it notices.</span>
-          </div>
-          <div class="step" data-part="probes">
-            <div class="num">II.</div>
-            <h3>The heart of the colony</h3>
-            <p>Thin probes slip between the frames to the brood nest, which bees hold near 35 °C. When they can't keep it there, something is wrong.</p>
-            <span class="cap">A chilled brood nest is one of the earliest warnings.</span>
-          </div>
-          <div class="step" data-part="scale">
-            <div class="num">III.</div>
-            <h3>Every ounce</h3>
-            <p>A scale beneath the hive tracks its weight hour by hour, showing honey coming in, stores running low or a swarm leaving.</p>
-            <span class="cap">A sudden drop in weight is a swarm you can see.</span>
-          </div>
-          <div class="step" data-part="solar">
-            <div class="num">IV.</div>
-            <h3>Powered by daylight</h3>
-            <p>A small solar panel and battery keep CombGuard running through the season. No outlets, no battery swaps, no trips to the hive.</p>
-            <span class="cap">Readings every 15 minutes, day and night.</span>
-          </div>
+      <div class="tile timeline rv">
+        <h3 class="h3">Two weeks you can't see.</h3>
+        <p>Between two inspections, small problems quietly grow.</p>
+        <div class="tl">
+          <div class="ev" style="left:24%" data-at="0.3"><b>Day 3</b>Mite numbers climb</div>
+          <div class="ev" style="left:52%" data-at="0.4"><b>Day 7</b>Brood nest cools</div>
+          <div class="ev" style="left:80%" data-at="0.5"><b>Day 11</b>Swarm cells form</div>
+          <div class="tl-bar"><div class="tl-gap"></div><span class="tl-end" style="left:4%"></span><span class="tl-end" style="left:96%"></span></div>
+          <div class="tl-labels"><span>Inspection</span><span>Inspection</span></div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ============ 2:14 AM ============ -->
-  <section class="night">
-    <div class="wrap night-grid">
-      <div>
-        <p class="eyebrow reveal">2:14 AM</p>
-        <h2 class="display reveal delay-1">Sleepless, <em>by design.</em></h2>
-        <p class="lead reveal delay-2" style="margin-top:26px">CombGuard doesn't clock out. It watches through the night and only wakes you when it matters, with time to act before morning.</p>
-        <div class="log reveal delay-3">
-          <span class="cap">1:40 AM: brood nest at 34.9 °C</span>
-          <span class="cap">2:05 AM: temperature falling</span>
-          <span class="cap" style="color:var(--amber)">2:14 AM: alert sent</span>
-        </div>
+<!-- ================= 02 THE WATCH ================= -->
+<section class="watch" id="watch" data-scene="sticky">
+  <div class="watch-stick">
+    <div class="wrap" style="width:100%;display:flex;flex-direction:column;height:100%">
+      <div class="watch-top">
+        <div class="label"><b>02</b>The watch</div>
+        <h2 class="h2">It sees what <span class="acc">you can't.</span></h2>
       </div>
-      <div class="reveal" id="phone">
-        <div class="phone" data-speed="0.1" data-tilt="1" aria-label="Example CombGuard alert on a phone lock screen">
-          <div class="screen">
-            <div class="date">Tuesday, June 9</div>
-            <div class="time">2:14</div>
-            <div class="notif">
-              <div class="icon"><svg><use href="#shield"/></svg></div>
-              <div>
-                <div class="top"><span>COMBGUARD</span><span>now</span></div>
-                <strong>Hive 1 needs attention</strong>
-                <p>Brood temperature dropped to 31.2 °C. The colony may be struggling to keep the brood warm.</p>
-              </div>
+      <div class="watch-body">
+        <div class="viewer">
+          <span class="viewer-tag">Where each part goes</span>
+          <div class="cam" id="cam">
+            <div class="cam-inner">
+              <!-- Can be swapped for a Higgsfield image of the same hive layout -->
+              <img src="images/hive-cutaway.svg" alt="Cutaway of a beehive showing where CombGuard's sensors sit">
+              <span class="pin" style="left:45.8%;top:35%"></span>
+              <span class="pin" style="left:45.8%;top:55%"></span>
+              <span class="pin" style="left:45%;top:89.5%"></span>
+              <span class="pin" style="left:79.5%;top:45.5%"></span>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ DAWN ============ -->
-  <section class="dawn">
-    <div class="sunrise" aria-hidden="true"></div>
-    <div class="wrap" style="position:relative;z-index:1">
-      <div class="center">
-        <p class="eyebrow reveal">Dawn</p>
-        <h2 class="display reveal delay-1">By morning, <em>you already know.</em></h2>
-        <p class="lead reveal delay-2" style="margin-top:26px">Fewer surprises. Fewer needless inspections. More colonies that make it through the season.</p>
-      </div>
-      <div class="features">
-        <div class="feature reveal">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#e9a23b" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.8V4a2 2 0 1 0-4 0v10.8a4 4 0 1 0 4 0z"/><path d="M12 10v7"/></svg>
-          <h3>Brood temperature</h3>
-          <p>Know the colony is keeping its young warm.</p>
-        </div>
-        <div class="feature reveal delay-1">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#e9a23b" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.7S6 9.3 6 14a6 6 0 0 0 12 0c0-4.7-6-11.3-6-11.3z"/></svg>
-          <h3>Humidity</h3>
-          <p>Catch the damp that breeds mold and disease.</p>
-        </div>
-        <div class="feature reveal delay-2">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#e9a23b" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2.5-6 5 12 2.5-6h4"/></svg>
-          <h3>CO₂</h3>
-          <p>See how large and active the colony is.</p>
-        </div>
-        <div class="feature reveal">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#e9a23b" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20h14l-2-11H7z"/><circle cx="12" cy="5.5" r="2"/></svg>
-          <h3>Hive weight</h3>
-          <p>Track honey stores and spot a swarm the day it leaves.</p>
-        </div>
-        <div class="feature reveal delay-1">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#e9a23b" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-          <h3>Solar powered</h3>
-          <p>Runs on its own, season after season.</p>
-        </div>
-        <div class="feature reveal delay-2">
-          <svg viewBox="0 0 52 60" fill="none" stroke="#e9a23b" stroke-width="2.6" stroke-linejoin="round"><path d="M26 2 48 9v20c0 14-9.5 23.5-22 29C13.5 52.5 4 43 4 29V9z"/><path d="M17 30l6 6 12-13"/></svg>
-          <h3>Non-invasive</h3>
-          <p>Fewer inspections means less stress on the colony.</p>
+        <div class="cards">
+          <div class="progress" aria-hidden="true"><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span></div>
+          <div class="card-stack">
+            <div class="step on"><div class="big-n">01</div><div class="k">1 of 4 · Under the inner cover</div><h3>The air inside.</h3><p>A slim sensor pod reads the hive's air. It shows how strong and busy the colony is, and catches damp before it turns to mold.</p><div class="reads"><span>CO₂</span><span>Humidity</span><span>Temperature</span></div></div>
+            <div class="step"><div class="big-n">02</div><div class="k">2 of 4 · Between the frames</div><h3>The brood nest.</h3><p>Thin probes reach the heart of the colony. Bees hold their brood near 35 °C (95 °F). When it drops, the colony is struggling.</p><div class="reads"><span>Brood temperature</span></div></div>
+            <div class="step"><div class="big-n">03</div><div class="k">3 of 4 · Under the hive</div><h3>Every pound.</h3><p>A scale tracks the hive's weight around the clock: honey coming in, stores running low, or the sudden drop of a swarm.</p><div class="reads"><span>Hive weight</span></div></div>
+            <div class="step"><div class="big-n">04</div><div class="k">4 of 4 · On the side</div><h3>The brain, on solar.</h3><p>A sealed case holds the electronics, powered by a small solar panel. It sends readings over Wi-Fi every 15 minutes, day and night.</p><div class="reads"><span>Solar power</span><span>Wi-Fi</span><span>Battery backup</span></div></div>
+          </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ============ AT A GLANCE ============ -->
-  <section class="glance center">
-    <div class="wrap">
-      <p class="eyebrow reveal">The dashboard</p>
-      <h2 class="display reveal delay-1">Your colony, <em>at a glance.</em></h2>
-      <p class="lead reveal delay-2" style="margin-top:26px">One clear status and every reading, from anywhere.</p>
-
-      <div data-speed="0.05" data-grow="1"><div class="panel reveal" aria-hidden="true">
-        <div class="panel-top">
-          <span class="chip">All clear</span>
-          <span class="cap">Test Hive 1 · last reading 4 minutes ago</span>
-        </div>
-        <div class="readings">
-          <div class="reading"><small>Brood</small><div>94.8<span>°F</span></div></div>
-          <div class="reading"><small>Humidity</small><div>61<span>%</span></div></div>
-          <div class="reading"><small>CO₂</small><div>2,140<span>ppm</span></div></div>
-          <div class="reading"><small>Weight</small><div>96.3<span>lb</span></div></div>
-        </div>
-        <div class="chart">
-          <svg viewBox="0 0 900 200" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#e9a23b" stop-opacity="0.28"/>
-                <stop offset="1" stop-color="#e9a23b" stop-opacity="0"/>
-              </linearGradient>
-            </defs>
-            <g stroke="rgba(255,255,255,0.05)"><path d="M0 50h900M0 100h900M0 150h900"/></g>
-            <path d="M0 120 C70 112 120 80 190 86 S300 132 370 118 S480 60 550 66 S680 120 750 104 S850 74 900 80 V200 H0z" fill="url(#fill)"/>
-            <g class="draw" id="chartLine"><path pathLength="1" d="M0 120 C70 112 120 80 190 86 S300 132 370 118 S480 60 550 66 S680 120 750 104 S850 74 900 80" fill="none" stroke="#e9a23b" stroke-width="2.2" style="filter: drop-shadow(0 0 6px rgba(233,162,59,0.7))"/></g>
-            <circle cx="900" cy="80" r="5" fill="#f6c56b"/>
-          </svg>
-          <div class="chart-labels"><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>12 AM</span><span>Now</span></div>
-        </div>
-      </div></div>
-
-      <div class="actions reveal">
-        <a href="/dashboard" class="btn btn-amber">Open the dashboard</a>
+<!-- ================= 03 THE ALERT ================= -->
+<section class="section alert-sec" id="alert" data-scene="pass">
+  <div class="wrap center">
+    <div class="rv">
+      <div class="label"><b>03</b>The alert</div>
+      <h2 class="h2">Sleepless, <span class="acc">by design.</span></h2>
+      <p class="lead">You're asleep at 2:14 AM. CombGuard isn't. It only wakes you when it matters, with time to act before morning.</p>
+    </div>
+    <div class="phone-wrap">
+      <div class="alert-glow"></div>
+      <div class="iphone" aria-label="Example CombGuard alert on an iPhone lock screen">
+        <div class="bezel"><div class="screen">
+          <div class="island"></div>
+          <div class="lock">
+            <svg width="14" height="18" viewBox="0 0 14 18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1.5" y="8" width="11" height="8.5" rx="2" fill="currentColor"/><path d="M4 8V5.5a3 3 0 0 1 6 0V8"/></svg>
+            <div class="d">Tuesday, June 9</div>
+            <div class="t">2:14</div>
+          </div>
+          <div class="notif">
+            <div class="ic"><svg><use href="#cg-logo"/></svg></div>
+            <div><div class="top"><span>COMBGUARD</span><span>now</span></div><strong>Hive 1 needs attention</strong><p>Brood temperature dropped to 31.2 °C. The colony may be struggling to keep the brood warm.</p></div>
+          </div>
+          <div class="quick l"><svg width="18" height="22" viewBox="0 0 18 22" fill="#fff"><path d="M5 0h8v4l-2 4v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V8L5 4z" opacity=".9"/></svg></div>
+          <div class="quick r"><svg width="22" height="18" viewBox="0 0 22 18" fill="#fff"><path d="M7 1h8l2 3h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3z" opacity=".9"/><circle cx="11" cy="10.5" r="4" fill="#222"/></svg></div>
+          <div class="home-ind"></div>
+        </div></div>
       </div>
     </div>
-  </section>
+    <div class="log">
+      <div class="rv"><b>1:40 AM</b>Brood nest at 34.9 °C</div>
+      <div class="rv"><b>2:05 AM</b>Temperature falling</div>
+      <div class="rv hot"><b>2:14 AM</b>Alert sent to your phone</div>
+    </div>
+  </div>
+</section>
 
-  <!-- ============ BUILT BY HAND ============ -->
-  <section class="built" id="built">
-    <div class="wrap built-head">
-      <div>
-        <p class="eyebrow reveal">Our build</p>
-        <h2 class="display reveal delay-1">Built by hand, <em>piece by piece.</em></h2>
-      </div>
-      <div class="slider-btns reveal">
-        <button type="button" id="prev" aria-label="Previous"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 5l-7 7 7 7"/></svg></button>
-        <button type="button" id="next" aria-label="Next"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 5l7 7-7 7"/></svg></button>
-      </div>
+<!-- ================= 04 THE PLAN + DAWN ================= -->
+<section class="section plan-sec" id="plan" data-scene="pass">
+  <div class="sunrise" aria-hidden="true"></div>
+  <div class="wrap" style="position:relative">
+    <div class="head rv">
+      <div class="label"><b>04</b>The plan</div>
+      <h2 class="h2">Set it up once.<br><span class="acc">It handles the rest.</span></h2>
     </div>
-    <div class="track" id="track">
-      <figure class="slide" style="margin:0">
-        <div class="img"><img src="images/breadboard.jpg" alt="The first CombGuard circuit on a breadboard" loading="lazy"></div>
-        <span class="cap">Fall 2026</span>
-        <h3>The first circuit</h3>
-      </figure>
-      <figure class="slide" style="margin:0">
-        <div class="img"><img src="images/cad.jpg" alt="CAD model of the CombGuard case" loading="lazy"></div>
-        <span class="cap">Designed in CAD</span>
-        <h3>Shaping the case</h3>
-      </figure>
-      <figure class="slide" style="margin:0">
-        <div class="img"><img src="images/pcb.jpg" alt="Hand-soldered CombGuard circuit board" loading="lazy"></div>
-        <span class="cap">Soldered by hand</span>
-        <h3>From breadboard to board</h3>
-      </figure>
-      <figure class="slide" style="margin:0">
-        <div class="img"><img src="images/gen1-case.jpg" alt="3D-printed Generation 1 case" loading="lazy"></div>
-        <span class="cap">Generation 1</span>
-        <h3>The first enclosure</h3>
-      </figure>
-      <figure class="slide" style="margin:0">
-        <div class="img"><img src="images/case-black.jpg" alt="Black 3D-printed case with honeycomb mark" loading="lazy"></div>
-        <span class="cap">Refined</span>
-        <h3>Ready for the field</h3>
-      </figure>
-      <figure class="slide gen2" style="margin:0">
-        <div class="img">
-          <svg viewBox="0 0 52 60" width="90" height="104" style="color:var(--amber);filter:drop-shadow(0 0 24px rgba(233,162,59,0.5))"><use href="#shield"/></svg>
-        </div>
-        <span class="cap">In development</span>
-        <h3>Generation 2</h3>
-      </figure>
+    <div class="grid-3 plan">
+      <div class="tile rv"><div class="n">1</div><h3>Mount it.</h3><p>Pod under the inner cover, probes between the frames, hive on the scale, panel in the sun.</p></div>
+      <div class="tile rv"><div class="n">2</div><h3>It keeps watch.</h3><p>Every 15 minutes, day and night, readings go to your dashboard.</p></div>
+      <div class="tile rv"><div class="n">3</div><h3>You step in when it matters.</h3><p>Green, yellow or red. When something's wrong, you hear about it first.</p></div>
     </div>
-  </section>
+    <div class="tile cover rv">
+      <div class="cover-row"><h3 class="h3">The blind spot, covered.</h3><div class="big"><span id="checks">0</span> check-ins</div></div>
+      <p>Two weeks between inspections used to mean two weeks of guessing. Now it means 1,344 readings.</p>
+      <div class="cover-bar"><div class="cover-fill"></div></div>
+      <div class="tl-labels"><span>Inspection</span><span>14 days</span><span>Inspection</span></div>
+    </div>
+    <div class="dawn-line">
+      <h2 class="h2">By morning,<br><span class="acc">you already know.</span></h2>
+    </div>
+  </div>
+</section>
 
-  <!-- ============ GEN 2 ============ -->
-  <section class="gen2-sec" id="gen2">
-    <div class="wrap">
-      <p class="eyebrow reveal">Generation 2</p>
-      <h2 class="display reveal delay-1">Forged for <em>the field.</em></h2>
-      <p class="lead reveal delay-2" style="margin-top:26px">Rebuilt from the ground up for sun, rain and long Florida summers, with more sensors and a longer reach.</p>
-      <div class="specs">
-        <div class="spec reveal"><div class="v">5.5<small>W</small></div><p>Solar panel with smart charging</p></div>
-        <div class="spec reveal delay-1"><div class="v">10k<small>mAh</small></div><p>Battery for cloudy stretches</p></div>
-        <div class="spec reveal delay-2"><div class="v">15<small>min</small></div><p>Between readings, all day and night</p></div>
-        <div class="spec reveal delay-3"><div class="v">6<small>sensors</small></div><p>Inside, outside and under the hive</p></div>
+<!-- ================= DEMO ================= -->
+<section class="section band" id="demo" data-scene="pass">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="label"><b>05</b>The dashboard</div>
+      <h2 class="h2">Your colony, <span class="acc">at a glance.</span></h2>
+      <p class="lead" style="margin-left:auto;margin-right:auto">One clear status and every reading, from anywhere.</p>
+    </div>
+    <div class="panel rv" aria-hidden="true">
+      <div class="panel-top"><span class="chip">All clear</span><span class="small">Hive 1 · last reading 4 minutes ago</span></div>
+      <div class="reads4">
+        <div><small>Brood</small><b>94.8<em>°F</em></b></div>
+        <div><small>Humidity</small><b>61<em>%</em></b></div>
+        <div><small>CO₂</small><b>2,140<em>ppm</em></b></div>
+        <div><small>Weight</small><b>96.3<em>lb</em></b></div>
       </div>
+      <svg viewBox="0 0 900 160" preserveAspectRatio="none">
+        <defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9a23b" stop-opacity=".25"/><stop offset="1" stop-color="#e9a23b" stop-opacity="0"/></linearGradient></defs>
+        <path d="M0 40h900M0 80h900M0 120h900" stroke="rgba(255,255,255,.05)"/>
+        <path d="M0 100 C70 92 120 60 190 66 S300 112 370 98 S480 40 550 46 S680 100 750 84 S850 54 900 60 V160 H0z" fill="url(#fill)"/>
+        <path class="line" pathLength="1" d="M0 100 C70 92 120 60 190 66 S300 112 370 98 S480 40 550 46 S680 100 750 84 S850 54 900 60" fill="none" stroke="#e9a23b" stroke-width="2.4"/>
+      </svg>
     </div>
-  </section>
+    <div class="actions center" style="justify-content:center"><a href="/dashboard?demo=1" class="btn btn-gold">See the live demo</a><a href="/dashboard" class="btn btn-ghost">Team log in</a></div>
+  </div>
+</section>
 
-  <!-- ============ CREED ============ -->
-  <section class="creed center">
-    <div class="wrap">
-      <div data-speed="0.06"><blockquote class="reveal">Every colony already posts guards at its gate. <em>CombGuard is one more.</em></blockquote></div>
-      <span class="cap reveal delay-1">The idea behind our name</span>
+<!-- ================= 06 GEN 1 ================= -->
+<section class="section" id="gen1">
+  <div class="wrap">
+    <div class="head rv" style="text-align:left;margin-left:0">
+      <div class="label"><b>06</b>Gen 1</div>
+      <h2 class="h2">Where it started.</h2>
+      <p class="lead">Before CombGuard, there was HiveMind, our first prototype, built by hand. Tap any card to see more.</p>
     </div>
-  </section>
+  </div>
+  <div class="track" id="track">
+      <div class="slide" data-modal="m-circuit" role="button" tabindex="0" aria-label="The first circuit: more details">
+        <img src="images/breadboard.jpg" alt="" loading="lazy"><div class="cap"><small>Fall 2026 · Prototype</small><h3>The first circuit</h3></div><button class="plus" aria-hidden="true" tabindex="-1">+</button></div>
+      <div class="slide" data-modal="m-cad" role="button" tabindex="0" aria-label="Designing the case: more details">
+        <img src="images/cad.jpg" alt="" loading="lazy"><div class="cap"><small>CAD</small><h3>Designing the case</h3></div><button class="plus" aria-hidden="true" tabindex="-1">+</button></div>
+      <div class="slide" data-modal="m-pcb" role="button" tabindex="0" aria-label="From breadboard to board: more details">
+        <img src="images/pcb.jpg" alt="" loading="lazy"><div class="cap"><small>Soldering</small><h3>From breadboard to board</h3></div><button class="plus" aria-hidden="true" tabindex="-1">+</button></div>
+      <div class="slide" data-modal="m-case" role="button" tabindex="0" aria-label="The first enclosure: more details">
+        <img src="images/gen1-case.jpg" alt="" loading="lazy"><div class="cap"><small>Gen 1 · HiveMind</small><h3>The first enclosure</h3></div><button class="plus" aria-hidden="true" tabindex="-1">+</button></div>
+      <div class="slide" data-modal="m-refined" role="button" tabindex="0" aria-label="Refined and renamed: more details">
+        <img src="images/case-black.jpg" alt="" loading="lazy"><div class="cap"><small>Gen 1 · CombGuard</small><h3>Refined and renamed</h3></div><button class="plus" aria-hidden="true" tabindex="-1">+</button></div>
+      <a class="slide text" href="/gen2"><div class="cap" style="position:static"><small>Next</small><h3>Gen 2 is in development.<br><span style="color:var(--text-2)">See what's changing</span> ›</h3></div></a>
+  </div>
+  <div class="wrap">
+    <div class="car-nav"><a href="/gen1" class="link" style="margin-right:auto;align-self:center">Explore Gen 1</a>
+      <button id="prev" aria-label="Previous"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 3 5 8l5 5"/></svg></button>
+      <button id="next" aria-label="Next"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3l5 5-5 5"/></svg></button></div>
+  </div>
+</section>
 
-  <!-- ============ CTA ============ -->
-  <section class="cta center">
-    <div class="wrap">
-      <p class="eyebrow reveal">Stand watch with us</p>
-      <h2 class="display reveal delay-1">Help shape <em>CombGuard.</em></h2>
-      <p class="lead reveal delay-2">Are you a beekeeper? Tell us what you need in a 4-minute survey, or get in touch about testing CombGuard on your hives.</p>
-      <div class="actions reveal delay-3">
-        <a href="https://forms.gle/yDhAXinGf1WT7gVK9" target="_blank" rel="noopener" class="btn btn-amber">Take the survey</a>
-        <!-- TODO: change to your team's CombGuard email address -->
-        <a href="mailto:hello@combguard.com" class="btn btn-ghost">Contact us</a>
+<!-- ================= 07 GEN 2 ================= -->
+<section class="section band" id="gen2">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="label"><b>07</b>Gen 2</div>
+      <h2 class="h2">Forged for <span class="acc">the field.</span></h2>
+      <p class="lead" style="margin-left:auto;margin-right:auto">Rebuilt from the ground up for sun, rain and long Florida summers.</p>
+    </div>
+    <div class="bento">
+      <div class="tile wide rv">
+        <div><span class="status">In development</span><h3 class="h3" style="margin-top:16px">Six sensors.<br>One sealed case.</h3></div>
+        <ul class="sensors">
+          <li><b>Brood temperature</b>Probes between frames</li>
+          <li><b>CO₂</b>Colony size and activity</li>
+          <li><b>Humidity</b>Inside the hive</li>
+          <li><b>Weather</b>Outside temperature and humidity</li>
+          <li><b>Weight</b>100 kg load cell</li>
+          <li><b>Sound</b>The colony's hum</li>
+        </ul>
       </div>
+      <div class="tile rv"><div class="v">5.5<em>W</em></div><p>Solar panel with smart charging</p></div>
+      <div class="tile rv"><div class="v">10k<em>mAh</em></div><p>Battery for cloudy stretches</p></div>
+      <div class="tile rv"><div class="v">15<em>min</em></div><p>Between readings, all day and night</p></div>
+      <div class="tile rv"><div class="v">Wi‑Fi</div><p>Straight to your dashboard and phone</p></div>
     </div>
-  </section>
+    <div class="actions" style="justify-content:center"><a href="/gen2" class="link">Explore Gen 2</a></div>
+  </div>
+</section>
+
+<!-- ================= CTA ================= -->
+<section class="section cta">
+  <div class="wrap rv">
+    <h2 class="h2">Help us build what<br><span class="acc">beekeepers need.</span></h2>
+    <p class="lead">Take the 4-minute beekeeper survey, or explore the live demo dashboard.</p>
+    <div class="actions"><a href="https://forms.gle/yDhAXinGf1WT7gVK9" target="_blank" rel="noopener" class="btn btn-gold">Take the survey</a><a href="/dashboard?demo=1" class="btn btn-ghost">See the live demo</a></div>
+    <p class="small" style="margin-top:26px">Questions? <a href="mailto:hello@combguard.com" style="text-decoration:underline">hello@combguard.com</a></p>
+  </div>
+</section>
 
 </main>
-
+<div class="modal" id="m-circuit" role="dialog" aria-modal="true" aria-label="The first circuit">
+  <div class="modal-card" style="position:relative">
+    <button class="modal-close" aria-label="Close">×</button>
+    <img src="images/breadboard.jpg" alt="">
+    <div class="modal-body"><p style="color:var(--gold);font-weight:600;margin:0 0 6px">Fall 2026 · Prototype</p><h3 class="h3">The first circuit</h3><p>Before any case or code was final, we had to prove the idea worked at all.</p><ul><li>An Arduino Nano read the sensors and wrote every reading to a microSD card.</li><li>A piezo sensor and a small amplifier circuit listened for the colony's sound.</li><li>Everything lived on a breadboard, so we could rewire and test quickly.</li></ul></div>
+  </div>
+</div>
+<div class="modal" id="m-cad" role="dialog" aria-modal="true" aria-label="Designing the case">
+  <div class="modal-card" style="position:relative">
+    <button class="modal-close" aria-label="Close">×</button>
+    <img src="images/cad.jpg" alt="">
+    <div class="modal-body"><p style="color:var(--gold);font-weight:600;margin:0 0 6px">CAD</p><h3 class="h3">Designing the case</h3><p>Next, we modeled an enclosure around the electronics.</p><ul><li>We sized the case around the board, battery and sensor connections.</li><li>Several rounds of measuring, printing and adjusting got the parts to fit.</li><li>Sealing and ventilation became the big questions we carried into Gen 2.</li></ul></div>
+  </div>
+</div>
+<div class="modal" id="m-pcb" role="dialog" aria-modal="true" aria-label="From breadboard to board">
+  <div class="modal-card" style="position:relative">
+    <button class="modal-close" aria-label="Close">×</button>
+    <img src="images/pcb.jpg" alt="">
+    <div class="modal-body"><p style="color:var(--gold);font-weight:600;margin:0 0 6px">Soldering</p><h3 class="h3">From breadboard to board</h3><p>Breadboard wires can shake loose, so the circuit moved onto a soldered board.</p><ul><li>Hand-soldered connections hold up better to heat, movement and handling.</li><li>It made the electronics small enough to fit inside the printed case.</li></ul></div>
+  </div>
+</div>
+<div class="modal" id="m-case" role="dialog" aria-modal="true" aria-label="The first enclosure">
+  <div class="modal-card" style="position:relative">
+    <button class="modal-close" aria-label="Close">×</button>
+    <img src="images/gen1-case.jpg" alt="">
+    <div class="modal-body"><p style="color:var(--gold);font-weight:600;margin:0 0 6px">Gen 1 · HiveMind</p><h3 class="h3">The first enclosure</h3><p>Our first 3D-printed case, made when the project was still called HiveMind.</p><ul><li>The name was embossed right into the print.</li><li>It taught us how to design parts that print cleanly and assemble easily.</li></ul></div>
+  </div>
+</div>
+<div class="modal" id="m-refined" role="dialog" aria-modal="true" aria-label="Refined and renamed">
+  <div class="modal-card" style="position:relative">
+    <button class="modal-close" aria-label="Close">×</button>
+    <img src="images/case-black.jpg" alt="">
+    <div class="modal-body"><p style="color:var(--gold);font-weight:600;margin:0 0 6px">Gen 1 · CombGuard</p><h3 class="h3">Refined and renamed</h3><p>A darker, cleaner print with the honeycomb mark, and a new name: CombGuard.</p><ul><li>Everything we learned here shaped Gen 2's priorities:</li><li>weatherproofing, solar power, and sending readings over Wi-Fi instead of only saving them to a card.</li></ul></div>
+  </div>
+</div>
 <footer>
   <div class="wrap">
-    <a href="/" class="logo" aria-label="CombGuard home">
-      <svg><use href="#shield"/></svg>
-      <span class="wordmark" style="font-size:1.25rem">CombGuard</span>
-    </a>
-    <div class="links">
-      <a href="#watch">The watch</a>
-      <a href="#built">Our build</a>
-      <a href="#gen2">Gen 2</a>
-      <a href="/dashboard">Dashboard</a>
+    <div class="foot">
+      <div>
+        <a href="/" class="brand" style="color:var(--text)"><svg><use href="#cg-logo"/></svg>CombGuard</a>
+        <p style="margin:14px 0 0;max-width:300px;color:var(--text-2)">Solar-powered hive monitoring that keeps watch between inspections.</p>
+      </div>
+      <div><h4>Explore</h4><a href="/">Home</a><a href="/about">About</a><a href="/gen1">Gen 1</a><a href="/gen2">Gen 2</a></div>
+      <div><h4>Dashboard</h4><a href="/dashboard?demo=1">Live demo</a><a href="/dashboard">Team log in</a></div>
+      <div><h4>Get involved</h4><a href="https://forms.gle/yDhAXinGf1WT7gVK9" target="_blank" rel="noopener">Beekeeper survey</a><a href="mailto:hello@combguard.com">Contact us</a></div>
     </div>
-    <div>© 2026 CombGuard · A student engineering project</div>
+    <div class="foot-bottom"><span>© 2026 CombGuard · A student engineering project</span><span>Made for beekeepers, by students.</span></div>
   </div>
 </footer>
-
+<script src="/assets/site.js"></script>
 <script>
 (function () {
-  // Nav background after scrolling
-  const nav = document.getElementById("nav");
-  const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 20);
-  onScroll();
-  window.addEventListener("scroll", onScroll, { passive: true });
+  const CG = window.CG, clamp = CG.clamp, smooth = CG.smooth;
 
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
-  const smooth = (a, b, v) => { const t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t); };
-
-  // ----- The dive: sunset, then into the hive -----
-  const dive = document.getElementById("dive");
-  const hero = document.getElementById("top");
-  const copy = hero.querySelector(".hero-copy");
-  const hive = hero.querySelector(".hero-art svg");
-  const inside = hero.querySelector(".inside");
-  const line = hero.querySelector(".inside-line");
-  const cue = hero.querySelector(".scroll-cue");
-  let gx = 0, gy = 0, diveP = 0;
-
-  function measure() {
-    const prev = hive.style.transform;
-    hive.style.transform = "none";
-    const b = hive.getBoundingClientRect(), h = hero.getBoundingClientRect();
-    gx = b.left + b.width * 0.5 - h.left;
-    gy = b.top + b.height * 0.57 - h.top;
-    hive.style.transform = prev;
-  }
-
-  function updateDive() {
-    const total = dive.offsetHeight - window.innerHeight;
-    const p = total > 0 ? clamp(-dive.getBoundingClientRect().top / total) : 0;
-    diveP = p;
-    hero.style.setProperty("--dusk", (1 - smooth(0, 0.45, p)).toFixed(3));
-    hero.style.setProperty("--sun-drop", (p * 260).toFixed(1) + "px");
-    hero.style.setProperty("--stars", ((1 - smooth(0.35, 0.6, p)) * (0.45 + p)).toFixed(3));
-    copy.style.opacity = (1 - smooth(0, 0.28, p)).toFixed(3);
-    copy.style.transform = `translateY(${(-p * 140).toFixed(1)}px)`;
-    if (cue) cue.style.opacity = (1 - smooth(0, 0.08, p)).toFixed(3);
-
-    const z = smooth(0.12, 0.85, p);
-    const hrect = hero.getBoundingClientRect();
-    const dx = (hrect.width / 2 - gx) * z, dy = (hrect.height / 2 - gy) * z;
-    const sc = 1 + z * z * 11;
-    hive.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(${sc.toFixed(3)})`;
-    inside.style.opacity = smooth(0.45, 0.78, p).toFixed(3);
-    hero.style.setProperty("--dots", (1 - smooth(0.3, 0.55, p)).toFixed(3));
-    const lp = smooth(0.62, 0.8, p);
-    line.style.opacity = lp.toFixed(3);
-    line.style.transform = `translateY(calc(-50% + ${((1 - lp) * 30).toFixed(1)}px))`;
-  }
-
-  // ----- One scroll plays the whole dive (and one scroll back reverses it) -----
-  let ticking = false;
-  const onFrame = () => { ticking = false; if (!reduce) updateDive(); };
-  window.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(onFrame); } }, { passive: true });
-  window.addEventListener("resize", () => { measure(); onFrame(); });
-  measure(); onFrame();
-
-  if (!reduce) {
-    const diveEnd = () => dive.offsetHeight - window.innerHeight;
-    const ease = (t) => 1 - Math.pow(1 - t, 3);   // quick start, soft landing
-    let gliding = false, quietUntil = 0;
-
-    function glide(to) {
-      gliding = true;
-      const from = window.scrollY, dist = to - from, start = performance.now();
-      const dur = 720 + Math.min(260, Math.abs(dist) * 0.2);
-      const step = (now) => {
-        const t = clamp((now - start) / dur);
-        window.scrollTo({ top: from + dist * ease(t), behavior: "instant" });
-        if (t < 1) requestAnimationFrame(step);
-        else { gliding = false; quietUntil = performance.now() + 500; }
-      };
-      requestAnimationFrame(step);
-    }
-    // dir: 1 = down, -1 = up. Returns true if the dive took over this scroll.
-    function intent(dir) {
-      const y = window.scrollY, end = diveEnd();
-      if (dir > 0 && y < end - 4) { glide(end); return true; }
-      if (dir < 0 && y > 4 && y <= end + 4) { glide(0); return true; }
-      return false;
-    }
-    const inZone = () => window.scrollY <= diveEnd() + 8;
-
-    // Mouse wheel and trackpad
-    window.addEventListener("wheel", (e) => {
-      if (gliding || performance.now() < quietUntil) { if (inZone()) e.preventDefault(); return; }
-      if (Math.abs(e.deltaY) < 2) return;
-      if (intent(Math.sign(e.deltaY))) e.preventDefault();
-    }, { passive: false });
-
-    // Phones and tablets
-    let touchY = null;
-    window.addEventListener("touchstart", (e) => { touchY = e.touches[0].clientY; }, { passive: true });
-    window.addEventListener("touchmove", (e) => {
-      if (gliding) { e.preventDefault(); return; }
-      if (touchY === null) return;
-      const dy = touchY - e.touches[0].clientY;
-      if (Math.abs(dy) > 12 && intent(Math.sign(dy))) { e.preventDefault(); touchY = null; }
-    }, { passive: false });
-
-    // Keyboard
-    window.addEventListener("keydown", (e) => {
-      if (e.target.closest && e.target.closest("input, textarea, select")) return;
-      const down = ["ArrowDown", "PageDown", " "].includes(e.key), up = ["ArrowUp", "PageUp"].includes(e.key);
-      if ((down || up) && !gliding && intent(down ? 1 : -1)) e.preventDefault();
-    });
-  }
-
-  // ----- Scroll-linked motion, smoothed so it glides instead of jumping -----
-  if (!reduce) {
-    const movers = [...document.querySelectorAll("[data-speed]")];
-    const dawn = document.querySelector(".dawn");
-    let smoothY = window.scrollY, running = false;
-    const base = new Map();
-
-    function cache() {
-      movers.forEach((el) => {
-        el.style.transform = "none";
-        const r = el.getBoundingClientRect();
-        base.set(el, { mid: r.top + window.scrollY + r.height / 2 });
-      });
-      render(true);
-    }
-
-    function render(force) {
-      const target = window.scrollY;
-      smoothY += (target - smoothY) * 0.14;
-      if (Math.abs(target - smoothY) < 0.3) smoothY = target;
-      const center = smoothY + window.innerHeight / 2;
-
-      movers.forEach((el) => {
-        const b = base.get(el); if (!b) return;
-        const d = b.mid - center;                       // distance from screen center
-        if (Math.abs(d) > window.innerHeight * 1.6) return;
-        const speed = parseFloat(el.dataset.speed);
-        let t = `translate3d(0, ${(-d * speed).toFixed(1)}px, 0)`;
-        if (el.dataset.tilt) t += ` rotate(${clamp(d * 0.006, -5, 5).toFixed(2)}deg)`;
-        if (el.dataset.grow) t += ` scale(${(1 - Math.min(0.08, Math.abs(d) / window.innerHeight * 0.1)).toFixed(3)})`;
-        el.style.transform = t;
-      });
-
-      // The sun comes back up at dawn
-      const r = dawn.getBoundingClientRect();
-      const q = clamp((window.innerHeight - r.top - (smoothY - target)) / (r.height + window.innerHeight * 0.2));
-      dawn.style.setProperty("--rise", q.toFixed(3));
-
-      if (smoothY !== target || force) { running = true; requestAnimationFrame(() => render(false)); }
-      else running = false;
-    }
-
-    window.addEventListener("scroll", () => { if (!running) { running = true; requestAnimationFrame(() => render(false)); } }, { passive: true });
-    window.addEventListener("resize", cache);
-    (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(cache);
-  }
-
-  // ----- Count up the loss number, smoothly and without the text shifting -----
-  const num = document.querySelector("#lossNum span");
-  if (num) {
-    const lock = () => { num.style.minWidth = num.getBoundingClientRect().width + "px"; };
-    (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(lock);
-    if (!reduce) {
-      num.textContent = "0.0";
-      const numIO = new IntersectionObserver((entries) => {
-        if (!entries[0].isIntersecting) return;
-        numIO.disconnect();
-        const start = performance.now(), dur = 1500;
-        const tick = (now) => {
-          const t = clamp((now - start) / dur);
-          const e = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);   // fast start, soft landing
-          num.textContent = (39.9 * e).toFixed(1);
-          if (t < 1) requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
-      }, { threshold: 0.5 });
-      numIO.observe(num.parentElement);
-    }
-  }
-
-  // Stars in the dusk sky
+  // Stars
   const stars = document.getElementById("stars");
-  for (let i = 0; i < 46; i++) {
+  for (let i = 0; i < 60; i++) {
     const s = document.createElement("i");
-    s.style.left = Math.random() * 100 + "%";
-    s.style.top = (20 + Math.random() * 70) + "%";
-    s.style.animationDelay = (Math.random() * 5).toFixed(2) + "s";
-    s.style.opacity = (0.15 + Math.random() * 0.5).toFixed(2);
+    s.style.left = Math.random() * 100 + "%"; s.style.top = Math.random() * 100 + "%";
+    s.style.opacity = (0.2 + Math.random() * 0.6).toFixed(2); s.style.animationDelay = (Math.random() * 4).toFixed(2) + "s";
     stars.appendChild(s);
   }
 
-  // Reveal + line drawing on scroll
-  // (clipped headlines are watched through their parent, since a fully clipped
-  // element never counts as "visible")
-  const proxy = new Map();
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((e) => {
-      if (!e.isIntersecting) return;
-      (proxy.get(e.target) || [e.target]).forEach((el) => el.classList.add("in"));
-      io.unobserve(e.target);
-    });
-  }, { threshold: 0.15, rootMargin: "0px 0px -40px 0px" });
-  document.querySelectorAll(".reveal, .draw").forEach((el) => {
-    if (el.matches("h2.display, .number")) {
-      const parent = el.parentElement;
-      if (!proxy.has(parent)) { proxy.set(parent, []); io.observe(parent); }
-      proxy.get(parent).push(el);
-    } else io.observe(el);
+  // 01: 100 colonies, about 40 go dark, and the number follows (both directions)
+  const hexWrap = document.getElementById("hexes");
+  const order = [...Array(100).keys()];
+  let seed = 11; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+  const lost = order.slice(0, 40);
+  const cells = []; for (let i = 0; i < 100; i++) { const c = document.createElement("i"); hexWrap.appendChild(c); cells.push(c); }
+  const num = document.getElementById("lossNum");
+  const evs = [...document.querySelectorAll(".ev")];
+  CG.onScene(document.getElementById("blind"), (p) => {
+    const t = smooth(0.2, 0.52, p);
+    num.textContent = (39.9 * t).toFixed(1);
+    const n = Math.round(40 * t);
+    lost.forEach((idx, k) => cells[idx].classList.toggle("lost", k < n));
+    evs.forEach((e) => e.classList.toggle("on", p > parseFloat(e.dataset.at)));
   });
-  // Hero hive draws in right away
-  requestAnimationFrame(() => setTimeout(() => document.getElementById("heroHive").classList.add("in"), 300));
 
-  // Sticky sensor walkthrough
-  const art = document.getElementById("watchArt");
-  const steps = document.querySelectorAll(".step");
-  const stepIO = new IntersectionObserver((entries) => {
-    entries.forEach((e) => {
-      if (e.isIntersecting) {
-        steps.forEach((s) => s.classList.toggle("active", s === e.target));
-        art.dataset.active = e.target.dataset.part;
-      }
-    });
-  }, { rootMargin: "-45% 0px -45% 0px" });
-  steps.forEach((s) => stepIO.observe(s));
-  steps[0].classList.add("active");
+  // 02: camera moves to each part as you scroll
+  const cam = document.getElementById("cam");
+  const steps = [...document.querySelectorAll(".step")];
+  const pins = [...document.querySelectorAll(".pin")];
+  const bars = [...document.querySelectorAll(".progress i")];
+  const focus = [ [45.8, 35, 2.1], [45.8, 55, 1.8], [45, 88, 2.2], [76, 32, 1.7] ];
+  let cur = -2;
+  CG.onScene(document.getElementById("watch"), (p) => {
+    const raw = p * 4;
+    const k = p < 0.04 ? -1 : Math.min(3, Math.floor(raw));
+    bars.forEach((b, i) => b.style.width = (clamp(raw - i) * 100).toFixed(1) + "%");
+    if (k === cur) return; cur = k;
+    steps.forEach((s, i) => s.classList.toggle("on", i === Math.max(0, k)));
+    pins.forEach((s, i) => s.classList.toggle("on", i === k));
+    if (k < 0) { cam.style.transform = "none"; return; }
+    const [fx, fy, z] = focus[k];
+    cam.style.transformOrigin = "50% 50%";
+    const inner = cam.firstElementChild;
+    const w = inner.offsetWidth, h = inner.offsetHeight;
+    const dx = (50 - fx) / 100 * w * z, dy = (50 - fy) / 100 * h * z;
+    cam.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(${z})`;
+  });
 
-  // Sliding build gallery
-  const track = document.getElementById("track");
-  const slideBy = () => (track.querySelector(".slide")?.offsetWidth || 400) + 22;
-  document.getElementById("next").addEventListener("click", () => track.scrollBy({ left: slideBy(), behavior: "smooth" }));
-  document.getElementById("prev").addEventListener("click", () => track.scrollBy({ left: -slideBy(), behavior: "smooth" }));
+  // 04: check-in counter follows the blue fill
+  const checks = document.getElementById("checks");
+  CG.onScene(document.getElementById("plan"), (p) => {
+    checks.textContent = Math.round(1344 * clamp((p - 0.2) * 2.6)).toLocaleString();
+  });
+
+  // 06: Apple-style arrows
+  const track = document.getElementById("track"), prev = document.getElementById("prev"), next = document.getElementById("next");
+  const step = () => (track.querySelector(".slide")?.offsetWidth || 380) + 18;
+  const navState = () => { prev.disabled = track.scrollLeft < 8; next.disabled = track.scrollLeft + track.clientWidth > track.scrollWidth - 8; };
+  prev.addEventListener("click", () => track.scrollBy({ left: -step(), behavior: "smooth" }));
+  next.addEventListener("click", () => track.scrollBy({ left: step(), behavior: "smooth" }));
+  track.addEventListener("scroll", navState, { passive: true }); navState();
+  track.querySelectorAll(".slide[data-modal]").forEach((s) => s.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); s.click(); } }));
 })();
 </script>
 </body>

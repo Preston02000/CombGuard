@@ -3,461 +3,326 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard · CombGuard</title>
-<meta name="description" content="Live readings from CombGuard hive monitors.">
+<title>CombGuard Dashboard</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Log in to the CombGuard team dashboard, or explore the live demo with sample hive data.">
+<link rel="canonical" href="https://combguard.com/dashboard">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CombGuard">
+<meta property="og:title" content="CombGuard Dashboard">
+<meta property="og:description" content="Log in to the CombGuard team dashboard, or explore the live demo with sample hive data.">
+<meta property="og:url" content="https://combguard.com/dashboard">
+<meta property="og:image" content="https://combguard.com/assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,300&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700&family=Inter:wght@400;500;600&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
 <style>
-  :root {
-    --bg: #050506;
-    --panel: #0b0c0f;
-    --panel-2: #111318;
-    --border: rgba(255, 255, 255, 0.08);
-    --text: #f1ece2;
-    --muted: #8b919c;
-    --honey: #e9a23b;
-    --outside: #8fa6d6;
-    --green: #34c759;
-    --yellow: #e9a23b;
-    --red: #ff5a4e;
-    --none: #2a2c33;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: radial-gradient(1000px 500px at 80% -10%, rgba(43, 74, 138, 0.35), transparent 60%), var(--bg);
-    min-height: 100vh;
-    color: var(--text);
-    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-    line-height: 1.45;
-    -webkit-font-smoothing: antialiased;
-  }
-  .wrap { max-width: 1100px; margin: 0 auto; padding: 20px 16px 48px; }
-
-  header {
-    display: flex; flex-wrap: wrap; gap: 12px;
-    align-items: center; justify-content: space-between;
-    margin-bottom: 20px;
-  }
-  .brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; }
-  .brand svg { width: 24px; height: 28px; }
-  .brand .wordmark { font-family: "Instrument Serif", Georgia, serif; font-size: 1.55rem; line-height: 1; }
-  .brand .page { color: var(--muted); font-size: 0.9rem; padding-left: 10px; border-left: 1px solid var(--border); }
-  .controls { display: flex; gap: 8px; flex-wrap: wrap; }
-  select, button {
-    font: inherit; color: var(--text);
-    background: var(--panel-2); border: 1px solid var(--border);
-    border-radius: 980px; padding: 7px 16px; cursor: pointer;
-  }
-  button.active { background: var(--honey); color: #120b00; border-color: var(--honey); font-weight: 600; }
-
-  .status {
-    display: flex; gap: 16px; align-items: center;
-    background: var(--panel); border: 1px solid var(--border);
-    border-left: 6px solid var(--none);
-    border-radius: 18px; padding: 18px 20px; margin-bottom: 18px;
-  }
-  .status.green { border-left-color: var(--green); }
-  .status.yellow { border-left-color: var(--yellow); }
-  .status.red { border-left-color: var(--red); }
-  .dot { width: 18px; height: 18px; border-radius: 50%; background: var(--none); flex: none; }
-  .green .dot { background: var(--green); box-shadow: 0 0 12px var(--green); }
-  .yellow .dot { background: var(--yellow); box-shadow: 0 0 12px var(--yellow); }
-  .red .dot { background: var(--red); box-shadow: 0 0 12px var(--red); }
-  .status h2 { margin: 0; font-family: "Instrument Serif", Georgia, serif; font-weight: 400; font-size: 2rem; line-height: 1.1; }
-  .status ul { margin: 6px 0 0; padding-left: 18px; color: var(--muted); }
-  .status .when { color: var(--muted); font-family: "Fraunces", Georgia, serif; font-style: italic; font-weight: 300; font-size: 0.95rem; margin-top: 4px; }
-
-  .cards {
-    display: grid; gap: 12px;
-    grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
-    margin-bottom: 26px;
-  }
-  .card {
-    background: var(--panel); border: 1px solid var(--border);
-    border-top: 3px solid var(--none);
-    border-radius: 18px; padding: 14px 16px;
-  }
-  .card.green { border-top-color: var(--green); }
-  .card.yellow { border-top-color: var(--yellow); }
-  .card.red { border-top-color: var(--red); }
-  .card .label { color: var(--muted); font-size: 0.85rem; }
-  .card .value { font-size: 1.6rem; font-weight: 700; margin: 2px 0; }
-  .card .value small { font-size: 0.9rem; font-weight: 500; color: var(--muted); margin-left: 2px; }
-  .card .note { color: var(--muted); font-size: 0.78rem; }
-
-  .section-head {
-    display: flex; flex-wrap: wrap; gap: 10px;
-    align-items: center; justify-content: space-between; margin-bottom: 12px;
-  }
-  .section-head h3 { margin: 0; font-family: "Instrument Serif", Georgia, serif; font-weight: 400; font-size: 1.9rem; }
-  .charts {
-    display: grid; gap: 14px;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr));
-  }
-  .chart-box {
-    background: var(--panel); border: 1px solid var(--border);
-    border-radius: 18px; padding: 14px 14px 8px;
-  }
-  .chart-box h4 { margin: 0 0 8px; font-size: 0.95rem; font-weight: 600; }
-  .chart-box .canvas-wrap { position: relative; height: 220px; }
-  .empty { color: var(--muted); text-align: center; padding: 40px 0; }
-
-  .message {
-    background: var(--panel); border: 1px solid var(--border);
-    border-radius: 18px; padding: 16px; margin-bottom: 18px; color: var(--muted);
-  }
-  footer a { color: var(--honey); }
-  footer { margin-top: 28px; color: var(--muted); font-size: 0.8rem; }
-  footer a { color: var(--honey); }
+main { padding: 96px 0 90px; min-height: 100vh; }
+.auth { max-width: 440px; margin: 40px auto 0; }
+.auth .tile { padding: 34px; }
+.tabs { display: grid; grid-template-columns: 1fr 1fr; background: var(--tile-2); border-radius: 999px; padding: 4px; margin: 26px 0 22px; }
+.tabs button { border: 0; background: none; color: var(--text-2); padding: 9px; border-radius: 999px; cursor: pointer; font-weight: 500; }
+.tabs button.on { background: #2c2c30; color: var(--text); }
+form { display: grid; gap: 12px; }
+label { font-size: 0.85rem; color: var(--text-2); display: grid; gap: 6px; }
+input { font: inherit; color: var(--text); background: #0f0f11; border: 1px solid #2c2c30; border-radius: 14px; padding: 13px 14px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(var(--gold-rgb), 0.2); }
+.err { color: #ff6b5e; font-size: 0.9rem; min-height: 1.2em; margin: 2px 0 0; }
+.demo-link { text-align: center; margin-top: 18px; font-size: 0.92rem; color: var(--text-2); }
+.demo-banner { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; background: rgba(var(--gold-rgb), 0.1); color: var(--gold-hi); border-radius: 18px; padding: 12px 18px; margin-bottom: 18px; font-size: 0.92rem; }
+.bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.bar h1 { font-size: clamp(2rem, 4vw, 2.8rem); }
+.ctrl { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.ctrl button, .ctrl select { font: inherit; font-size: 0.86rem; color: var(--text); background: var(--tile); border: 0; border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+.ctrl button.on { background: var(--gold); color: #140c00; }
+.status { display: flex; gap: 16px; align-items: center; background: var(--tile); border-radius: var(--radius); padding: 22px 26px; margin-bottom: 14px; }
+.dot { width: 16px; height: 16px; border-radius: 50%; flex: none; background: #555; }
+.s-green .dot { background: #34c759; box-shadow: 0 0 14px #34c759; }
+.s-yellow .dot { background: var(--gold); box-shadow: 0 0 14px var(--gold); }
+.s-red .dot { background: #ff453a; box-shadow: 0 0 14px #ff453a; }
+.status h2 { font-size: 1.5rem; letter-spacing: -0.03em; }
+.status ul { margin: 6px 0 0; padding-left: 18px; color: var(--text-2); }
+.status .when { color: var(--text-3); font-size: 0.88rem; margin-top: 4px; }
+.cards { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 14px; }
+.card { background: var(--tile); border-radius: 22px; padding: 18px; border-top: 3px solid transparent; }
+.card.green { border-top-color: #34c759; } .card.yellow { border-top-color: var(--gold); } .card.red { border-top-color: #ff453a; }
+.card small { color: var(--text-3); font-size: 0.8rem; }
+.card b { display: block; font-family: var(--head); font-size: 1.7rem; letter-spacing: -0.03em; margin-top: 2px; }
+.card b em { font-style: normal; font-size: 0.85rem; color: var(--text-3); font-weight: 500; margin-left: 3px; }
+.card span { color: var(--text-3); font-size: 0.78rem; }
+.charts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.chart { background: var(--tile); border-radius: var(--radius); padding: 20px 20px 12px; }
+.chart h3 { font-size: 1rem; letter-spacing: -0.01em; margin-bottom: 8px; }
+.chart .box { position: relative; height: 220px; }
+.empty { color: var(--text-3); text-align: center; padding: 80px 0; }
+@media (max-width: 1000px) { .cards { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 720px) { .cards { grid-template-columns: 1fr 1fr; } .charts { grid-template-columns: 1fr; } }
+[hidden] { display: none !important; }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="cg-logo" viewBox="0 0 64 64"><path d="M32 4 56 18v28L32 60 8 46V18z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><rect x="17" y="26" width="30" height="6.5" rx="3.25" fill="#e9a23b"/><path d="M32 32v15" stroke="#e9a23b" stroke-width="5" stroke-linecap="round"/></symbol>
+</defs></svg>
+<header class="nav">
+  <div class="wrap">
+    <a href="/" class="brand" aria-label="CombGuard home"><svg><use href="#cg-logo"/></svg>CombGuard</a>
+    <button class="menu-btn" aria-label="Menu" aria-expanded="false"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 7h14M3 13h14"/></svg></button>
+    <nav class="nav-links" aria-label="Main">
+      <a href="/about">About</a>
+      <a href="/gen1">Gen 1</a>
+      <a href="/gen2">Gen 2</a>
+      <a href="/dashboard?demo=1" aria-current="page">Live demo</a>
+      <a href="/dashboard" class="btn btn-gold btn-sm">Log in</a>
+    </nav>
+  </div>
+</header>
+<main>
 <div class="wrap">
 
-  <header>
-    <a class="brand" href="/" aria-label="CombGuard home">
-      <svg viewBox="0 0 52 60" aria-hidden="true">
-        <path d="M26 2 48 9v20c0 14-9.5 23.5-22 29C13.5 52.5 4 43 4 29V9z" fill="none" stroke="#e9a23b" stroke-width="3" stroke-linejoin="round"/>
-        <path d="M26 17l10 5.8v11.5L26 40l-10-5.8V22.8z" fill="#e9a23b"/>
-      </svg>
-      <span class="wordmark">CombGuard</span>
-      <span class="page">Dashboard</span>
-    </a>
-    <div class="controls">
-      <select id="hiveSelect" aria-label="Choose hive"></select>
-      <button id="unitBtn" type="button" title="Switch units">°F / lb</button>
+  <!-- ===== Log in / sign up ===== -->
+  <section id="authView" hidden>
+    <div class="center" style="margin-top:30px">
+      <svg style="width:54px;height:54px;margin:0 auto 18px;color:var(--text)"><use href="#cg-logo"/></svg>
+      <h1 class="h2" style="font-size:clamp(2.2rem,5vw,3.2rem)">Team <span class="acc">dashboard.</span></h1>
+      <p class="lead">Log in to see your hives. New team members need an invite code to sign up.</p>
     </div>
-  </header>
-
-  <div id="message" class="message" hidden></div>
-
-  <div id="status" class="status">
-    <div class="dot"></div>
-    <div>
-      <h2 id="statusTitle">Loading…</h2>
-      <ul id="statusReasons"></ul>
-      <div class="when" id="statusWhen"></div>
+    <div class="auth"><div class="tile">
+      <div class="tabs" role="tablist"><button class="on" data-tab="login" role="tab">Log in</button><button data-tab="signup" role="tab">Sign up</button></div>
+      <form id="loginForm">
+        <label>Email<input type="email" name="email" autocomplete="email" required></label>
+        <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
+        <p class="err" id="loginErr"></p>
+        <button class="btn btn-gold" type="submit">Log in</button>
+      </form>
+      <form id="signupForm" hidden>
+        <label>Name<input type="text" name="name" autocomplete="name" required></label>
+        <label>Email<input type="email" name="email" autocomplete="email" required></label>
+        <label>Password <span class="small">(at least 10 characters)</span><input type="password" name="password" autocomplete="new-password" minlength="10" required></label>
+        <label>Invite code<input type="text" name="code" autocomplete="off" required></label>
+        <p class="err" id="signupErr"></p>
+        <button class="btn btn-gold" type="submit">Create account</button>
+      </form>
     </div>
-  </div>
+    <p class="demo-link">Just looking? <a href="?demo=1" class="link">See the live demo</a></p></div>
+  </section>
 
-  <div class="cards" id="cards"></div>
-
-  <div class="section-head">
-    <h3>History</h3>
-    <div class="controls" id="rangeBtns">
-      <button type="button" data-hours="24" class="active">24 hours</button>
-      <button type="button" data-hours="168">7 days</button>
-      <button type="button" data-hours="720">30 days</button>
+  <!-- ===== Dashboard ===== -->
+  <section id="dashView" hidden>
+    <div class="demo-banner" id="demoBanner" hidden><span>You're viewing a demo with sample data.</span><a href="/dashboard" class="link">Team log in</a></div>
+    <div class="bar">
+      <h1 id="hiveName">Hive</h1>
+      <div class="ctrl">
+        <select id="hiveSelect" aria-label="Choose hive" hidden></select>
+        <button data-hours="24" class="on">24h</button><button data-hours="168">7 days</button><button data-hours="720">30 days</button>
+        <button id="unitBtn" type="button">°F / lb</button>
+        <button id="logoutBtn" type="button" hidden>Log out</button>
+      </div>
     </div>
-  </div>
+    <div class="status" id="status"><div class="dot"></div><div><h2 id="statusTitle">Loading…</h2><ul id="statusReasons"></ul><div class="when" id="statusWhen"></div></div></div>
+    <div class="cards" id="cards"></div>
+    <div class="charts">
+      <div class="chart"><h3>Temperature</h3><div class="box"><canvas id="cTemp"></canvas></div></div>
+      <div class="chart"><h3>Humidity</h3><div class="box"><canvas id="cRh"></canvas></div></div>
+      <div class="chart"><h3>CO₂</h3><div class="box"><canvas id="cCo2"></canvas></div></div>
+      <div class="chart"><h3>Hive weight</h3><div class="box"><canvas id="cW"></canvas></div></div>
+    </div>
+    <p class="small" style="margin-top:18px">Status ranges are early estimates and will be tuned with bee researchers.</p>
+  </section>
 
-  <div class="charts">
-    <div class="chart-box"><h4>Temperature</h4><div class="canvas-wrap"><canvas id="chartTemp"></canvas></div></div>
-    <div class="chart-box"><h4>Humidity</h4><div class="canvas-wrap"><canvas id="chartRh"></canvas></div></div>
-    <div class="chart-box"><h4>CO₂</h4><div class="canvas-wrap"><canvas id="chartCo2"></canvas></div></div>
-    <div class="chart-box"><h4>Hive weight</h4><div class="canvas-wrap"><canvas id="chartWeight"></canvas></div></div>
-  </div>
-
-  <footer>
-    Status ranges are early estimates and will be adjusted with input from bee researchers.
-    Data updates every 5 minutes.
-  </footer>
 </div>
-
+</main><footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a href="/" class="brand" style="color:var(--text)"><svg><use href="#cg-logo"/></svg>CombGuard</a>
+        <p style="margin:14px 0 0;max-width:300px;color:var(--text-2)">Solar-powered hive monitoring that keeps watch between inspections.</p>
+      </div>
+      <div><h4>Explore</h4><a href="/">Home</a><a href="/about">About</a><a href="/gen1">Gen 1</a><a href="/gen2">Gen 2</a></div>
+      <div><h4>Dashboard</h4><a href="/dashboard?demo=1">Live demo</a><a href="/dashboard">Team log in</a></div>
+      <div><h4>Get involved</h4><a href="https://forms.gle/yDhAXinGf1WT7gVK9" target="_blank" rel="noopener">Beekeeper survey</a><a href="mailto:hello@combguard.com">Contact us</a></div>
+    </div>
+    <div class="foot-bottom"><span>© 2026 CombGuard · A student engineering project</span><span>Made for beekeepers, by students.</span></div>
+  </div>
+</footer>
+<script src="/assets/site.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-// ================= Settings =================
+(function () {
 const API = "https://api.combguard.com";
-const REFRESH_MS = 5 * 60 * 1000;
-
-// Status ranges (Celsius, %, ppm, kg, volts, minutes).
-// These are STARTING POINTS - confirm with Jaevyn / the Bee Lab and adjust.
 const T = {
-  brood:   { green: [32, 36],   yellow: [30, 37] },     // brood nest temperature
-  rh:      { green: [50, 70],   yellow: [40, 80] },     // inside humidity
-  co2:     { green: [0, 6000],  yellow: [0, 10000] },   // inside CO2
-  battery: { green: [3.7, 5],   yellow: [3.5, 5] },     // LiPo voltage
-  weightDrop: { yellow: 1, red: 2 },                    // kg lost in 24 h (swarm / robbing)
-  staleMin:   { yellow: 45, red: 180 },                 // minutes since last reading
+  brood: { green: [32, 36], yellow: [30, 37] },
+  rh: { green: [50, 70], yellow: [40, 80] },
+  co2: { green: [0, 6000], yellow: [0, 10000] },
+  battery: { green: [3.7, 5], yellow: [3.5, 5] },
+  weightDrop: { yellow: 1, red: 2 },
+  staleMin: { yellow: 45, red: 180 },
 };
-
-// ================= State =================
-let hiveId = null;
-let hours = 24;
-let imperial = loadPref("cg-imperial", "true") === "true";
+const $ = (id) => document.getElementById(id);
+const demo = new URLSearchParams(location.search).has("demo");
+let hours = 24, hiveId = null, imperial = true;
+try { imperial = localStorage.getItem("cg-imperial") !== "false"; } catch {}
 const charts = {};
 
-function loadPref(key, fallback) {
-  try { return localStorage.getItem(key) ?? fallback; } catch { return fallback; }
-}
-function savePref(key, value) {
-  try { localStorage.setItem(key, value); } catch {}
-}
-
-// ================= Helpers =================
-const $ = (id) => document.getElementById(id);
-
-function rangeLevel(v, r) {
-  if (v === null || v === undefined) return "none";
-  if (v >= r.green[0] && v <= r.green[1]) return "green";
-  if (v >= r.yellow[0] && v <= r.yellow[1]) return "yellow";
-  return "red";
-}
-const rank = { none: 0, green: 1, yellow: 2, red: 3 };
-const worst = (levels) => levels.reduce((a, b) => (rank[b] > rank[a] ? b : a), "green");
-
-const temp = (c) => (c === null || c === undefined ? null : imperial ? c * 9 / 5 + 32 : c);
-const weight = (kg) => (kg === null || kg === undefined ? null : imperial ? kg * 2.20462 : kg);
-const tUnit = () => (imperial ? "°F" : "°C");
-const wUnit = () => (imperial ? "lb" : "kg");
-const fmt = (v, d = 1) => (v === null || v === undefined ? "—" : Number(v).toFixed(d));
-
-function ago(date) {
-  const min = Math.round((Date.now() - date) / 60000);
-  if (min < 1) return "just now";
-  if (min < 60) return `${min} min ago`;
-  const h = Math.floor(min / 60);
-  if (h < 48) return `${h} hr ago`;
-  return `${Math.floor(h / 24)} days ago`;
+async function api(path, opts = {}) {
+  const res = await fetch(API + path, { credentials: "include", headers: { "Content-Type": "application/json" }, ...opts });
+  let data = null; try { data = await res.json(); } catch {}
+  return { ok: res.ok, status: res.status, data };
 }
 
-function timeLabel(date) {
-  return hours <= 24
-    ? date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
-    : date.toLocaleDateString([], { month: "short", day: "numeric" }) + " " +
-      date.toLocaleTimeString([], { hour: "numeric" });
-}
+// ---------- views ----------
+function show(view) { $("authView").hidden = view !== "auth"; $("dashView").hidden = view !== "dash"; }
 
-async function getJSON(path) {
-  const res = await fetch(API + path);
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error(`API returned ${res.status}`);
-  return res.json();
-}
+document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => {
+  document.querySelectorAll(".tabs button").forEach((x) => x.classList.toggle("on", x === b));
+  $("loginForm").hidden = b.dataset.tab !== "login"; $("signupForm").hidden = b.dataset.tab !== "signup";
+}));
 
-function showMessage(text) {
-  $("message").textContent = text;
-  $("message").hidden = !text;
-}
-
-// ================= Status + cards =================
-function render(latest, readings) {
-  const status = $("status");
-  const reasons = [];
-
-  if (!latest) {
-    status.className = "status";
-    $("statusTitle").textContent = "No readings yet";
-    $("statusReasons").replaceChildren();
-    $("statusWhen").textContent = "Waiting for this hive's first reading.";
-    $("cards").replaceChildren();
-    return;
-  }
-
-  const when = new Date(latest.recorded_at);
-  const ageMin = (Date.now() - when) / 60000;
-
-  const lv = {
-    brood: rangeLevel(latest.brood_temp_c, T.brood),
-    rh: rangeLevel(latest.inside_rh, T.rh),
-    co2: rangeLevel(latest.co2_ppm, T.co2),
-    battery: rangeLevel(latest.battery_v, T.battery),
-    weight: "none",
-    stale: ageMin > T.staleMin.red ? "red" : ageMin > T.staleMin.yellow ? "yellow" : "green",
-  };
-
-  // Weight change over the last 24 hours
-  let drop = null;
-  const dayAgo = Date.now() - 24 * 3600 * 1000;
-  const dayWeights = readings
-    .filter((r) => r.weight_kg !== null && new Date(r.recorded_at) >= dayAgo)
-    .map((r) => r.weight_kg);
-  if (latest.weight_kg !== null && dayWeights.length > 1) {
-    drop = Math.max(...dayWeights) - latest.weight_kg;
-    lv.weight = drop >= T.weightDrop.red ? "red" : drop >= T.weightDrop.yellow ? "yellow" : "green";
-  } else if (latest.weight_kg !== null) {
-    lv.weight = "green";
-  }
-
-  if (lv.brood !== "green" && lv.brood !== "none") reasons.push(`Brood temperature is ${fmt(temp(latest.brood_temp_c))} ${tUnit()}`);
-  if (lv.rh !== "green" && lv.rh !== "none") reasons.push(`Inside humidity is ${fmt(latest.inside_rh, 0)}%`);
-  if (lv.co2 !== "green" && lv.co2 !== "none") reasons.push(`CO₂ is ${latest.co2_ppm} ppm`);
-  if (lv.weight !== "green" && lv.weight !== "none") reasons.push(`Hive lost ${fmt(weight(drop))} ${wUnit()} in 24 hours (possible swarm or robbing)`);
-  if (lv.battery !== "green" && lv.battery !== "none") reasons.push(`Battery is low (${fmt(latest.battery_v, 2)} V)`);
-  if (lv.stale !== "green") reasons.push(`No new reading for ${ago(when).replace(" ago", "")}`);
-
-  const overall = worst(Object.values(lv));
-  status.className = "status " + overall;
-  $("statusTitle").textContent =
-    overall === "green" ? "Hive looks healthy" :
-    overall === "yellow" ? "Worth checking soon" : "Needs attention";
-  $("statusReasons").replaceChildren(...reasons.map((r) => {
-    const li = document.createElement("li"); li.textContent = r; return li;
-  }));
-  $("statusWhen").textContent = `Last reading ${ago(when)} · ${when.toLocaleString()}`;
-
-  const cards = [
-    { label: "Brood temperature", value: fmt(temp(latest.brood_temp_c)), unit: tUnit(), level: lv.brood,
-      note: `Healthy: ${fmt(temp(T.brood.green[0]), 0)}–${fmt(temp(T.brood.green[1]), 0)} ${tUnit()}` },
-    { label: "Inside humidity", value: fmt(latest.inside_rh, 0), unit: "%", level: lv.rh,
-      note: `Healthy: ${T.rh.green[0]}–${T.rh.green[1]}%` },
-    { label: "CO₂", value: latest.co2_ppm ?? "—", unit: "ppm", level: lv.co2,
-      note: "Rises with colony size and activity" },
-    { label: "Hive weight", value: fmt(weight(latest.weight_kg)), unit: wUnit(), level: lv.weight,
-      note: drop === null ? "Shows honey stores" : `24 h change: ${drop > 0 ? "−" : "+"}${fmt(weight(Math.abs(drop)))} ${wUnit()}` },
-    { label: "Outside", value: fmt(temp(latest.outside_temp_c)), unit: tUnit(), level: "none",
-      note: `Humidity ${fmt(latest.outside_rh, 0)}%` },
-    { label: "Battery", value: fmt(latest.battery_v, 2), unit: "V", level: lv.battery,
-      note: latest.wifi_rssi !== null ? `Wi-Fi signal ${latest.wifi_rssi} dBm` : "" },
-  ];
-
-  $("cards").replaceChildren(...cards.map((c) => {
-    const el = document.createElement("div");
-    el.className = "card " + c.level;
-    const label = document.createElement("div"); label.className = "label"; label.textContent = c.label;
-    const value = document.createElement("div"); value.className = "value"; value.textContent = c.value;
-    const unit = document.createElement("small"); unit.textContent = c.unit; value.append(unit);
-    const note = document.createElement("div"); note.className = "note"; note.textContent = c.note;
-    el.append(label, value, note);
-    return el;
-  }));
-}
-
-// ================= Charts =================
-Chart.defaults.color = "#8e8e93";
-Chart.defaults.borderColor = "rgba(255,255,255,0.05)";
-Chart.defaults.font.family = "Inter, system-ui, -apple-system, Segoe UI, sans-serif";
-
-function drawChart(id, labels, datasets, unit) {
-  if (charts[id]) charts[id].destroy();
-  const canvas = $(id);
-  const wrap = canvas.parentElement;
-  wrap.querySelector(".empty")?.remove();
-
-  const hasData = datasets.some((d) => d.data.some((v) => v !== null));
-  canvas.hidden = !hasData;
-  if (!hasData) {
-    const empty = document.createElement("div");
-    empty.className = "empty";
-    empty.textContent = "No data for this time range";
-    wrap.append(empty);
-    return;
-  }
-
-  charts[id] = new Chart(canvas, {
-    type: "line",
-    data: {
-      labels,
-      datasets: datasets.map((d) => ({
-        ...d,
-        borderWidth: 2,
-        pointRadius: labels.length < 30 ? 3 : 0,
-        tension: 0.3,
-        spanGaps: true,
-      })),
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { mode: "index", intersect: false },
-      plugins: {
-        legend: { display: datasets.length > 1, labels: { boxWidth: 12 } },
-        tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${c.parsed.y.toFixed(1)} ${unit}` } },
-      },
-      scales: {
-        x: { ticks: { maxTicksLimit: 6, maxRotation: 0 } },
-        y: { ticks: { callback: (v) => `${v} ${unit}` } },
-      },
-    },
+function bindForm(form, path, errEl) {
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector("button[type=submit]"); btn.disabled = true; errEl.textContent = "";
+    const body = Object.fromEntries(new FormData(form));
+    try {
+      const r = await api(path, { method: "POST", body: JSON.stringify(body) });
+      if (r.ok) { form.reset(); startDashboard(r.data.user); }
+      else errEl.textContent = (r.data && r.data.error) || "Something went wrong. Try again.";
+    } catch { errEl.textContent = "Can't reach CombGuard right now. Check your connection."; }
+    btn.disabled = false;
   });
 }
+bindForm($("loginForm"), "/auth/login", $("loginErr"));
+bindForm($("signupForm"), "/auth/signup", $("signupErr"));
 
-function renderCharts(readings) {
-  const labels = readings.map((r) => timeLabel(new Date(r.recorded_at)));
-  const col = (key, conv = (v) => v) => readings.map((r) => (r[key] === null ? null : conv(r[key])));
+$("logoutBtn").addEventListener("click", async () => { await api("/auth/logout", { method: "POST" }); location.href = "/dashboard"; });
 
-  drawChart("chartTemp", labels, [
-    { label: "Brood", data: col("brood_temp_c", temp), borderColor: "#e9a23b", backgroundColor: "#e9a23b" },
-    { label: "Outside", data: col("outside_temp_c", temp), borderColor: "#8fa6d6", backgroundColor: "#8fa6d6" },
-  ], tUnit());
-  drawChart("chartRh", labels, [
-    { label: "Inside", data: col("inside_rh"), borderColor: "#e9a23b", backgroundColor: "#e9a23b" },
-    { label: "Outside", data: col("outside_rh"), borderColor: "#8fa6d6", backgroundColor: "#8fa6d6" },
-  ], "%");
-  drawChart("chartCo2", labels, [
-    { label: "CO₂", data: col("co2_ppm"), borderColor: "#e9a23b", backgroundColor: "#e9a23b" },
-  ], "ppm");
-  drawChart("chartWeight", labels, [
-    { label: "Weight", data: col("weight_kg", weight), borderColor: "#e9a23b", backgroundColor: "#e9a23b" },
-  ], wUnit());
+// ---------- demo data ----------
+function demoReadings(h) {
+  const out = [], now = Date.now(), n = Math.min(h * 4, 2880);
+  for (let i = n; i >= 0; i--) {
+    const t = now - i * 15 * 60000, day = Math.sin((t / 3600000 / 24) * Math.PI * 2);
+    out.push({ recorded_at: new Date(t).toISOString(), brood_temp_c: 34.8 + day * 0.4, outside_temp_c: 24 + day * 6,
+      inside_rh: 60 + day * 4, outside_rh: 72 - day * 12, co2_ppm: Math.round(2100 + day * 350),
+      weight_kg: 43.2 + (n - i) * 0.0006 + Math.max(0, day) * 0.15, battery_v: 3.96, wifi_rssi: -66 });
+  }
+  return out;
 }
 
-// ================= Loading =================
-async function loadHives() {
-  const hives = (await getJSON("/hives")) || [];
-  const select = $("hiveSelect");
-  select.replaceChildren(...hives.map((h) => {
-    const o = document.createElement("option");
-    o.value = h.id; o.textContent = h.name;
-    return o;
+// ---------- helpers ----------
+const lvl = (v, r) => v == null ? "none" : (v >= r.green[0] && v <= r.green[1]) ? "green" : (v >= r.yellow[0] && v <= r.yellow[1]) ? "yellow" : "red";
+const rank = { none: 0, green: 1, yellow: 2, red: 3 };
+const tC = (c) => c == null ? null : imperial ? c * 9 / 5 + 32 : c;
+const wK = (k) => k == null ? null : imperial ? k * 2.20462 : k;
+const tu = () => imperial ? "°F" : "°C", wu = () => imperial ? "lb" : "kg";
+const f = (v, d = 1) => v == null ? "—" : Number(v).toFixed(d);
+const ago = (d) => { const m = Math.round((Date.now() - d) / 60000); return m < 1 ? "just now" : m < 60 ? m + " min ago" : m < 2880 ? Math.floor(m / 60) + " hr ago" : Math.floor(m / 1440) + " days ago"; };
+
+function render(latest, readings) {
+  if (!latest) { $("statusTitle").textContent = "No readings yet"; $("statusWhen").textContent = "Waiting for this hive's first reading."; $("cards").replaceChildren(); return; }
+  const when = new Date(latest.recorded_at), age = (Date.now() - when) / 60000;
+  const L = { brood: lvl(latest.brood_temp_c, T.brood), rh: lvl(latest.inside_rh, T.rh), co2: lvl(latest.co2_ppm, T.co2), bat: lvl(latest.battery_v, T.battery),
+    stale: age > T.staleMin.red ? "red" : age > T.staleMin.yellow ? "yellow" : "green", w: "green" };
+  const dayAgo = Date.now() - 864e5, ws = readings.filter((r) => r.weight_kg != null && new Date(r.recorded_at) >= dayAgo).map((r) => r.weight_kg);
+  const drop = ws.length > 1 && latest.weight_kg != null ? Math.max(...ws) - latest.weight_kg : null;
+  if (drop != null) L.w = drop >= T.weightDrop.red ? "red" : drop >= T.weightDrop.yellow ? "yellow" : "green";
+  const why = [];
+  if (!["green", "none"].includes(L.brood)) why.push(`Brood temperature is ${f(tC(latest.brood_temp_c))} ${tu()}`);
+  if (!["green", "none"].includes(L.rh)) why.push(`Inside humidity is ${f(latest.inside_rh, 0)}%`);
+  if (!["green", "none"].includes(L.co2)) why.push(`CO₂ is ${latest.co2_ppm} ppm`);
+  if (L.w !== "green") why.push(`Hive lost ${f(wK(drop))} ${wu()} in 24 hours (possible swarm or robbing)`);
+  if (!["green", "none"].includes(L.bat)) why.push(`Battery is low (${f(latest.battery_v, 2)} V)`);
+  if (L.stale !== "green") why.push(`No new reading for ${ago(when).replace(" ago", "")}`);
+  const all = Object.values(L).reduce((a, b) => rank[b] > rank[a] ? b : a, "green");
+  $("status").className = "status s-" + all;
+  $("statusTitle").textContent = all === "green" ? "Hive looks healthy" : all === "yellow" ? "Worth checking soon" : "Needs attention";
+  $("statusReasons").replaceChildren(...why.map((t) => Object.assign(document.createElement("li"), { textContent: t })));
+  $("statusWhen").textContent = `Last reading ${ago(when)} · ${when.toLocaleString()}`;
+  const cards = [
+    ["Brood", f(tC(latest.brood_temp_c)), tu(), L.brood, "Healthy 90–97 °F"],
+    ["Humidity", f(latest.inside_rh, 0), "%", L.rh, "Healthy 50–70%"],
+    ["CO₂", latest.co2_ppm ?? "—", "ppm", L.co2, "Colony activity"],
+    ["Weight", f(wK(latest.weight_kg)), wu(), L.w, drop == null ? "Honey stores" : `24 h: ${drop > 0 ? "−" : "+"}${f(wK(Math.abs(drop)))} ${wu()}`],
+    ["Outside", f(tC(latest.outside_temp_c)), tu(), "none", `Humidity ${f(latest.outside_rh, 0)}%`],
+    ["Battery", f(latest.battery_v, 2), "V", L.bat, latest.wifi_rssi != null ? `Wi-Fi ${latest.wifi_rssi} dBm` : ""],
+  ];
+  $("cards").replaceChildren(...cards.map(([l, v, u, c, n]) => {
+    const el = document.createElement("div"); el.className = "card " + c;
+    el.innerHTML = `<small></small><b></b><span></span>`;
+    el.querySelector("small").textContent = l; el.querySelector("b").textContent = v;
+    const em = document.createElement("em"); em.textContent = u; el.querySelector("b").append(em);
+    el.querySelector("span").textContent = n; return el;
   }));
-  select.hidden = hives.length < 2;
-  const saved = loadPref("cg-hive", "");
-  hiveId = hives.some((h) => h.id === saved) ? saved : hives[0]?.id ?? null;
-  if (hiveId) select.value = hiveId;
+}
+
+if (window.Chart) { Chart.defaults.color = "#86868b"; Chart.defaults.borderColor = "rgba(255,255,255,0.06)"; Chart.defaults.font.family = "Inter, system-ui, sans-serif"; }
+function draw(id, labels, sets, unit) {
+  if (!window.Chart) return;
+  if (charts[id]) charts[id].destroy();
+  charts[id] = new Chart($(id), { type: "line", data: { labels, datasets: sets.map((s) => ({ ...s, borderWidth: 2, pointRadius: 0, tension: 0.35, spanGaps: true })) },
+    options: { responsive: true, maintainAspectRatio: false, interaction: { mode: "index", intersect: false },
+      plugins: { legend: { display: sets.length > 1, labels: { boxWidth: 10 } }, tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${c.parsed.y.toFixed(1)} ${unit}` } } },
+      scales: { x: { ticks: { maxTicksLimit: 6, maxRotation: 0 } }, y: { ticks: { callback: (v) => v + " " + unit } } } } });
+}
+function charts4(rs) {
+  const lab = rs.map((r) => { const d = new Date(r.recorded_at); return hours <= 24 ? d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : d.toLocaleDateString([], { month: "short", day: "numeric" }); });
+  const col = (k, c = (v) => v) => rs.map((r) => r[k] == null ? null : c(r[k]));
+  const gold = "#e9a23b", blue = "#8fb0ff";
+  draw("cTemp", lab, [{ label: "Brood", data: col("brood_temp_c", tC), borderColor: gold }, { label: "Outside", data: col("outside_temp_c", tC), borderColor: blue }], tu());
+  draw("cRh", lab, [{ label: "Inside", data: col("inside_rh"), borderColor: gold }, { label: "Outside", data: col("outside_rh"), borderColor: blue }], "%");
+  draw("cCo2", lab, [{ label: "CO₂", data: col("co2_ppm"), borderColor: gold }], "ppm");
+  draw("cW", lab, [{ label: "Weight", data: col("weight_kg", wK), borderColor: gold }], wu());
 }
 
 async function refresh() {
-  if (!hiveId) { render(null, []); return; }
-  try {
-    const [latest, hist] = await Promise.all([
-      getJSON(`/latest?hive=${encodeURIComponent(hiveId)}`),
-      getJSON(`/history?hive=${encodeURIComponent(hiveId)}&hours=${Math.max(hours, 24)}`),
-    ]);
-    const readings = hist?.readings || [];
-    const cutoff = Date.now() - hours * 3600 * 1000;
-    showMessage("");
-    render(latest, readings);
-    renderCharts(readings.filter((r) => new Date(r.recorded_at) >= cutoff));
-  } catch (err) {
-    showMessage("Can't reach the CombGuard API right now. Showing the last data loaded. (" + err.message + ")");
-  }
+  if (demo) { const rs = demoReadings(Math.max(hours, 24)); render(rs[rs.length - 1], rs); charts4(rs.filter((r) => new Date(r.recorded_at) >= Date.now() - hours * 36e5)); return; }
+  const [l, h] = await Promise.all([api(`/latest?hive=${encodeURIComponent(hiveId)}`), api(`/history?hive=${encodeURIComponent(hiveId)}&hours=${Math.max(hours, 24)}`)]);
+  if (l.status === 401 || h.status === 401) { show("auth"); return; }
+  const rs = (h.data && h.data.readings) || [];
+  render(l.ok ? l.data : null, rs);
+  charts4(rs.filter((r) => new Date(r.recorded_at) >= Date.now() - hours * 36e5));
 }
 
-// ================= Controls =================
-$("hiveSelect").addEventListener("change", (e) => {
-  hiveId = e.target.value;
-  savePref("cg-hive", hiveId);
-  refresh();
-});
-
-function setUnitLabel() { $("unitBtn").textContent = imperial ? "Switch to °C / kg" : "Switch to °F / lb"; }
-$("unitBtn").addEventListener("click", () => {
-  imperial = !imperial;
-  savePref("cg-imperial", String(imperial));
-  setUnitLabel();
-  refresh();
-});
-
-$("rangeBtns").addEventListener("click", (e) => {
-  const btn = e.target.closest("button[data-hours]");
-  if (!btn) return;
-  hours = Number(btn.dataset.hours);
-  document.querySelectorAll("#rangeBtns button").forEach((b) => b.classList.toggle("active", b === btn));
-  refresh();
-});
-
-(async function start() {
-  setUnitLabel();
-  try {
-    await loadHives();
-  } catch (err) {
-    showMessage("Can't reach the CombGuard API right now. (" + err.message + ")");
+async function startDashboard(user) {
+  show("dash");
+  $("demoBanner").hidden = !demo; $("logoutBtn").hidden = demo;
+  if (demo) { $("hiveName").textContent = "Demo hive"; }
+  else {
+    const hv = await api("/hives");
+    if (hv.status === 401) { show("auth"); return; }
+    const hives = hv.data || [];
+    hiveId = hives[0] ? hives[0].id : null;
+    const sel = $("hiveSelect");
+    sel.replaceChildren(...hives.map((h) => Object.assign(document.createElement("option"), { value: h.id, textContent: h.name })));
+    sel.hidden = hives.length < 2;
+    $("hiveName").textContent = hives[0] ? hives[0].name : "No hives yet";
+    sel.onchange = () => { hiveId = sel.value; $("hiveName").textContent = sel.selectedOptions[0].textContent; refresh(); };
   }
-  await refresh();
-  setInterval(refresh, REFRESH_MS);
+  refresh();
+}
+
+document.querySelectorAll(".ctrl [data-hours]").forEach((b) => b.addEventListener("click", () => {
+  hours = +b.dataset.hours; document.querySelectorAll(".ctrl [data-hours]").forEach((x) => x.classList.toggle("on", x === b)); refresh();
+}));
+const unitLabel = () => $("unitBtn").textContent = imperial ? "Switch to °C / kg" : "Switch to °F / lb";
+$("unitBtn").addEventListener("click", () => { imperial = !imperial; try { localStorage.setItem("cg-imperial", imperial); } catch {} unitLabel(); refresh(); });
+unitLabel();
+setInterval(() => { if (!$("dashView").hidden) refresh(); }, 5 * 60 * 1000);
+
+// ---------- start ----------
+(async () => {
+  if (demo) { startDashboard(null); return; }
+  try {
+    const me = await api("/auth/me");
+    if (me.ok) startDashboard(me.data.user); else show("auth");
+  } catch { show("auth"); $("loginErr").textContent = "Can't reach CombGuard right now."; }
+})();
 })();
 </script>
 </body>
