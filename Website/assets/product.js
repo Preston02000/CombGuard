@@ -32,21 +32,21 @@ function productPage(){var root=document.documentElement;
     lens.style.left=lx+'px';lens.style.top=ly+'px';spot.style.setProperty('--x',dx+'px');spot.style.setProperty('--y',dy+'px');
     var cx=lx+L/2,cy=ly+L/2,ang=Math.atan2(dy-cy,dx-cx);ln.setAttribute('x1',dx);ln.setAttribute('y1',dy);ln.setAttribute('x2',(cx+Math.cos(ang)*L/2).toFixed(1));ln.setAttribute('y2',(cy+Math.sin(ang)*L/2).toFixed(1));}
   function show(i,user){if(user){auto=false;}act=(i+H.length)%H.length;var h=H[act];dots.forEach(function(d,k){d.setAttribute('aria-pressed',k===act?'true':'false');d.classList.toggle('on',k===act);});
-    box.classList.add('active');lens.classList.remove('in');void lens.offsetWidth;li.src='assets/img/'+h.img+'.webp';var th=document.getElementById('hc-thumb');if(th){th.src=li.src;th.alt='Concept render: '+h.t;}lt.textContent=h.tag;lens.classList.add('in');
+    box.classList.add('active');lens.classList.remove('in');void lens.offsetWidth;li.src='assets/'+h.img+'.webp';var th=document.getElementById('hc-thumb');if(th){th.src=li.src;th.alt='Concept render: '+h.t;}lt.textContent=h.tag;lens.classList.add('in');
     card.classList.remove('swap');void card.offsetWidth;card.classList.add('swap');
     document.getElementById('hc-n').textContent='0'+(act+1);document.getElementById('hc-h').textContent=h.t;document.getElementById('hc-p').textContent=h.p;
     document.getElementById('hc-chips').innerHTML=h.c.map(function(c){return '<li>'+c+'</li>';}).join('');place();}
   dots.forEach(function(d,i){d.addEventListener('click',function(e){e.stopPropagation();show(i,true);});});
   document.getElementById('hc-prev').addEventListener('click',function(){show(act-1,true);});document.getElementById('hc-next').addEventListener('click',function(){show(act+1,true);});
   window.addEventListener('resize',place);CG.shown.push(function(){setTimeout(place,80);});
-  var pre=0;if('IntersectionObserver' in window)new IntersectionObserver(function(es){inView=es[0].isIntersecting;if(!pre&&es[0].isIntersecting){pre=1;H.forEach(function(h){var im=new Image();im.src='assets/img/'+h.img+'.webp';});}},{threshold:.4}).observe(box);
+  var pre=0;if('IntersectionObserver' in window)new IntersectionObserver(function(es){inView=es[0].isIntersecting;if(!pre&&es[0].isIntersecting){pre=1;H.forEach(function(h){var im=new Image();im.src='assets/'+h.img+'.webp';});}},{threshold:.4}).observe(box);
   setInterval(function(){if(auto&&inView&&root.dataset.page==='product'&&!root.classList.contains('calm'))show(act+1,false);},4800);
   show(1,false);}
 
 /* ---------- closer look: pills that open a small panel and swap the render ---------- */
 (function(){var pills=[].slice.call(document.querySelectorAll('#pills .pill')),img=document.getElementById('look-img');
   function open(p){pills.forEach(function(q){var on=q===p&&!q.classList.contains('open');q.classList.toggle('open',on);q.querySelector('button').setAttribute('aria-expanded',on?'true':'false');});
-    var src=p.classList.contains('open')?p.dataset.img:'assets/img/r-case.webp',alt=p.classList.contains('open')?p.dataset.alt:pills[0].dataset.alt;
+    var src=p.classList.contains('open')?p.dataset.img:'assets/r-case.webp',alt=p.classList.contains('open')?p.dataset.alt:pills[0].dataset.alt;
     if(img.getAttribute('src')!==src){img.classList.add('fade');setTimeout(function(){img.src=src;img.alt=alt;img.onload=function(){img.classList.remove('fade');};},reduce?0:260);}}
   pills.forEach(function(p){p.querySelector('button').addEventListener('click',function(){open(p);});});})();
 productPage();
