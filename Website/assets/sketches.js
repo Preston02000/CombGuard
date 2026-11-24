@@ -563,4 +563,8 @@ var JOIN_ENDPOINT='';
   window.addEventListener('resize',function(){layout(true);});setPaused(paused);go(0);})();
 
 senseStrip();nightControls();liveTicks();
+/* pause each sketch's looping animations (smoke, stars, fireflies...) while it is off screen:
+   otherwise the browser keeps repainting them every frame, which slows down scrolling everywhere */
+if('IntersectionObserver' in window){var sko=new IntersectionObserver(function(es){es.forEach(function(e){e.target.classList.toggle('paused',!e.isIntersecting);});},{rootMargin:'120px 0px'});
+  document.querySelectorAll('svg.sk').forEach(function(s){s.classList.add('paused');sko.observe(s);});}
 })();
