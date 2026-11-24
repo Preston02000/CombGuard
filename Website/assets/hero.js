@@ -505,15 +505,25 @@ var glideTo=function(y){window.scrollTo(0,y);};
   /* Skip intro: jump straight past the scene to the rest of the home page */
   if(skip)skip.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();cancelAnimationFrame(anim);lock=false;
     var t=document.getElementById('problem'),pad=parseFloat(getComputedStyle(root).scrollPaddingTop)||0;
-    window.scrollTo({top:Math.round(t.getBoundingClientRect().top+window.scrollY-pad),behavior:'instant'});
+    window.scrollTo(0,Math.round(t.getBoundingClientRect().top+window.scrollY-pad));
     t.setAttribute('tabindex','-1');t.focus({preventScroll:true});});
 })();
 function target(){var r=hero.getBoundingClientRect(),span=hero.offsetHeight-window.innerHeight;return span>0?clamp(-r.top/span):1;}
 var narrow=false;
 var VS=1,OX=0,OY=0;
+var SHc=window.innerHeight;
+function placeLayer(l,cam){var top=cam*l.f-OY/VS,vh=SHc/VS,lo=Math.max(top,l.y0),hi=Math.min(top+vh,l.y0+l.h);
+  if(l.vy==null||lo<l.vy-.5||hi>l.vy+l.winH+.5){var vy=Math.max(l.y0,Math.min(l.y0+l.h-l.winH,top-(l.winH-vh)/2));
+    if(vy!==l.vy){l.vy=vy;l.svg.setAttribute('viewBox','0 '+vy.toFixed(1)+' 1600 '+l.winH.toFixed(1));}}
+  var tf='translate3d('+OX.toFixed(1)+'px,'+((l.vy-cam*l.f)*VS+OY).toFixed(1)+'px,0)';if(tf!==l.tf){l.tf=tf;l.svg.style.transform=tf;}}
 function layout(){narrow=window.innerWidth<820;var sr=stage.getBoundingClientRect(),SW=sr.width||window.innerWidth,SH=sr.height||window.innerHeight;
   if(narrow){VS=Math.min(SW/680,SH/900);OX=(SW-680*VS)/2-470*VS;OY=SH-900*VS;}else{VS=Math.max(SW/1600,SH/900);OX=(SW-1600*VS)/2;OY=(SH-900*VS)/2;}
-  for(var k in LY){var l=LY[k];l.svg.setAttribute('viewBox','0 '+l.y0+' 1600 '+l.h);l.svg.style.width=(1600*VS).toFixed(1)+'px';l.svg.style.height=(l.h*VS).toFixed(1)+'px';}
+  /* Each layer is a sliding window about two screens tall, not one giant picture: iPad Safari can't hold a layer
+     thousands of pixels tall in graphics memory and leaves parts of it unpainted (black triangles). The window
+     slides along with the camera in layer(), below. */
+  var dpr=Math.min(3,window.devicePixelRatio||1);SHc=SH;
+  for(var k in LY){var l=LY[k],cssH=Math.min(l.h*VS,Math.max(SH*1.3,Math.min(SH*2,3800/dpr)));l.winH=cssH/VS;l.vy=null;
+    l.svg.style.width=(1600*VS).toFixed(1)+'px';l.svg.style.height=cssH.toFixed(1)+'px';}
   document.querySelectorAll('.bubble').forEach(function(b){b.style.visibility=narrow?'hidden':'';});sizeFx();}
 
 layout();sizeWords();all.forEach(function(d){d.finish();});onSeason();
@@ -535,7 +545,7 @@ function frame(now){var dt=Math.min(.05,(now-last)/1000),t=now/1000;last=now;
   reduce=RM();var hr=hero.getBoundingClientRect();if(hr.bottom<-200||hr.top>window.innerHeight+200){requestAnimationFrame(frame);return;}
   var tg=target();cur+=(tg-cur)*(1-Math.exp(-dt*(reduce?60:9)));if(Math.abs(tg-cur)<.00005)cur=tg;
   var cam=camAt(cur);
-  for(var k in LY){var l=LY[k];l.svg.style.transform='translate3d('+OX.toFixed(1)+'px,'+((l.y0-cam*l.f)*VS+OY).toFixed(1)+'px,0)';}
+  for(var k in LY)placeLayer(LY[k],cam);
   if(railFill){railFill.style.transform='scaleY('+cur.toFixed(4)+')';var ab=0;rail.forEach(function(b,k){if(cur>=Math.max(0,R[+b.dataset.b][0])-.001)ab=k;});rail.forEach(function(b,k){b.classList.toggle('on',k===ab);b.classList.toggle('past',k<ab);});}
   var inDay=cur>=R[9][0]&&cur<R[9][1];if(inDay)dayClock+=dt;else dayClock=0;var ph=dayClock%12;
   if(cur<R[9][0]){sunH.on=99;moonH.on=99;}else if(inDay){sunH.on=ph<6?-1:99;moonH.on=ph<6?99:-1;}else{sunH.on=-1;moonH.on=99;}sunH.off=moonH.off=1e9;
