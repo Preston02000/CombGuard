@@ -24,6 +24,7 @@ $('opt-calm').addEventListener('change',function(){calm=this.checked;store('cg-c
 /* settings panel and phone menu */
 function panel(btn,pn){btn.addEventListener('click',function(e){e.stopPropagation();var open=pn.hidden;closePanels();if(open){pn.hidden=false;btn.setAttribute('aria-expanded','true');}});}
 function closePanels(){[['set-btn','settings'],['menu-btn','menu']].forEach(function(p){$(p[1]).hidden=true;$(p[0]).setAttribute('aria-expanded','false');});}
+CG.closePanels=closePanels;
 panel($('set-btn'),$('settings'));panel($('menu-btn'),$('menu'));
 document.addEventListener('click',function(e){if(!e.target.closest('.panel'))closePanels();});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closePanels();});
