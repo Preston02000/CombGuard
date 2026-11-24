@@ -24,7 +24,7 @@
 <link rel="preload" href="assets/cg-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/inter-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/cg.css">
-<script>/* set the season and motion settings before the page paints */(function(){var r=document.documentElement,m,c,f;r.classList.add('js');try{m=localStorage.getItem('cg-season-mode');c=localStorage.getItem('cg-calm');f=localStorage.getItem('cg-fx');}catch(e){}var d=new Date().getMonth(),s=m&&m!=='auto'?m:d>=2&&d<=4?'spring':d>=5&&d<=7?'summer':d>=8&&d<=10?'fall':'winter';r.setAttribute('data-season',s);if(c==='1'||(c==null&&window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))r.classList.add('calm');if(f==='0')r.classList.add('nofx');})();</script>
+<script>/* set the season and motion settings before the page paints */(function(){var r=document.documentElement,m,c,f;r.classList.add('js');try{m=localStorage.getItem('cg-season-mode');c=localStorage.getItem('cg-calm');f=localStorage.getItem('cg-fx');}catch(e){}var d=new Date().getMonth(),s=m&&m!=='auto'?m:d>=2&&d<=4?'spring':d>=5&&d<=7?'summer':d>=8&&d<=10?'fall':'winter';r.setAttribute('data-season',s);if(c==='1'||(c==null&&window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))r.classList.add('calm');if(f==='0')r.classList.add('nofx');if(r.getAttribute('data-page')==='home'&&!location.hash)r.classList.add('in-scene');})();</script>
 <script defer src="assets/shell.js"></script>
 <script defer src="assets/dashboard.js"></script>
 </head>
@@ -33,7 +33,7 @@
 <a class="skip" href="#main">Skip to content</a>
 <header class="nav" id="nav">
   <div class="nav-in">
-    <a class="brand" href="index.html" aria-label="CombGuard home"><svg viewBox="0 0 644 964" aria-hidden="true" focusable="false"><use href="#helm"/></svg>CombGuard</a>
+    <a class="brand" href="index.html#problem" aria-label="CombGuard home"><svg viewBox="0 0 644 964" aria-hidden="true" focusable="false"><use href="#helm"/></svg>CombGuard</a>
     <nav class="nav-links" aria-label="Pages">
       <a href="product.html" data-nav="product">Product</a>
       <a href="demo.html" data-nav="dashboard">Live hive<span class="demo-tag">demo</span></a>
@@ -66,7 +66,7 @@
   </div>
   <div class="panel menu" id="menu" hidden>
     <div class="panel-in">
-      <a href="index.html">Home</a><a href="product.html">Product</a><a href="demo.html">Live hive demo</a><a href="mission.html">Our mission</a><a href="team.html">Team</a>
+      <a href="index.html#problem">Home</a><a href="product.html">Product</a><a href="demo.html">Live hive demo</a><a href="mission.html">Our mission</a><a href="team.html">Team</a>
       <a href="https://forms.gle/HvKqPn7JhiQj5WCf8" target="_blank" rel="noopener">Beekeeper survey &#8599;</a>
       <a class="cta" href="index.html#join">Join the Watch</a>
     </div>
@@ -141,8 +141,8 @@
 <footer class="foot">
   <div class="wrap">
     <div class="foot-grid">
-      <div><a class="brand" href="index.html"><svg viewBox="0 0 644 964" aria-hidden="true" focusable="false"><use href="#helm"/></svg>CombGuard</a><p>The hive's first line of defense.</p></div>
-      <div><h4>Pages</h4><a href="index.html">Home</a><a href="product.html">Product</a><a href="demo.html">Live hive demo</a><a href="mission.html">Our mission</a><a href="team.html">Team</a></div>
+      <div><a class="brand" href="index.html#problem"><svg viewBox="0 0 644 964" aria-hidden="true" focusable="false"><use href="#helm"/></svg>CombGuard</a><p>The hive's first line of defense.</p></div>
+      <div><h4>Pages</h4><a href="index.html#problem">Home</a><a href="product.html">Product</a><a href="demo.html">Live hive demo</a><a href="mission.html">Our mission</a><a href="team.html">Team</a></div>
       <div><h4>On the home page</h4><a href="index.html#hardware">Hardware</a><a href="index.html#senses">What it senses</a><a href="index.html#watch">The long night</a><a href="index.html#progress">Where we are</a></div>
       <div><h4>Get involved</h4><a href="index.html#join">Join the Watch</a><a href="https://forms.gle/HvKqPn7JhiQj5WCf8" target="_blank" rel="noopener">Beekeeper survey &#8599;</a><a href="mailto:hello@combguard.com">hello@combguard.com</a><a href="dashboard.html">Dashboard sign-in</a></div>
     </div>
