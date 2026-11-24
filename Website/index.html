@@ -1,628 +1,311 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" data-page="home">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CombGuard: The hive's first line of defense</title>
-<meta name="description" content="CombGuard is a solar-powered beehive monitor that checks brood temperature, humidity, CO2 and weight every 15 minutes and alerts beekeepers early.">
-<link rel="canonical" href="https://combguard.com/">
-<meta name="theme-color" content="#000000">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="manifest" href="/site.webmanifest">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CombGuard · The hive's first line of defense</title>
+<meta name="description" content="CombGuard keeps watch at the hive between inspections. It tracks weight, brood temperature, air and sound, and emails you when something changes.">
+<meta name="theme-color" content="#FFFAF0">
+<link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="CombGuard">
-<meta property="og:title" content="CombGuard: The hive's first line of defense">
-<meta property="og:description" content="CombGuard is a solar-powered beehive monitor that checks brood temperature, humidity, CO2 and weight every 15 minutes and alerts beekeepers early.">
-<meta property="og:url" content="https://combguard.com/">
-<meta property="og:image" content="https://combguard.com/assets/og-image.png">
+<meta property="og:title" content="CombGuard · The hive's first line of defense">
+<meta property="og:description" content="CombGuard keeps watch at the hive between inspections. It tracks weight, brood temperature, air and sound, and emails you when something changes.">
+<meta property="og:image" content="assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The CombGuard helm logo with the words: The hive's first line of defense.">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700&family=Inter:wght@400;500;600&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css">
-<style>
-/* ===== HERO: sunset, then the dive into the hive (scrubbed by scroll) ===== */
-.dive { height: 240vh; position: relative; }
-.dive-stick { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; background: #000; }
-.sky { position: absolute; inset: 0; pointer-events: none;
-  background:
-    radial-gradient(900px 520px at 50% -8%, rgba(255, 196, 120, 0.75), rgba(232, 112, 62, 0.32) 42%, transparent 72%),
-    linear-gradient(#3a1d14, #1a0f12 34%, #06060a 62%, #000 80%);
-  opacity: clamp(0, calc(1 - var(--p, 0) * 2.4), 1); }
-.sun { position: absolute; left: 50%; top: 0; width: 360px; height: 360px; border-radius: 50%; pointer-events: none;
-  transform: translate(-50%, calc(-62% + var(--p, 0) * 260px));
-  background: radial-gradient(circle, #fff1d6 0%, #ffcf8a 20%, rgba(246, 150, 80, 0.5) 42%, transparent 68%);
-  opacity: clamp(0, calc(1 - var(--p, 0) * 2.2), 1); }
-.night-blue { position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(1000px 600px at 50% 40%, rgba(var(--blue-rgb), 0.35), transparent 70%);
-  opacity: clamp(0, calc((var(--p, 0) - 0.15) * 3), 0.9); }
-.stars { position: absolute; inset: 0 0 40% 0; pointer-events: none; opacity: clamp(0, calc((var(--p, 0) - 0.05) * 3), 1); }
-.stars i { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #e6ecff; animation: tw 4s ease-in-out infinite; }
-@keyframes tw { 50% { opacity: 0.2; } }
-.hero-copy { position: relative; z-index: 2; text-align: center; padding: 118px 22px 0;
-  opacity: clamp(0, calc(1 - var(--p, 0) * 3.4), 1); transform: translateY(calc(var(--p, 0) * -140px)); }
-.hero-copy .lead { margin-top: 18px; }
-.hero-copy .actions { margin-top: 28px; justify-content: center; }
-.stage { position: absolute; left: 50%; top: calc(100% - 38vh); z-index: 1;
-  width: min(900px, 88vw); aspect-ratio: 16 / 9; border-radius: 34px; overflow: hidden;
-  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
-  transform-origin: 50% 74%;
-  transform: translate(-50%, calc(clamp(0, var(--p, 0) * 2.2, 1) * -48vh)) scale(calc(1 + clamp(0, (var(--p, 0) - 0.12) * 4.2, 2.6)));
-  border-radius: calc(34px - clamp(0, var(--p, 0) * 60, 34) * 1px); }
-.stage img { width: 100%; height: 100%; object-fit: cover; }
-.stage .tag { position: absolute; left: 18px; bottom: 16px; padding: 6px 12px; border-radius: 999px; background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); font-size: 0.78rem; color: var(--text-2); opacity: clamp(0, calc(1 - var(--p, 0) * 6), 1); }
-.inside { position: absolute; inset: 0; z-index: 3; pointer-events: none;
-  background: radial-gradient(circle at 50% 50%, rgba(var(--gold-rgb), 0.22), rgba(0, 0, 0, 0.9) 45%, #000 75%);
-  opacity: clamp(0, calc((var(--p, 0) - 0.4) * 3.2), 1); }
-.inside-line { position: absolute; inset: 0; z-index: 4; display: grid; place-content: center; text-align: center; padding: 0 22px; pointer-events: none;
-  opacity: clamp(0, calc((var(--p, 0) - 0.58) * 4.5), 1); transform: translateY(calc((1 - clamp(0, (var(--p, 0) - 0.58) * 4.5, 1)) * 40px)); }
-.inside-line p { color: var(--text-2); font-size: 1.15rem; margin: 18px auto 0; max-width: 520px; font-weight: 500; }
-.cue { position: absolute; left: 50%; bottom: 22px; z-index: 5; transform: translateX(-50%); font-size: 0.75rem; color: var(--text-2); letter-spacing: 0.08em; display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: clamp(0, calc(1 - var(--p, 0) * 8), 1); }
-.cue span { width: 22px; height: 34px; border: 1.5px solid rgba(255,255,255,.4); border-radius: 12px; position: relative; }
-.cue span::after { content: ""; position: absolute; left: 50%; top: 7px; width: 3px; height: 7px; border-radius: 2px; background: #fff; transform: translateX(-50%); animation: wheel 1.8s ease-in-out infinite; }
-@keyframes wheel { 0% { opacity: 0; transform: translate(-50%, 0); } 30% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, 10px); } }
-@media (max-width: 640px) { .stage { top: calc(100% - 30vh); width: 92vw; border-radius: 22px; } .hero-copy { padding-top: 100px; } }
-
-/* ===== 01 THE BLIND SPOT ===== */
-.loss { text-align: center; padding: 44px 30px 34px; }
-.loss .num { font-family: var(--head); font-weight: 700; font-size: clamp(4.4rem, 11vw, 7.6rem); letter-spacing: -0.05em; line-height: 0.9; color: var(--text); }
-.loss .num span { display: inline-block; min-width: 3.3ch; text-align: right; font-variant-numeric: tabular-nums; }
-.loss .num em { font-style: normal; color: var(--gold); }
-.hexes { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; max-width: 360px; margin: 30px auto 6px; }
-.hexes i { aspect-ratio: 1 / 1.1547; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
-  background: var(--gold); box-shadow: 0 0 12px rgba(var(--gold-rgb), 0.6); transition: background 0.5s, opacity 0.5s, transform 0.5s; }
-.hexes i:nth-child(20n + 11), .hexes i:nth-child(20n + 12), .hexes i:nth-child(20n + 13), .hexes i:nth-child(20n + 14), .hexes i:nth-child(20n + 15),
-.hexes i:nth-child(20n + 16), .hexes i:nth-child(20n + 17), .hexes i:nth-child(20n + 18), .hexes i:nth-child(20n + 19), .hexes i:nth-child(20n + 20) { transform: translateX(50%); }
-.hexes i.lost { background: #2a2a2e; box-shadow: none; }
-.timeline { padding: 40px 34px; display: flex; flex-direction: column; }
-.tl { position: relative; margin: auto 0; padding-top: 130px; }
-.tl-bar { height: 14px; border-radius: 6px; background: #222226; position: relative; }
-.tl-gap { position: absolute; left: 4%; right: 4%; top: 0; bottom: 0; border-radius: 6px; background: repeating-linear-gradient(90deg, #2c2c31 0 10px, #222226 10px 20px); }
-.tl-end { position: absolute; top: 50%; width: 22px; height: 22px; border-radius: 50%; background: var(--text); transform: translate(-50%, -50%); box-shadow: 0 0 0 5px var(--tile); }
-.tl-labels { display: flex; justify-content: space-between; margin-top: 16px; font-size: 0.82rem; color: var(--text-2); font-weight: 500; }
-.ev { position: absolute; bottom: 30px; transform: translateX(-50%); text-align: center; width: 130px; font-size: 0.95rem; font-weight: 500; color: var(--text-2); line-height: 1.3;
-  opacity: 0; translate: 0 10px; transition: opacity 0.5s, translate 0.5s; }
-.ev::after { content: ""; display: block; width: 1px; height: 22px; margin: 8px auto 0; background: linear-gradient(var(--gold), transparent); }
-.ev b { display: block; color: var(--gold); font-family: var(--head); font-size: 0.9rem; margin-bottom: 4px; }
-.ev.on { opacity: 1; translate: 0 0; }
-.ev:nth-child(2) { bottom: 92px; }
-.ev:nth-child(2)::after { height: 84px; }
-.tl-mid { position: absolute; left: 50%; top: 100%; transform: translate(-50%, 34px); font-family: var(--head); font-weight: 600; color: var(--text-3); font-size: 0.9rem; white-space: nowrap; }
-
-/* ===== 02 THE WATCH (pinned, steps change as you scroll) ===== */
-.watch { height: 460vh; position: relative; }
-.watch-stick { position: sticky; top: 0; height: 100vh; height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: 70px 0 30px; overflow: hidden; }
-.watch-top { text-align: center; margin-bottom: 26px; }
-.watch-top .h2 { font-size: clamp(2rem, 4.4vw, 3.4rem); }
-.watch-body { display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 18px; align-items: stretch; min-height: 0; flex: 1; max-height: 640px; }
-.viewer { position: relative; border-radius: var(--radius); overflow: hidden; background: radial-gradient(800px 500px at 50% 30%, #12172a, #07080c 70%); }
-.cam { position: absolute; inset: 0; display: grid; place-items: center; transition: transform 1.1s cubic-bezier(0.65, 0, 0.35, 1); }
-.cam-inner { position: relative; height: 92%; aspect-ratio: 600 / 640; }
-.cam-inner img { width: 100%; height: 100%; }
-.pin { position: absolute; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 4px rgba(var(--gold-rgb), 0.25); opacity: 0.35; transition: opacity 0.5s, transform 0.5s; }
-.pin.on { opacity: 1; animation: ping 1.8s ease-out infinite; }
-@keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(var(--gold-rgb), 0.7); } 100% { box-shadow: 0 0 0 18px rgba(var(--gold-rgb), 0); } }
-.viewer-tag { position: absolute; left: 18px; top: 16px; z-index: 2; padding: 6px 12px; border-radius: 999px; background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); font-size: 0.78rem; color: var(--text-2); }
-.cards { position: relative; display: flex; flex-direction: column; }
-.progress { display: flex; gap: 6px; margin-bottom: 14px; }
-.progress span { flex: 1; height: 4px; border-radius: 3px; background: #26262a; overflow: hidden; }
-.progress span i { display: block; height: 100%; width: 0; background: var(--gold); }
-.card-stack { position: relative; flex: 1; }
-.step { position: absolute; inset: 0; background: var(--tile); border-radius: var(--radius); padding: 34px; display: flex; flex-direction: column; justify-content: flex-end;
-  opacity: 0; transform: translateY(24px); transition: opacity 0.6s, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); pointer-events: none; }
-.step.on { opacity: 1; transform: none; pointer-events: auto; }
-.step .k { font-family: var(--head); font-weight: 700; color: var(--gold); font-size: 0.9rem; margin-bottom: auto; }
-.step .big-n { position: absolute; right: 26px; top: 14px; font-family: var(--head); font-weight: 700; font-size: 7rem; line-height: 1; letter-spacing: -0.06em; color: rgba(255,255,255,0.05); }
-.step h3 { font-size: clamp(1.6rem, 2.6vw, 2.2rem); margin-bottom: 12px; }
-.step p { color: var(--text-2); margin: 0; font-size: 1.02rem; }
-.step .reads { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
-.step .reads span { padding: 6px 12px; border-radius: 999px; background: var(--tile-2); font-size: 0.8rem; color: var(--text); }
-@media (max-width: 860px) {
-  .watch-body { grid-template-columns: 1fr; grid-template-rows: 1fr auto; max-height: none; }
-  .viewer { min-height: 0; }
-  .card-stack { min-height: 230px; flex: none; }
-  .step { padding: 24px; }
-  .watch-top { margin-bottom: 14px; }
-}
-
-/* ===== 03 THE ALERT (realistic phone) ===== */
-.alert-sec { overflow: hidden; background: radial-gradient(900px 600px at 50% 60%, rgba(var(--blue-rgb), calc(0.12 + var(--p, 0) * 0.3)), transparent 70%), #04050a; }
-.phone-wrap { position: relative; display: grid; place-items: center; margin-top: 60px; }
-.alert-glow { position: absolute; width: 520px; height: 520px; border-radius: 50%; background: radial-gradient(closest-side, rgba(var(--gold-rgb), 0.45), transparent);
-  opacity: clamp(0, calc((var(--p, 0) - 0.42) * 6), 1); transform: scale(calc(0.7 + clamp(0, (var(--p, 0) - 0.42) * 3, 0.3))); }
-.iphone { position: relative; width: 320px; height: 660px; border-radius: 62px; padding: 5px;
-  background: linear-gradient(145deg, #6b6b70, #2a2a2d 22%, #47474b 50%, #1f1f22 78%, #5a5a5e);
-  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.25), 0 60px 120px rgba(0, 0, 0, 0.75);
-  transform: translateY(calc((0.5 - var(--p, 0)) * 120px)) rotate(calc((0.5 - var(--p, 0)) * -6deg)); }
-.iphone::before, .iphone::after { content: ""; position: absolute; width: 4px; border-radius: 2px; background: linear-gradient(90deg, #3a3a3e, #6a6a6f); }
-.iphone::before { left: -3px; top: 150px; height: 64px; box-shadow: 0 -52px 0 -12px #4a4a4e, 0 80px 0 0 #4a4a4e; }
-.iphone::after { right: -3px; top: 190px; height: 96px; }
-.bezel { height: 100%; border-radius: 57px; background: #000; padding: 9px; }
-.screen { position: relative; height: 100%; border-radius: 49px; overflow: hidden;
-  background: radial-gradient(120% 80% at 30% 0%, #2c3f7a, transparent 60%), radial-gradient(100% 70% at 90% 100%, #3a1f4f, transparent 60%), linear-gradient(#101a3a, #090c1c); }
-.island { position: absolute; left: 50%; top: 11px; width: 112px; height: 33px; border-radius: 20px; background: #000; transform: translateX(-50%); z-index: 3; }
-.lock { position: absolute; left: 0; right: 0; top: 62px; text-align: center; color: rgba(255, 255, 255, 0.92); }
-.lock svg { margin: 0 auto 6px; }
-.lock .d { font-size: 1.02rem; font-weight: 600; }
-.lock .t { font-family: var(--head); font-weight: 700; font-size: 88px; line-height: 1; letter-spacing: -0.02em; margin-top: 2px; }
-.notif { position: absolute; left: 12px; right: 12px; top: 270px; padding: 13px 14px; border-radius: 22px; display: grid; grid-template-columns: 36px 1fr; gap: 10px;
-  background: rgba(52, 54, 66, 0.62); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); color: #fff;
-  opacity: clamp(0, calc((var(--p, 0) - 0.4) * 7), 1);
-  transform: translateY(calc((1 - clamp(0, (var(--p, 0) - 0.4) * 7, 1)) * -30px)) scale(calc(0.94 + clamp(0, (var(--p, 0) - 0.4) * 7, 1) * 0.06)); }
-.notif .ic { width: 36px; height: 36px; border-radius: 9px; background: #0b0b0c; display: grid; place-items: center; }
-.notif .ic svg { width: 22px; height: 22px; color: #f5f5f7; }
-.notif .top { display: flex; justify-content: space-between; font-size: 0.76rem; opacity: 0.7; }
-.notif strong { display: block; font-size: 0.9rem; margin-top: 1px; }
-.notif p { margin: 2px 0 0; font-size: 0.84rem; line-height: 1.32; opacity: 0.9; }
-.quick { position: absolute; bottom: 38px; width: 50px; height: 50px; border-radius: 50%; background: rgba(255, 255, 255, 0.14); backdrop-filter: blur(10px); display: grid; place-items: center; }
-.quick.l { left: 40px; } .quick.r { right: 40px; }
-.home-ind { position: absolute; left: 50%; bottom: 9px; width: 130px; height: 5px; border-radius: 3px; background: rgba(255, 255, 255, 0.85); transform: translateX(-50%); }
-.log { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; max-width: 760px; margin: 60px auto 0; }
-.log div { background: var(--tile); border-radius: 20px; padding: 18px 20px; font-size: 0.92rem; color: var(--text-2); }
-.log b { display: block; font-family: var(--head); color: var(--text); font-size: 1.05rem; margin-bottom: 2px; }
-.log .hot b { color: var(--gold); }
-@media (max-width: 640px) { .iphone { width: 280px; height: 578px; } .lock .t { font-size: 76px; } .notif { top: 240px; } .log { grid-template-columns: 1fr; } }
-
-/* ===== 04 THE PLAN + DAWN ===== */
-.plan-sec { overflow: hidden; padding-bottom: 220px; }
-.plan .tile { padding: 34px; min-height: 260px; display: flex; flex-direction: column; }
-.plan .n { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: rgba(var(--gold-rgb), 0.14); color: var(--gold); font-family: var(--head); font-weight: 700; margin-bottom: auto; }
-.plan h3 { font-size: 1.5rem; margin-top: 30px; }
-.cover { margin-top: 18px; padding: 36px; }
-.cover-bar { position: relative; height: 34px; border-radius: 10px; background: #1f1f23; overflow: hidden; margin-top: 22px; }
-.cover-fill { position: absolute; inset: 0; width: calc(clamp(0, (var(--p, 0) - 0.2) * 2.6, 1) * 100%);
-  background: repeating-linear-gradient(90deg, rgba(var(--blue-rgb), 0.95) 0 2px, rgba(var(--blue-rgb), 0.35) 2px 6px); box-shadow: 0 0 24px rgba(var(--blue-rgb), 0.6); }
-.cover-row { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 10px; }
-.cover-row .big { font-family: var(--head); font-weight: 700; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.04em; }
-.cover-row .big span { color: #8fb0ff; }
-.sunrise { position: absolute; left: 50%; bottom: 0; width: 900px; height: 900px; border-radius: 50%; pointer-events: none;
-  transform: translate(-50%, calc(88% - clamp(0, (var(--p, 0) - 0.35) * 1.4, 1) * 40%));
-  background: radial-gradient(circle, rgba(255, 220, 160, 0.85) 0%, rgba(246, 160, 80, 0.45) 18%, rgba(232, 112, 62, 0.14) 40%, transparent 64%);
-  opacity: clamp(0, calc((var(--p, 0) - 0.3) * 2.2), 1); }
-.dawn-line { position: relative; text-align: center; margin-top: 130px;
-  opacity: clamp(0, calc((var(--p, 0) - 0.5) * 4), 1); }
-
-/* ===== DEMO ===== */
-.panel { max-width: 980px; margin: 0 auto; background: var(--tile); border-radius: var(--radius); padding: 26px; text-align: left; }
-.panel-top { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
-.chip { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; background: rgba(52, 199, 89, 0.12); color: #7fe0a0; font-size: 0.86rem; font-weight: 500; }
-.chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #34c759; box-shadow: 0 0 10px #34c759; }
-.reads4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 18px; }
-.reads4 div { background: var(--tile-2); border-radius: 18px; padding: 16px; }
-.reads4 small { color: var(--text-3); font-size: 0.8rem; }
-.reads4 b { display: block; font-family: var(--head); font-size: 1.7rem; letter-spacing: -0.03em; margin-top: 2px; }
-.reads4 b em { font-style: normal; font-size: 0.85rem; color: var(--text-3); font-weight: 500; margin-left: 3px; }
-.panel svg { width: 100%; height: 160px; margin-top: 16px; }
-.panel .line { stroke-dasharray: 1; stroke-dashoffset: calc(1 - clamp(0, (var(--p, 0) - 0.15) * 2.4, 1)); }
-@media (max-width: 640px) { .reads4 { grid-template-columns: 1fr 1fr; } }
-
-/* ===== GEN 1 CAROUSEL ===== */
-.track { display: flex; gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
-  padding: 0 max(22px, calc((100vw - var(--max)) / 2 + 22px)); scroll-padding: 0 max(22px, calc((100vw - var(--max)) / 2 + 22px)); }
-.track::-webkit-scrollbar { display: none; }
-.slide { position: relative; flex: 0 0 min(380px, 82vw); height: 500px; border-radius: var(--radius); overflow: hidden; scroll-snap-align: start; background: var(--tile); cursor: pointer; }
-.slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.slide:hover img { transform: scale(1.04); }
-.slide::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(0, 0, 0, 0.65), transparent 40%, transparent 60%, rgba(0, 0, 0, 0.4)); }
-.slide .cap { position: absolute; left: 26px; right: 26px; top: 26px; z-index: 1; }
-.slide .cap small { color: var(--gold); font-weight: 600; font-size: 0.82rem; }
-.slide .cap h3 { font-size: 1.55rem; margin-top: 6px; line-height: 1.1; }
-.plus { position: absolute; right: 18px; bottom: 18px; z-index: 1; width: 38px; height: 38px; border-radius: 50%; border: 0; background: rgba(245, 245, 247, 0.9); color: #000; font-size: 24px; line-height: 1; cursor: pointer; display: grid; place-items: center; transition: transform 0.25s; }
-.slide:hover .plus { transform: scale(1.08); }
-.slide.text { background: linear-gradient(160deg, #1a1a1d, #0d0d0f); display: flex; align-items: flex-end; padding: 26px; }
-.slide.text::after { display: none; }
-.car-nav { display: flex; justify-content: flex-end; gap: 12px; margin-top: 22px; }
-.car-nav button { width: 44px; height: 44px; border-radius: 50%; border: 0; background: #2a2a2e; color: var(--text); cursor: pointer; display: grid; place-items: center; transition: background 0.2s, opacity 0.2s; }
-.car-nav button:hover { background: #3a3a3e; }
-.car-nav button:disabled { opacity: 0.35; cursor: default; }
-
-/* ===== GEN 2 BENTO ===== */
-.bento { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-.bento .tile { min-height: 220px; display: flex; flex-direction: column; justify-content: flex-end; }
-.bento .wide { grid-column: span 2; grid-row: span 2; justify-content: space-between; background: radial-gradient(500px 300px at 80% 0%, rgba(var(--gold-rgb), 0.16), transparent 70%), var(--tile); }
-.bento .v { font-family: var(--head); font-weight: 700; font-size: clamp(2.2rem, 4vw, 3.2rem); letter-spacing: -0.045em; line-height: 1; }
-.bento .v em { font-style: normal; color: var(--gold); font-size: 0.5em; margin-left: 4px; letter-spacing: -0.02em; }
-.sensors { list-style: none; padding: 0; margin: 22px 0 0; display: grid; gap: 10px; }
-.sensors li { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--line); color: var(--text-2); font-size: 0.95rem; }
-.sensors li b { color: var(--text); font-weight: 500; }
-.status { display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--gold); font-weight: 600; }
-.status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); animation: ping 1.8s ease-out infinite; }
-@media (max-width: 900px) { .bento { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 560px) { .bento { grid-template-columns: 1fr; } .bento .wide { grid-column: auto; } }
-
-/* ===== CTA ===== */
-.cta { text-align: center; overflow: hidden; }
-.cta::before { content: ""; position: absolute; left: 50%; bottom: -380px; width: 1000px; height: 700px; transform: translateX(-50%); pointer-events: none;
-  background: radial-gradient(closest-side, rgba(var(--gold-rgb), 0.22), transparent); }
-.cta .wrap { position: relative; }
-</style>
+<link rel="preload" href="assets/fonts/cg-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/site.css">
+<script>/* set the season and motion settings before the page paints */(function(){var r=document.documentElement,m,c,f;r.classList.add('js');try{m=localStorage.getItem('cg-season-mode');c=localStorage.getItem('cg-calm');f=localStorage.getItem('cg-fx');}catch(e){}var d=new Date().getMonth(),s=m&&m!=='auto'?m:d>=2&&d<=4?'spring':d>=5&&d<=7?'summer':d>=8&&d<=10?'fall':'winter';r.setAttribute('data-season',s);if(c==='1'||(c==null&&window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))r.classList.add('calm');if(f==='0')r.classList.add('nofx');})();</script>
+<script defer src="assets/js/vendor/rough.js"></script>
+<script defer src="assets/js/shell.js"></script>
+<script defer src="assets/js/hero.js"></script>
+<script defer src="assets/js/sketches.js"></script>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-<symbol id="cg-logo" viewBox="0 0 64 64"><path d="M32 4 56 18v28L32 60 8 46V18z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><rect x="17" y="26" width="30" height="6.5" rx="3.25" fill="#e9a23b"/><path d="M32 32v15" stroke="#e9a23b" stroke-width="5" stroke-linecap="round"/></symbol>
-</defs></svg>
-<header class="nav">
-  <div class="wrap">
-    <a href="/" class="brand" aria-label="CombGuard home"><svg><use href="#cg-logo"/></svg>CombGuard</a>
-    <button class="menu-btn" aria-label="Menu" aria-expanded="false"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 7h14M3 13h14"/></svg></button>
-    <nav class="nav-links" aria-label="Main">
-      <a href="/about">About</a>
-      <a href="/gen1">Gen 1</a>
-      <a href="/gen2">Gen 2</a>
-      <a href="/dashboard?demo=1">Live demo</a>
-      <a href="/dashboard" class="btn btn-gold btn-sm">Log in</a>
+<svg class="helm-sprite" aria-hidden="true" focusable="false"><symbol id="helm" viewBox="190 30 644 964"><path fill="#24180C" d="M511 41 L493 63 L465 85 L445 95 L372 125 L336 146 L312 165 L298 179 L281 202 L271 221 L263 243 L256 274 L253 303 L253 341 L251 343 L237 345 L225 352 L217 364 L214 376 L215 458 L218 466 L227 478 L235 483 L246 486 L249 490 L260 572 L262 609 L260 652 L254 677 L245 696 L230 716 L207 737 L203 743 L202 752 L207 764 L218 778 L240 800 L258 815 L310 849 L392 891 L430 913 L469 943 L512 990 L532 965 L550 946 L585 918 L632 890 L709 851 L740 832 L780 802 L814 766 L820 753 L820 744 L815 736 L792 716 L778 697 L767 672 L762 647 L762 570 L773 491 L776 486 L785 484 L794 479 L801 472 L807 460 L808 374 L802 358 L796 351 L783 344 L771 343 L769 341 L765 277 L758 245 L749 219 L740 202 L726 182 L711 166 L687 147 L638 119 L578 95 L558 85 L540 72Z"/><path fill="#EBA43C" fill-rule="evenodd" d="M554 598 L538 624 L542 634 L554 653 L582 653 L597 628 L598 624 L582 598ZM441 598 L426 623 L426 627 L441 653 L470 653 L485 627 L483 620 L472 601 L469 598ZM611 563 L609 564 L597 585 L595 592 L608 615 L611 618 L636 618 L649 597 L652 589 L637 563ZM496 565 L482 590 L482 592 L495 613 L495 615 L500 618 L526 618 L541 592 L540 587 L525 563 L501 563ZM387 563 L382 569 L371 591 L384 615 L387 618 L412 618 L416 614 L429 590 L414 564 L412 563ZM664 529 L654 545 L649 557 L664 583 L688 583 L703 555 L688 529ZM554 529 L551 532 L538 555 L539 559 L554 583 L565 583 L566 584 L583 583 L598 557 L597 553 L585 532 L582 529ZM441 529 L426 554 L426 558 L441 583 L449 584 L470 583 L485 557 L481 547 L470 529ZM358 528 L334 529 L320 554 L320 558 L335 583 L343 584 L359 583 L374 556 L362 533ZM723 495 L714 495 L712 497 L700 520 L713 546 L715 543 L720 519ZM497 495 L482 521 L486 530 L498 549 L526 549 L541 523 L539 516 L526 495ZM300 495 L299 500 L309 546 L314 539 L322 523 L322 519 L311 498 L308 495ZM610 495 L595 520 L595 523 L608 546 L611 549 L637 549 L652 521 L637 495 L627 495 L626 494ZM386 495 L371 520 L371 523 L386 549 L413 549 L428 523 L428 520 L413 495 L403 495 L402 494ZM664 460 L652 480 L649 488 L663 514 L665 515 L688 515 L702 489 L702 485 L688 460ZM554 460 L547 470 L538 488 L553 514 L580 515 L587 508 L598 486 L585 463 L582 460ZM441 460 L426 485 L426 489 L441 515 L457 515 L458 514 L469 515 L485 488 L482 480 L470 460ZM334 460 L320 486 L320 489 L334 514 L336 515 L359 514 L374 487 L359 460ZM713 430 L700 452 L700 455 L712 479 L714 481 L724 481 L725 480 L725 432 L720 430ZM302 430 L297 432 L297 480 L298 481 L308 481 L321 458 L322 452 L310 430ZM611 426 L597 448 L595 454 L610 480 L637 480 L652 455 L652 452 L637 426ZM498 426 L488 441 L482 454 L497 480 L526 480 L541 454 L541 451 L526 426ZM386 426 L377 440 L371 454 L386 480 L413 480 L427 457 L428 452 L413 426ZM659 404 L650 420 L663 444 L665 446 L688 446 L701 424 L697 415 L694 412 L684 410 L681 408ZM363 403 L328 412 L322 421 L322 425 L333 445 L335 446 L358 446 L360 444 L373 420ZM602 394 L603 398 L612 412 L638 412 L645 401 L630 397ZM421 394 L399 396 L378 401 L385 412 L412 412ZM553 390 L538 417 L541 425 L554 446 L582 446 L588 438 L599 419 L599 417 L583 391ZM440 391 L425 417 L426 422 L441 446 L469 446 L486 417 L480 404 L472 390ZM769 360 L768 361 L768 466 L769 467 L779 467 L786 462 L790 455 L791 449 L791 378 L789 371 L782 363 L778 361ZM252 360 L244 361 L240 363 L235 368 L232 375 L232 453 L235 460 L244 467 L254 466 L254 362ZM511 65 L506 72 L489 89 L477 98 L457 109 L400 132 L360 152 L336 168 L312 190 L296 212 L288 228 L280 251 L274 283 L272 327 L277 326 L290 317 L290 303 L293 274 L299 248 L304 234 L311 220 L322 204 L341 185 L369 166 L395 153 L455 129 L457 127 L460 127 L478 119 L491 111 L494 113 L494 291 L492 293 L462 293 L461 294 L444 294 L443 295 L430 295 L420 297 L401 298 L344 308 L315 317 L296 326 L280 336 L267 350 L267 382 L269 383 L279 376 L306 363 L333 354 L363 347 L394 342 L424 339 L437 339 L438 338 L492 337 L494 339 L494 356 L492 358 L458 358 L457 359 L426 360 L365 368 L325 377 L303 384 L281 393 L268 401 L268 490 L283 578 L309 599 L368 639 L464 699 L487 712 L494 718 L494 908 L492 910 L469 891 L434 867 L398 846 L333 811 L300 791 L273 772 L251 752 L269 731 L277 719 L287 697 L290 684 L293 653 L292 632 L288 609 L282 594 L281 594 L280 651 L277 668 L272 685 L257 714 L244 730 L224 748 L224 751 L243 774 L262 791 L285 808 L337 839 L339 839 L352 847 L356 848 L416 880 L449 901 L481 927 L512 961 L529 940 L553 917 L567 906 L605 881 L700 831 L742 805 L775 778 L791 761 L799 749 L773 724 L763 711 L763 709 L755 696 L749 681 L742 645 L742 631 L741 630 L742 594 L741 594 L739 597 L733 618 L730 640 L730 663 L733 687 L738 704 L744 717 L760 739 L769 748 L769 750 L760 760 L742 776 L711 798 L589 867 L558 888 L531 910 L529 909 L529 718 L536 712 L559 699 L655 639 L711 601 L740 578 L741 566 L755 486 L755 401 L751 398 L730 388 L708 380 L658 368 L594 360 L564 359 L563 358 L531 358 L529 356 L529 339 L531 337 L586 338 L587 339 L620 341 L661 347 L686 353 L714 362 L742 375 L752 382 L754 382 L754 349 L744 338 L733 330 L712 319 L686 310 L655 303 L622 298 L580 295 L579 294 L531 293 L529 291 L529 113 L532 111 L556 124 L593 138 L638 158 L663 172 L682 186 L696 200 L705 212 L714 228 L720 243 L724 257 L728 280 L730 299 L730 316 L731 318 L741 323 L746 327 L748 326 L747 293 L743 265 L738 245 L727 217 L709 190 L687 169 L655 148 L618 130 L566 109 L544 97 L527 83ZM286 411 L316 399 L369 385 L420 377 L468 374 L469 373 L492 373 L494 375 L494 403 L500 412 L525 412 L529 406 L529 375 L531 373 L570 374 L619 379 L672 389 L713 401 L736 411 L739 414 L739 487 L724 567 L710 579 L663 612 L531 696 L529 694 L529 682 L540 663 L541 658 L525 632 L498 632 L482 659 L482 661 L494 681 L494 694 L492 696 L372 620 L299 568 L289 521 L283 484 L283 414Z"/></symbol></svg>
+<a class="skip" href="#home-main">Skip to content</a>
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="brand" href="index.html" aria-label="CombGuard home"><svg viewBox="0 0 644 964" aria-hidden="true" focusable="false"><use href="#helm"/></svg>CombGuard</a>
+    <nav class="nav-links" aria-label="Pages">
+      <a href="product.html" data-nav="product">Product</a>
+      <a href="dashboard.html" data-nav="dashboard">Live hive<span class="demo-tag">demo</span></a>
+      <a href="mission.html" data-nav="mission">Our mission</a>
+      <a href="team.html" data-nav="team">Team</a>
+      <a href="https://forms.gle/HvKqPn7JhiQj5WCf8" target="_blank" rel="noopener">Beekeeper survey <span aria-hidden="true">&#8599;</span></a>
     </nav>
+    <div class="nav-r">
+      <a class="cta" href="#join">Join the Watch</a>
+      <button class="icon-btn" id="set-btn" type="button" aria-label="Settings" aria-expanded="false" aria-controls="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 13.5a7.7 7.7 0 0 0 0-3l2-1.6-2-3.4-2.4 1a7.6 7.6 0 0 0-2.6-1.5L14 2.5h-4l-.4 2.5A7.6 7.6 0 0 0 7 6.5l-2.4-1-2 3.4 2 1.6a7.7 7.7 0 0 0 0 3l-2 1.6 2 3.4 2.4-1a7.6 7.6 0 0 0 2.6 1.5l.4 2.5h4l.4-2.5a7.6 7.6 0 0 0 2.6-1.5l2.4 1 2-3.4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+      <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    </div>
+  </div>
+  <div class="panel settings" id="settings" hidden role="dialog" aria-label="Settings">
+    <div class="panel-in">
+      <p class="panel-t">Settings</p>
+      <p class="set-l" id="season-l">Season colors</p>
+      <div class="seg" role="radiogroup" aria-labelledby="season-l" id="season-seg">
+        <button type="button" role="radio" data-s="auto" aria-checked="true"><i class="sw auto"></i>Auto</button>
+        <button type="button" role="radio" data-s="spring" aria-checked="false"><i class="sw" style="background:#F8DCE3"></i>Spring</button>
+        <button type="button" role="radio" data-s="summer" aria-checked="false"><i class="sw" style="background:#D3EFEA"></i>Summer</button>
+        <button type="button" role="radio" data-s="fall" aria-checked="false"><i class="sw" style="background:#F6D6AE"></i>Fall</button>
+        <button type="button" role="radio" data-s="winter" aria-checked="false"><i class="sw" style="background:#E3EAF6"></i>Winter</button>
+      </div>
+      <p class="set-hint" id="auto-hint">Auto follows today's date.</p>
+      <label class="sw-row"><span><b>Season effects</b><small>Snow, petals, falling leaves and wind across the page</small></span><input type="checkbox" id="opt-fx" checked><i aria-hidden="true"></i></label>
+      <label class="sw-row"><span><b>Reduce motion</b><small>Calmer scrolling and no drawing animations</small></span><input type="checkbox" id="opt-calm"><i aria-hidden="true"></i></label>
+      <p class="set-hint">Saved on this device.</p>
+    </div>
+  </div>
+  <div class="panel menu" id="menu" hidden>
+    <div class="panel-in">
+      <a href="index.html">Home</a><a href="product.html">Product</a><a href="dashboard.html">Live hive demo</a><a href="mission.html">Our mission</a><a href="team.html">Team</a>
+      <a href="https://forms.gle/HvKqPn7JhiQj5WCf8" target="_blank" rel="noopener">Beekeeper survey &#8599;</a>
+      <a class="cta" href="#join">Join the Watch</a>
+    </div>
   </div>
 </header>
+<canvas id="pfx" aria-hidden="true"></canvas>
 
-<main>
-
-<!-- ================= HERO: sunset, then into the hive ================= -->
-<section class="dive" id="dive" data-scene="sticky">
-  <div class="dive-stick">
-    <div class="sky"></div>
-    <div class="sun"></div>
-    <div class="night-blue"></div>
-    <div class="stars" id="stars"></div>
-    <div class="hero-copy">
-      <h1 class="h1">The hive's first<br><span class="acc">line of defense.</span></h1>
-      <p class="lead" style="margin-left:auto;margin-right:auto">CombGuard watches inside your hive every 15 minutes and warns you early, while there's still time to act.</p>
-      <div class="actions"><a href="/dashboard?demo=1" class="btn btn-gold">See the live demo</a><a href="https://forms.gle/yDhAXinGf1WT7gVK9" target="_blank" rel="noopener" class="btn btn-ghost">Take the survey</a></div>
+<div class="page" data-page="home" id="page-home">
+<section class="hero" id="top" aria-label="The story of a hive and the guard that watches it">
+  <h1 class="sr">CombGuard: a hive monitor that keeps watch between inspections</h1>
+  <div class="stage" id="stage">
+    <div class="layers" role="img" aria-label="A pencil drawing that sinks from the open sky, over the tree line and through a forest to a beehive in a clearing, fitted with CombGuard.">
+      <svg class="lyr" id="L-far" aria-hidden="true"><defs></defs><g id="far"></g></svg>
+      <svg class="lyr" id="L-mid" aria-hidden="true"><defs></defs><g id="mid"></g></svg>
+      <svg class="lyr" id="L-near" aria-hidden="true"><defs></defs><g id="near"></g></svg>
     </div>
-    <!-- Hero image: replace images/hero.jpg with a Higgsfield render of CombGuard on a hive at dusk (16:9) -->
-    <div class="stage"><img src="images/hero.jpg" alt="Illustration of a beehive at dusk with the CombGuard case and solar panel"><span class="tag">Illustration</span></div>
-    <div class="inside" aria-hidden="true"></div>
-    <div class="inside-line">
-      <h2 class="h2">Inside the hive,<br><span class="acc">it's always night.</span></h2>
-      <p>Bees live and work in total darkness. Trouble starts there too, where no one can see it.</p>
+    <canvas id="fx" aria-hidden="true"></canvas>
+    <div class="beat L" data-b="0"><h2>Out past the tree line, a colony is hard at <em>work.</em></h2></div>
+    <div class="beat R" data-b="1"><h2>From first light, thousands of bees fly out for <em>nectar.</em></h2></div>
+    <div class="beat L" data-b="2"><h2>Once the lid is closed, you can't see what's happening <em>inside.</em></h2></div>
+    <div class="beat R" data-b="3"><h2>CombGuard keeps watch while you're <em>away.</em></h2></div>
+    <div class="beat L" data-b="4"><svg class="hw" data-w="Air." aria-label="Air"></svg><p>Under the lid, a sensor pod measures CO&#8322; and humidity.</p></div>
+    <div class="beat R" data-b="5"><svg class="hw" data-w="Sound." aria-label="Sound"></svg><p>The same pod listens to the colony's hum.</p></div>
+    <div class="beat L" data-b="6"><svg class="hw" data-w="Warmth." aria-label="Warmth"></svg><p>A probe between the frames tracks the brood, which the bees keep near 94&deg;F.</p></div>
+    <div class="beat R" data-b="7"><svg class="hw" data-w="Weight." aria-label="Weight"></svg><p>A scale under the hive shows the nectar flow, winter stores and swarms.</p></div>
+    <div class="beat L" data-b="8"><h2>Measured day and night, right at the <em>hive.</em></h2></div>
+    <div class="beat R" data-b="9"><h2>So you know which hive to open, and <em>when.</em></h2></div>
+    <div class="beat settle" data-b="10">
+      <div class="mark"><svg viewBox="0 0 644 964" aria-hidden="true" focusable="false"><use href="#helm"/></svg>CombGuard</div>
+      <h2>The hive's first line of <em>defense.</em></h2>
+      <div class="btns"><a class="cta" href="#problem">Meet CombGuard</a><a class="cta ghost" href="#join">Join the Watch</a></div>
+      <div class="note">Concept sketch. Gen 2 is being built now.</div>
     </div>
-    <div class="cue" aria-hidden="true"><span></span>Scroll</div>
+    <nav class="rail" id="rail" aria-label="Story progress"><i id="rail-fill"></i>
+      <button type="button" data-b="0"><span>Sky</span></button><button type="button" data-b="3"><span>Tree line</span></button><button type="button" data-b="5"><span>Forest</span></button><button type="button" data-b="10"><span>The hive</span></button>
+    </nav>
+    <div class="hint" id="hint">scroll<span></span></div>
   </div>
 </section>
 
-<!-- ================= 01 THE BLIND SPOT ================= -->
-<section class="section band" id="blind" data-scene="pass">
+<main id="home-main">
+<section class="sec" id="problem">
+  <div class="wrap wide">
+    <div class="center"><p class="kicker" data-rv>The long night</p><h2 class="big" data-words>Between inspections, you're <em>guessing.</em></h2>
+      <p class="lede" data-rv>You can't open the hive every day, and you shouldn't have to. But a lot can happen while the lid is closed.</p></div>
+    <div class="probs" data-stagger>
+      <article class="prob" data-rv><div class="pmedia paper"><svg class="sk" data-art="pswarm" viewBox="0 0 360 250" role="img" aria-label="Sketch of a swarm leaving a hive and gathering on a branch"></svg></div><h3>A swarm can leave in an <em>afternoon.</em></h3><p>About half the colony flies off with the old queen, often before you've seen the signs.</p></article>
+      <article class="prob" data-rv><div class="pmedia paper"><svg class="sk" data-art="pstores" viewBox="0 0 360 250" role="img" aria-label="Cutaway sketch of a hive in winter with the bee cluster on one side and honey out of reach on the other"></svg></div><h3>Winter stores can run out <em>quietly.</em></h3><p>A cluster can starve with honey just a few frames away, and you won't know until spring.</p></article>
+      <article class="prob" data-rv><div class="pmedia paper"><svg class="sk" data-art="pqueen" viewBox="0 0 360 250" role="img" aria-label="Sketch of comb with a dashed outline where the queen should be"></svg></div><h3>A colony can lose its <em>queen.</em></h3><p>Without her, the colony starts to fade. The longer it goes unnoticed, the harder it is to fix.</p></article>
+    </div>
+    <p class="turn" data-rv>That blind stretch between visits is <b>the long night</b>. CombGuard was built to stand watch through it.</p>
+  </div>
+</section>
+
+<section class="sec paper" id="meet">
+  <div class="wrap center hhead">
+    <p class="kicker" data-rv>Meet the guard</p>
+    <h2 class="big" data-words>A quiet guard that stays with the <em>hive.</em></h2>
+    <p class="lede" data-rv>CombGuard keeps track of what you can't see between inspections and tells you when something changes, so you open the right hive at the right time.</p>
+    <div class="tlinks" data-rv><a href="product.html">Explore the product &rsaquo;</a><a href="#watch">Follow a night on watch &rsaquo;</a></div>
+    <svg class="sk doodle d1" data-doodle="loop" viewBox="0 0 160 90" aria-hidden="true"></svg>
+  </div>
+  <div class="wrap xwide" data-rv>
+    <div class="scene-scroll" id="intro-scroll"><svg class="sk scene" id="art-intro" viewBox="0 0 1100 580" role="img" aria-label="Pencil sketch of a beehive standing on its stand in a forest clearing, with CombGuard fitted: a scale under it, a pod under the lid, a probe between the frames, and the case with its solar panel on the side. A smoker, a honey jar and a hive tool sit on the grass, and bees fly between the hive and the flowers."></svg></div>
+    <p class="caption">Concept sketch of CombGuard on a standard Langstroth hive.<span class="mob"> Drag to look around.</span></p>
+  </div>
+</section>
+
+<section class="sec night" id="hardware" aria-roledescription="carousel" aria-label="CombGuard Gen 2 gallery">
+  <div class="wrap wide sec-head">
+    <div><p class="kicker" data-rv>CombGuard Gen 2</p><h2 class="mid" data-words>Built for the <em>hive.</em></h2></div>
+    <p class="lede" data-rv>Every part has one job, and it's made to live outside with your bees.</p>
+  </div>
+  <div class="slider" id="slider" data-rv>
+    <div class="sl-view" id="sl-view" tabindex="0" aria-label="Gallery. Swipe, tap the next photo, or use the arrow keys.">
+      <div class="slides" id="slides">
+        <figure class="slide cover" aria-roledescription="slide" aria-label="1 of 5">
+          <div class="media"><img src="assets/img/r-hive.webp" srcset="assets/img/r-hive-800.webp 800w, assets/img/r-hive.webp 1600w" sizes="(max-width: 820px) 100vw, 1100px" width="1600" height="893" decoding="async" alt="Concept render of a white hive in a wildflower meadow on the black CombGuard scale, with the case and solar panel on its side" draggable="false"><span class="cr">Concept render</span></div>
+          <figcaption class="txt"><span class="sn">01 &middot; the fit</span><h3>Made for the hive you already <em>have.</em></h3><p>The scale slides under a standard Langstroth hive, the pod sits on the inner cover and the case rides on the side. Your boxes stay the same.</p></figcaption>
+        </figure>
+        <figure class="slide cover" aria-roledescription="slide" aria-label="2 of 5">
+          <div class="media"><img src="assets/img/r-podlid.webp" srcset="assets/img/r-podlid-800.webp 800w, assets/img/r-podlid.webp 1344w" sizes="(max-width: 820px) 100vw, 1100px" width="1344" height="752" decoding="async" alt="Concept render of the round black sensor pod sitting on a hive's inner cover with the lid off, bees walking around it" draggable="false" loading="lazy"><span class="cr">Concept render</span></div>
+          <figcaption class="txt"><span class="sn">02 &middot; the pod</span><h3>It sits right under the <em>lid.</em></h3><p>The sensor pod rests on the inner cover over the hole, reading the air rising from the colony and listening to its hum.</p></figcaption>
+        </figure>
+        <figure class="slide cover" aria-roledescription="slide" aria-label="3 of 5">
+          <div class="media"><img src="assets/img/r-scaleclose.webp" srcset="assets/img/r-scaleclose-800.webp 800w, assets/img/r-scaleclose.webp 1344w" sizes="(max-width: 820px) 100vw, 1100px" width="1344" height="752" decoding="async" alt="Concept render of the corner of a hive standing on the low black CombGuard scale in clover, bees at the entrance" draggable="false" loading="lazy"><span class="cr">Concept render</span></div>
+          <figcaption class="txt"><span class="sn">03 &middot; the scale</span><h3>It weighs the whole <em>colony.</em></h3><p>A low plate with a load cell carries the hive. Bees, brood, comb and honey: every pound shows up.</p></figcaption>
+        </figure>
+        <figure class="slide" aria-roledescription="slide" aria-label="4 of 5">
+          <div class="media"><img src="assets/img/r-ports.webp" srcset="assets/img/r-ports-800.webp 800w, assets/img/r-ports.webp 1600w" sizes="(max-width: 820px) 100vw, 1100px" width="1600" height="893" decoding="async" alt="Concept render of the case from the front, with four screw-lock cable plugs along the bottom" draggable="false" loading="lazy"><span class="cr">Concept render</span></div>
+          <figcaption class="txt"><span class="sn">04 &middot; the plugs</span><h3>A sealed plug for every <em>cable.</em></h3><p>Screw-lock GX12 connectors keep the rain out, and let you swap a sensor in the yard without opening the case.</p></figcaption>
+        </figure>
+        <figure class="slide" aria-roledescription="slide" aria-label="5 of 5">
+          <div class="media"><img src="assets/img/r-solar.webp" srcset="assets/img/r-solar-800.webp 800w, assets/img/r-solar.webp 1600w" sizes="(max-width: 820px) 100vw, 1100px" width="1600" height="893" decoding="async" alt="Concept render of the small black solar panel on its tilting mount" draggable="false" loading="lazy"><span class="cr">Concept render</span></div>
+          <figcaption class="txt"><span class="sn">05 &middot; the power</span><h3>Runs on <em>sunlight.</em></h3><p>A small panel on top of the case charges the battery during the day, so there are no cords to run out to the yard.</p></figcaption>
+        </figure>
+      </div>
+    </div>
+    <div class="sl-ctrl"><div class="sl-pill"><span class="sl-lab" id="sl-lab">01 &middot; the fit</span><div class="sl-dots" id="sl-dots" role="group" aria-label="Choose a slide"></div></div><button class="sl-play" id="sl-play" type="button" aria-label="Pause the gallery"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/><path class="i-play" d="M8 5.5v13l11-6.5z"/></svg></button></div>
+    <p class="sl-hint">swipe, or tap the next photo</p>
+  </div>
+</section>
+
+<section class="sec alt" id="senses" aria-label="What it senses">
+  <div class="wrap wide sec-head hhead">
+    <div><p class="kicker" data-rv>What it senses</p><h2 class="mid" data-words>Everything it <em>senses.</em></h2></div>
+    <p class="lede" data-rv>Drag the strip to explore. Tap a card to flip it over.</p>
+    <svg class="sk doodle d2" data-doodle="hop" viewBox="0 0 160 90" aria-hidden="true"></svg>
+  </div>
+  <div class="drift" id="drift" data-rv>
+    <div class="drift-track" id="drift-track">
+      <article class="fc" tabindex="0" role="button" aria-pressed="false" aria-label="Weight. Tap to flip for details."><div class="fc-in"><div class="fc-f paper"><span class="tag">weight</span><svg class="sk" data-art="weight" viewBox="0 0 400 320" aria-hidden="true"></svg><p class="fc-t">Know when the flow is on.</p><span class="flipme">tap to flip &#8635;</span></div><div class="fc-b"><span class="tag">weight</span><h3>Watch the colony <em>grow.</em></h3><p>Daily weight shows nectar coming in, stores going down through winter and the sudden drop of a swarm.</p><dl><div><dt>Sensor</dt><dd>Load cell under the hive, read by an HX711</dd></div><div><dt>Why it matters</dt><dd>A big drop in minutes can mean a swarm just left</dd></div></dl><span class="flipme">tap to flip back</span></div></div></article>
+<article class="fc" tabindex="0" role="button" aria-pressed="false" aria-label="Warmth. Tap to flip for details."><div class="fc-in"><div class="fc-f paper"><span class="tag">warmth</span><svg class="sk" data-art="warmth" viewBox="0 0 400 320" aria-hidden="true"></svg><p class="fc-t">Feel the brood from outside.</p><span class="flipme">tap to flip &#8635;</span></div><div class="fc-b"><span class="tag">warmth</span><h3>A steady <em>94&deg;F.</em></h3><p>A thin probe between two brood frames tracks the brood nest, which a healthy colony keeps near 94&deg;F.</p><dl><div><dt>Sensor</dt><dd>Temperature probe between the frames</dd></div><div><dt>Why it matters</dt><dd>Brood that runs cold or swings around is worth a look</dd></div></dl><span class="flipme">tap to flip back</span></div></div></article>
+<article class="fc" tabindex="0" role="button" aria-pressed="false" aria-label="Air. Tap to flip for details."><div class="fc-in"><div class="fc-f paper"><span class="tag">air</span><svg class="sk" data-art="air" viewBox="0 0 400 320" aria-hidden="true"></svg><p class="fc-t">Read the air under the lid.</p><span class="flipme">tap to flip &#8635;</span></div><div class="fc-b"><span class="tag">air</span><h3>Breath of the <em>colony.</em></h3><p>CO&#8322; and humidity rise and fall with the colony's work, its size and how well the hive is venting.</p><dl><div><dt>Sensors</dt><dd>Sensirion SCD41 for CO&#8322;, SHT45 for humidity</dd></div><div><dt>Where</dt><dd>In the pod, over the inner cover hole</dd></div></dl><span class="flipme">tap to flip back</span></div></div></article>
+<article class="fc" tabindex="0" role="button" aria-pressed="false" aria-label="Sound. Tap to flip for details."><div class="fc-in"><div class="fc-f paper"><span class="tag">sound</span><svg class="sk" data-art="sound" viewBox="0 0 400 320" aria-hidden="true"></svg><p class="fc-t">Hear the hum.</p><span class="flipme">tap to flip &#8635;</span></div><div class="fc-b"><span class="tag">sound</span><h3>Listen <em>in.</em></h3><p>A small microphone in the pod listens to the colony between your visits. Changes in the hum can be an early hint that something is different.</p><dl><div><dt>Sensor</dt><dd>Knowles MEMS microphone</dd></div><div><dt>Where</dt><dd>Inside the pod, behind a breathable vent membrane</dd></div></dl><span class="flipme">tap to flip back</span></div></div></article>
+<article class="fc" tabindex="0" role="button" aria-pressed="false" aria-label="Weather. Tap to flip for details."><div class="fc-in"><div class="fc-f paper"><span class="tag">weather</span><svg class="sk" data-art="weather" viewBox="0 0 400 320" aria-hidden="true"></svg><p class="fc-t">Know the weather at the hive.</p><span class="flipme">tap to flip &#8635;</span></div><div class="fc-b"><span class="tag">weather</span><h3>Inside vs. <em>out.</em></h3><p>A sensor tucked behind the vent on the case reads the open-air temperature and humidity, so you can compare the hive with the yard.</p><dl><div><dt>Sensor</dt><dd>Temperature and humidity, behind the case vent</dd></div><div><dt>Why it matters</dt><dd>Tells you how hard the bees are working to stay warm or cool</dd></div></dl><span class="flipme">tap to flip back</span></div></div></article>
+<article class="fc" tabindex="0" role="button" aria-pressed="false" aria-label="Power. Tap to flip for details."><div class="fc-in"><div class="fc-f paper"><span class="tag">power</span><svg class="sk" data-art="power" viewBox="0 0 400 320" aria-hidden="true"></svg><p class="fc-t">Runs on sunlight.</p><span class="flipme">tap to flip &#8635;</span></div><div class="fc-b"><span class="tag">power</span><h3>No cords to the <em>yard.</em></h3><p>A small solar panel on top of the case charges the battery during the day, and the battery keeps it running all night.</p><dl><div><dt>Power</dt><dd>Small solar panel and rechargeable battery</dd></div><div><dt>Mount</dt><dd>Tilting bracket on top of the case</dd></div></dl><span class="flipme">tap to flip back</span></div></div></article>
+<article class="fc" tabindex="0" role="button" aria-pressed="false" aria-label="Alerts. Tap to flip for details."><div class="fc-in"><div class="fc-f paper"><span class="tag">alerts</span><svg class="sk" data-art="alert" viewBox="0 0 400 320" aria-hidden="true"></svg><p class="fc-t">Hear about it when it matters.</p><span class="flipme">tap to flip &#8635;</span></div><div class="fc-b"><span class="tag">alerts</span><h3>It sounds the <em>alarm.</em></h3><p>When something changes, like a sudden weight drop, CombGuard sends you an email so you know which hive to open.</p><dl><div><dt>How</dt><dd>Email alerts</dd></div><div><dt>Example</dt><dd>Hive 2: weight dropped 4 lb in 10 minutes</dd></div></dl><span class="flipme">tap to flip back</span></div></div></article>
+<article class="fc" aria-hidden="true" tabindex="-1"><div class="fc-in"><div class="fc-f paper"><span class="tag">weight</span><svg class="sk" data-art="weight" viewBox="0 0 400 320" aria-hidden="true"></svg><p class="fc-t">Know when the flow is on.</p><span class="flipme">tap to flip &#8635;</span></div><div class="fc-b"><span class="tag">weight</span><h3>Watch the colony <em>grow.</em></h3><p>Daily weight shows nectar coming in, stores going down through winter and the sudden drop of a swarm.</p><dl><div><dt>Sensor</dt><dd>Load cell under the hive, read by an HX711</dd></div><div><dt>Why it matters</dt><dd>A big drop in minutes can mean a swarm just left</dd></div></dl><span class="flipme">tap to flip back</span></div></div></article>
+<article class="fc" aria-hidden="true" tabindex="-1"><div class="fc-in"><div class="fc-f paper"><span class="tag">warmth</span><svg class="sk" data-art="warmth" viewBox="0 0 400 320" aria-hidden="true"></svg><p class="fc-t">Feel the brood from outside.</p><span class="flipme">tap to flip &#8635;</span></div><div class="fc-b"><span class="tag">warmth</span><h3>A steady <em>94&deg;F.</em></h3><p>A thin probe between two brood frames tracks the brood nest, which a healthy colony keeps near 94&deg;F.</p><dl><div><dt>Sensor</dt><dd>Temperature probe between the frames</dd></div><div><dt>Why it matters</dt><dd>Brood that runs cold or swings around is worth a look</dd></div></dl><span class="flipme">tap to flip back</span></div></div></article>
+<article class="fc" aria-hidden="true" tabindex="-1"><div class="fc-in"><div class="fc-f paper"><span class="tag">air</span><svg class="sk" data-art="air" viewBox="0 0 400 320" aria-hidden="true"></svg><p class="fc-t">Read the air under the lid.</p><span class="flipme">tap to flip &#8635;</span></div><div class="fc-b"><span class="tag">air</span><h3>Breath of the <em>colony.</em></h3><p>CO&#8322; and humidity rise and fall with the colony's work, its size and how well the hive is venting.</p><dl><div><dt>Sensors</dt><dd>Sensirion SCD41 for CO&#8322;, SHT45 for humidity</dd></div><div><dt>Where</dt><dd>In the pod, over the inner cover hole</dd></div></dl><span class="flipme">tap to flip back</span></div></div></article>
+<article class="fc" aria-hidden="true" tabindex="-1"><div class="fc-in"><div class="fc-f paper"><span class="tag">sound</span><svg class="sk" data-art="sound" viewBox="0 0 400 320" aria-hidden="true"></svg><p class="fc-t">Hear the hum.</p><span class="flipme">tap to flip &#8635;</span></div><div class="fc-b"><span class="tag">sound</span><h3>Listen <em>in.</em></h3><p>A small microphone in the pod listens to the colony between your visits. Changes in the hum can be an early hint that something is different.</p><dl><div><dt>Sensor</dt><dd>Knowles MEMS microphone</dd></div><div><dt>Where</dt><dd>Inside the pod, behind a breathable vent membrane</dd></div></dl><span class="flipme">tap to flip back</span></div></div></article>
+<article class="fc" aria-hidden="true" tabindex="-1"><div class="fc-in"><div class="fc-f paper"><span class="tag">weather</span><svg class="sk" data-art="weather" viewBox="0 0 400 320" aria-hidden="true"></svg><p class="fc-t">Know the weather at the hive.</p><span class="flipme">tap to flip &#8635;</span></div><div class="fc-b"><span class="tag">weather</span><h3>Inside vs. <em>out.</em></h3><p>A sensor tucked behind the vent on the case reads the open-air temperature and humidity, so you can compare the hive with the yard.</p><dl><div><dt>Sensor</dt><dd>Temperature and humidity, behind the case vent</dd></div><div><dt>Why it matters</dt><dd>Tells you how hard the bees are working to stay warm or cool</dd></div></dl><span class="flipme">tap to flip back</span></div></div></article>
+<article class="fc" aria-hidden="true" tabindex="-1"><div class="fc-in"><div class="fc-f paper"><span class="tag">power</span><svg class="sk" data-art="power" viewBox="0 0 400 320" aria-hidden="true"></svg><p class="fc-t">Runs on sunlight.</p><span class="flipme">tap to flip &#8635;</span></div><div class="fc-b"><span class="tag">power</span><h3>No cords to the <em>yard.</em></h3><p>A small solar panel on top of the case charges the battery during the day, and the battery keeps it running all night.</p><dl><div><dt>Power</dt><dd>Small solar panel and rechargeable battery</dd></div><div><dt>Mount</dt><dd>Tilting bracket on top of the case</dd></div></dl><span class="flipme">tap to flip back</span></div></div></article>
+<article class="fc" aria-hidden="true" tabindex="-1"><div class="fc-in"><div class="fc-f paper"><span class="tag">alerts</span><svg class="sk" data-art="alert" viewBox="0 0 400 320" aria-hidden="true"></svg><p class="fc-t">Hear about it when it matters.</p><span class="flipme">tap to flip &#8635;</span></div><div class="fc-b"><span class="tag">alerts</span><h3>It sounds the <em>alarm.</em></h3><p>When something changes, like a sudden weight drop, CombGuard sends you an email so you know which hive to open.</p><dl><div><dt>How</dt><dd>Email alerts</dd></div><div><dt>Example</dt><dd>Hive 2: weight dropped 4 lb in 10 minutes</dd></div></dl><span class="flipme">tap to flip back</span></div></div></article>
+    </div>
+  </div>
+  <div class="wrap wide"><div class="tlinks" style="justify-content:flex-start" data-rv><a href="product.html">See every part on the product page &rsaquo;</a></div></div>
+</section>
+
+<section class="sec night watch" id="watch" aria-label="The long night">
+  <div class="wrap wide watch-grid">
+    <div class="watch-copy">
+      <p class="kicker" data-rv>The long night</p>
+      <h2 class="mid" data-words>On watch while you <em>sleep.</em></h2>
+      <p class="lede" data-rv>Drag the moon across the sky, or tap a time, to see one night at the hive.</p>
+      <div class="times" id="times" role="tablist" aria-label="Times of night">
+        <button type="button" role="tab" data-t="0" aria-selected="true">7:40 pm</button><button type="button" role="tab" data-t="1" aria-selected="false">11:15 pm</button><button type="button" role="tab" data-t="2" aria-selected="false">2:30 am</button><button type="button" role="tab" data-t="3" aria-selected="false">6:05 am</button>
+      </div>
+      <div class="entry" id="entry" aria-live="polite">
+        <p class="e-tag" id="e-tag">+3 lb today</p>
+        <h3 id="e-h">The foragers are home.</h3>
+        <p id="e-p">The hive is 3 lb heavier than this morning. Nectar is coming in.</p>
+      </div>
+      <p class="note">An example night. The readings are illustrative.</p>
+    </div>
+    <div class="watch-scene" data-rv>
+      <svg class="sk" id="art-night" viewBox="0 0 800 640" role="img" aria-label="Night sketch of a hive in the forest under the moon and stars, with an owl on a branch and the CombGuard light glowing on the case. Drag the moon to change the time."></svg>
+    </div>
+  </div>
+  <div class="wrap wide">
+    <div class="tally" data-stagger>
+      <div class="t1" data-rv><b data-count="6">6</b><span>signals measured right at the hive, every few minutes</span></div>
+      <div class="t1" data-rv><b data-count="0">0</b><span>lids lifted to check on them</span></div>
+      <div class="t1" data-rv><b data-count="1">1</b><span>small solar panel keeps it all running</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="how">
+  <div class="wrap wide">
+    <div class="center"><p class="kicker" data-rv>The plan</p><h2 class="mid" data-words>Three steps. Then it keeps the <em>watch.</em></h2></div>
+    <div class="steps" data-stagger>
+      <div class="step" data-rv><div class="smedia paper"><svg class="sk" data-art="station" viewBox="0 0 360 270" role="img" aria-label="Exploded sketch of a hive showing the scale sliding underneath, the pod going on the inner cover and the probe going between the frames"></svg></div><span class="n">one</span><h3>Station it</h3><p>Slide the scale under the hive, set the pod on the inner cover and the probe between two brood frames.</p></div>
+      <div class="step" data-rv><div class="smedia paper"><svg class="sk" data-art="watchstep" viewBox="0 0 360 270" role="img" aria-label="Sketch of a hive under an arc running from the sun to the moon, sending readings over Wi-Fi to a laptop"></svg></div><span class="n">two</span><h3>It keeps watch</h3><p>Readings go to your dashboard all day and all night, rain or shine.</p></div>
+      <div class="step" data-rv><div class="smedia paper"><svg class="sk" data-art="alarm" viewBox="0 0 360 270" role="img" aria-label="Sketch of a phone with an email alert pointing to the second of three hives"></svg></div><span class="n">three</span><h3>It sounds the alarm</h3><p>When something changes, you get an email, so you know which hive to open.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec alt" id="live">
+  <div class="wrap wide live">
+    <div><p class="kicker" data-rv>Live hive</p><h2 class="mid" data-words>Your hive, on one <em>screen.</em></h2><p class="lede" data-rv>Weight, warmth, air and sound side by side, with the history behind each one. On your laptop or your phone.</p><div class="tlinks" style="justify-content:flex-start" data-rv><a href="dashboard.html">Try the live demo &rsaquo;</a></div><p class="note" data-rv>Sketch of the dashboard. The numbers are an example.</p></div>
+    <div data-rv><svg class="sk" id="art-live" viewBox="0 0 760 500" role="img" aria-label="Sketch of a laptop and phone showing the CombGuard dashboard for Hive 2, next to a mug of coffee and a honey jar"></svg></div>
+  </div>
+</section>
+
+<section class="sec paper" id="progress">
+  <div class="wrap wide">
+    <div class="center"><p class="kicker" data-rv>Where we are</p><h2 class="mid" data-words>Being built right <em>now.</em></h2><p class="lede" data-rv>CombGuard Gen 2 is in development. Here's where the build stands.</p></div>
+    <ol class="tl" data-stagger>
+      <li class="done" data-rv><i></i><b>Designed</b><span>Our own main board and sensor board, drawn up from scratch.</span></li>
+      <li class="now" data-rv><i></i><b>Boards on the way</b><span>The first circuit boards are being made now.</span></li>
+      <li data-rv><i></i><b>First units</b><span>Build them, test them on the bench and write the code.</span></li>
+      <li data-rv><i></i><b>Into real hives</b><span>Put them on hives and learn what we got wrong.</span></li>
+      <li data-rv><i></i><b>Ready for yours</b><span>Join the Watch to hear the moment it is.</span></li>
+    </ol>
+    <div class="survey" data-rv>
+      <svg class="sk" data-art="clip" viewBox="0 0 120 120" aria-hidden="true"></svg>
+      <div><h3>Keep bees? Help us build it <em>right.</em></h3><p>Tell us how you check your hives and what you wish you knew. Every answer shapes what CombGuard watches for.</p></div>
+      <a class="cta" href="https://forms.gle/HvKqPn7JhiQj5WCf8" target="_blank" rel="noopener">Take the beekeeper survey <span aria-hidden="true">&#8599;</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="faq">
   <div class="wrap">
-    <div class="head rv">
-      <div class="label"><b>01</b>The blind spot</div>
-      <h2 class="h2">Trouble doesn't wait<br>for <span class="acc">inspection day.</span></h2>
-      <p class="lead" style="margin-left:auto;margin-right:auto">Most beekeepers open the hive every week or two. Everything in between happens out of sight, and that's where colonies are lost.</p>
-    </div>
-    <div class="grid-2">
-      <div class="tile loss rv">
-        <div class="num"><span id="lossNum">0.0</span><em>%</em></div>
-        <p style="max-width:380px;margin:12px auto 0">of managed U.S. honey bee colonies were lost between April 2025 and April 2026.</p>
-        <div class="hexes" id="hexes" aria-hidden="true"></div>
-        <p class="small">Each cell is one colony out of 100. Source: <a href="https://wire.auburn.edu/content/agriculture/2026/06/honeybeecolony0626.php" target="_blank" rel="noopener" style="text-decoration:underline">U.S. Beekeeping Survey, Auburn University</a></p>
-      </div>
-      <div class="tile timeline rv">
-        <h3 class="h3">Two weeks you can't see.</h3>
-        <p>Between two inspections, small problems quietly grow.</p>
-        <div class="tl">
-          <div class="ev" style="left:24%" data-at="0.3"><b>Day 3</b>Mite numbers climb</div>
-          <div class="ev" style="left:52%" data-at="0.4"><b>Day 7</b>Brood nest cools</div>
-          <div class="ev" style="left:80%" data-at="0.5"><b>Day 11</b>Swarm cells form</div>
-          <div class="tl-bar"><div class="tl-gap"></div><span class="tl-end" style="left:4%"></span><span class="tl-end" style="left:96%"></span></div>
-          <div class="tl-labels"><span>Inspection</span><span>Inspection</span></div>
-        </div>
-      </div>
+    <div class="center"><p class="kicker" data-rv>Good questions</p><h2 class="mid" data-words>Questions beekeepers <em>ask.</em></h2></div>
+    <div class="faq" data-rv>
+      <details><summary>Does it replace inspections? <i>+</i></summary><p>No. It tells you which hive needs a visit and when. You still open the hive to check the queen, the brood and for mites.</p></details>
+      <details><summary>Can it detect mites? <i>+</i></summary><p>No. Nothing in CombGuard counts varroa mites, so keep up your usual mite checks.</p></details>
+      <details><summary>Will it bother the bees? <i>+</i></summary><p>It's built to stay out of their way. The pod sits on top of the inner cover, with its sensors behind a breathable vent membrane the bees can't seal over with propolis. The probe is a thin rod between two frames.</p></details>
+      <details><summary>How does it connect? <i>+</i></summary><p>Gen 2 uses your Wi-Fi. A long-range radio version for out-yards without Wi-Fi is planned for Gen 3.</p></details>
+      <details><summary>What will it cost? <i>+</i></summary><p>We're still building Gen 2, so there's no price yet. Join the Watch to hear first.</p></details>
+      <details><summary>Is this what it looks like? <i>+</i></summary><p>The photos are concept renders and the drawings are concept sketches. The Gen 2 boards are being made now, and we'll share real photos once it's built.</p></details>
     </div>
   </div>
 </section>
 
-<!-- ================= 02 THE WATCH ================= -->
-<section class="watch" id="watch" data-scene="sticky">
-  <div class="watch-stick">
-    <div class="wrap" style="width:100%;display:flex;flex-direction:column;height:100%">
-      <div class="watch-top">
-        <div class="label"><b>02</b>The watch</div>
-        <h2 class="h2">It sees what <span class="acc">you can't.</span></h2>
-      </div>
-      <div class="watch-body">
-        <div class="viewer">
-          <span class="viewer-tag">Where each part goes</span>
-          <div class="cam" id="cam">
-            <div class="cam-inner">
-              <!-- Can be swapped for a Higgsfield image of the same hive layout -->
-              <img src="images/hive-cutaway.svg" alt="Cutaway of a beehive showing where CombGuard's sensors sit">
-              <span class="pin" style="left:45.8%;top:35%"></span>
-              <span class="pin" style="left:45.8%;top:55%"></span>
-              <span class="pin" style="left:45%;top:89.5%"></span>
-              <span class="pin" style="left:79.5%;top:45.5%"></span>
-            </div>
-          </div>
-        </div>
-        <div class="cards">
-          <div class="progress" aria-hidden="true"><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span></div>
-          <div class="card-stack">
-            <div class="step on"><div class="big-n">01</div><div class="k">1 of 4 · Under the inner cover</div><h3>The air inside.</h3><p>A slim sensor pod reads the hive's air. It shows how strong and busy the colony is, and catches damp before it turns to mold.</p><div class="reads"><span>CO₂</span><span>Humidity</span><span>Temperature</span></div></div>
-            <div class="step"><div class="big-n">02</div><div class="k">2 of 4 · Between the frames</div><h3>The brood nest.</h3><p>Thin probes reach the heart of the colony. Bees hold their brood near 35 °C (95 °F). When it drops, the colony is struggling.</p><div class="reads"><span>Brood temperature</span></div></div>
-            <div class="step"><div class="big-n">03</div><div class="k">3 of 4 · Under the hive</div><h3>Every pound.</h3><p>A scale tracks the hive's weight around the clock: honey coming in, stores running low, or the sudden drop of a swarm.</p><div class="reads"><span>Hive weight</span></div></div>
-            <div class="step"><div class="big-n">04</div><div class="k">4 of 4 · On the side</div><h3>The brain, on solar.</h3><p>A sealed case holds the electronics, powered by a small solar panel. It sends readings over Wi-Fi every 15 minutes, day and night.</p><div class="reads"><span>Solar power</span><span>Wi-Fi</span><span>Battery backup</span></div></div>
-          </div>
-        </div>
-      </div>
-    </div>
+<section class="sec paper" id="join">
+  <div class="wrap join-card hhead">
+    <p class="kicker" data-rv>Stand with us</p>
+    <h2 class="big" data-words>Join the <em>Watch.</em></h2>
+    <p class="lede" style="margin-inline:auto" data-rv>Get build updates and first word when CombGuard is ready for your hives.</p>
+    <form class="join-form" id="join-form" novalidate data-rv>
+      <label for="join-email">Email address</label>
+      <input id="join-email" type="email" placeholder="you@example.com" autocomplete="email" required>
+      <button type="submit">Join the Watch</button>
+    </form>
+    <p class="join-done" id="join-done" hidden></p>
+    <p class="join-alt" data-rv>Keep bees? <a href="https://forms.gle/HvKqPn7JhiQj5WCf8" target="_blank" rel="noopener">Take the beekeeper survey &#8599;</a></p>
+    <svg class="sk doodle d3" data-doodle="loop" viewBox="0 0 160 90" aria-hidden="true"></svg>
   </div>
+  <div class="wrap xwide"><svg class="sk scene" id="art-join" viewBox="0 0 1100 330" role="img" aria-label="Sketch of a hive at sunset with a lantern glowing on a post beside it and bees flying home"></svg></div>
 </section>
-
-<!-- ================= 03 THE ALERT ================= -->
-<section class="section alert-sec" id="alert" data-scene="pass">
-  <div class="wrap center">
-    <div class="rv">
-      <div class="label"><b>03</b>The alert</div>
-      <h2 class="h2">Sleepless, <span class="acc">by design.</span></h2>
-      <p class="lead">You're asleep at 2:14 AM. CombGuard isn't. It only wakes you when it matters, with time to act before morning.</p>
-    </div>
-    <div class="phone-wrap">
-      <div class="alert-glow"></div>
-      <div class="iphone" aria-label="Example CombGuard alert on an iPhone lock screen">
-        <div class="bezel"><div class="screen">
-          <div class="island"></div>
-          <div class="lock">
-            <svg width="14" height="18" viewBox="0 0 14 18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1.5" y="8" width="11" height="8.5" rx="2" fill="currentColor"/><path d="M4 8V5.5a3 3 0 0 1 6 0V8"/></svg>
-            <div class="d">Tuesday, June 9</div>
-            <div class="t">2:14</div>
-          </div>
-          <div class="notif">
-            <div class="ic"><svg><use href="#cg-logo"/></svg></div>
-            <div><div class="top"><span>COMBGUARD</span><span>now</span></div><strong>Hive 1 needs attention</strong><p>Brood temperature dropped to 31.2 °C. The colony may be struggling to keep the brood warm.</p></div>
-          </div>
-          <div class="quick l"><svg width="18" height="22" viewBox="0 0 18 22" fill="#fff"><path d="M5 0h8v4l-2 4v12a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V8L5 4z" opacity=".9"/></svg></div>
-          <div class="quick r"><svg width="22" height="18" viewBox="0 0 22 18" fill="#fff"><path d="M7 1h8l2 3h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3z" opacity=".9"/><circle cx="11" cy="10.5" r="4" fill="#222"/></svg></div>
-          <div class="home-ind"></div>
-        </div></div>
-      </div>
-    </div>
-    <div class="log">
-      <div class="rv"><b>1:40 AM</b>Brood nest at 34.9 °C</div>
-      <div class="rv"><b>2:05 AM</b>Temperature falling</div>
-      <div class="rv hot"><b>2:14 AM</b>Alert sent to your phone</div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= 04 THE PLAN + DAWN ================= -->
-<section class="section plan-sec" id="plan" data-scene="pass">
-  <div class="sunrise" aria-hidden="true"></div>
-  <div class="wrap" style="position:relative">
-    <div class="head rv">
-      <div class="label"><b>04</b>The plan</div>
-      <h2 class="h2">Set it up once.<br><span class="acc">It handles the rest.</span></h2>
-    </div>
-    <div class="grid-3 plan">
-      <div class="tile rv"><div class="n">1</div><h3>Mount it.</h3><p>Pod under the inner cover, probes between the frames, hive on the scale, panel in the sun.</p></div>
-      <div class="tile rv"><div class="n">2</div><h3>It keeps watch.</h3><p>Every 15 minutes, day and night, readings go to your dashboard.</p></div>
-      <div class="tile rv"><div class="n">3</div><h3>You step in when it matters.</h3><p>Green, yellow or red. When something's wrong, you hear about it first.</p></div>
-    </div>
-    <div class="tile cover rv">
-      <div class="cover-row"><h3 class="h3">The blind spot, covered.</h3><div class="big"><span id="checks">0</span> check-ins</div></div>
-      <p>Two weeks between inspections used to mean two weeks of guessing. Now it means 1,344 readings.</p>
-      <div class="cover-bar"><div class="cover-fill"></div></div>
-      <div class="tl-labels"><span>Inspection</span><span>14 days</span><span>Inspection</span></div>
-    </div>
-    <div class="dawn-line">
-      <h2 class="h2">By morning,<br><span class="acc">you already know.</span></h2>
-    </div>
-  </div>
-</section>
-
-<!-- ================= DEMO ================= -->
-<section class="section band" id="demo" data-scene="pass">
-  <div class="wrap">
-    <div class="head rv">
-      <div class="label"><b>05</b>The dashboard</div>
-      <h2 class="h2">Your colony, <span class="acc">at a glance.</span></h2>
-      <p class="lead" style="margin-left:auto;margin-right:auto">One clear status and every reading, from anywhere.</p>
-    </div>
-    <div class="panel rv" aria-hidden="true">
-      <div class="panel-top"><span class="chip">All clear</span><span class="small">Hive 1 · last reading 4 minutes ago</span></div>
-      <div class="reads4">
-        <div><small>Brood</small><b>94.8<em>°F</em></b></div>
-        <div><small>Humidity</small><b>61<em>%</em></b></div>
-        <div><small>CO₂</small><b>2,140<em>ppm</em></b></div>
-        <div><small>Weight</small><b>96.3<em>lb</em></b></div>
-      </div>
-      <svg viewBox="0 0 900 160" preserveAspectRatio="none">
-        <defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9a23b" stop-opacity=".25"/><stop offset="1" stop-color="#e9a23b" stop-opacity="0"/></linearGradient></defs>
-        <path d="M0 40h900M0 80h900M0 120h900" stroke="rgba(255,255,255,.05)"/>
-        <path d="M0 100 C70 92 120 60 190 66 S300 112 370 98 S480 40 550 46 S680 100 750 84 S850 54 900 60 V160 H0z" fill="url(#fill)"/>
-        <path class="line" pathLength="1" d="M0 100 C70 92 120 60 190 66 S300 112 370 98 S480 40 550 46 S680 100 750 84 S850 54 900 60" fill="none" stroke="#e9a23b" stroke-width="2.4"/>
-      </svg>
-    </div>
-    <div class="actions center" style="justify-content:center"><a href="/dashboard?demo=1" class="btn btn-gold">See the live demo</a><a href="/dashboard" class="btn btn-ghost">Team log in</a></div>
-  </div>
-</section>
-
-<!-- ================= 06 GEN 1 ================= -->
-<section class="section" id="gen1">
-  <div class="wrap">
-    <div class="head rv" style="text-align:left;margin-left:0">
-      <div class="label"><b>06</b>Gen 1</div>
-      <h2 class="h2">Where it started.</h2>
-      <p class="lead">Before CombGuard, there was HiveMind, our first prototype, built by hand. Tap any card to see more.</p>
-    </div>
-  </div>
-  <div class="track" id="track">
-      <div class="slide" data-modal="m-circuit" role="button" tabindex="0" aria-label="The first circuit: more details">
-        <img src="images/breadboard.jpg" alt="" loading="lazy"><div class="cap"><small>Fall 2026 · Prototype</small><h3>The first circuit</h3></div><button class="plus" aria-hidden="true" tabindex="-1">+</button></div>
-      <div class="slide" data-modal="m-cad" role="button" tabindex="0" aria-label="Designing the case: more details">
-        <img src="images/cad.jpg" alt="" loading="lazy"><div class="cap"><small>CAD</small><h3>Designing the case</h3></div><button class="plus" aria-hidden="true" tabindex="-1">+</button></div>
-      <div class="slide" data-modal="m-pcb" role="button" tabindex="0" aria-label="From breadboard to board: more details">
-        <img src="images/pcb.jpg" alt="" loading="lazy"><div class="cap"><small>Soldering</small><h3>From breadboard to board</h3></div><button class="plus" aria-hidden="true" tabindex="-1">+</button></div>
-      <div class="slide" data-modal="m-case" role="button" tabindex="0" aria-label="The first enclosure: more details">
-        <img src="images/gen1-case.jpg" alt="" loading="lazy"><div class="cap"><small>Gen 1 · HiveMind</small><h3>The first enclosure</h3></div><button class="plus" aria-hidden="true" tabindex="-1">+</button></div>
-      <div class="slide" data-modal="m-refined" role="button" tabindex="0" aria-label="Refined and renamed: more details">
-        <img src="images/case-black.jpg" alt="" loading="lazy"><div class="cap"><small>Gen 1 · CombGuard</small><h3>Refined and renamed</h3></div><button class="plus" aria-hidden="true" tabindex="-1">+</button></div>
-      <a class="slide text" href="/gen2"><div class="cap" style="position:static"><small>Next</small><h3>Gen 2 is in development.<br><span style="color:var(--text-2)">See what's changing</span> ›</h3></div></a>
-  </div>
-  <div class="wrap">
-    <div class="car-nav"><a href="/gen1" class="link" style="margin-right:auto;align-self:center">Explore Gen 1</a>
-      <button id="prev" aria-label="Previous"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 3 5 8l5 5"/></svg></button>
-      <button id="next" aria-label="Next"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3l5 5-5 5"/></svg></button></div>
-  </div>
-</section>
-
-<!-- ================= 07 GEN 2 ================= -->
-<section class="section band" id="gen2">
-  <div class="wrap">
-    <div class="head rv">
-      <div class="label"><b>07</b>Gen 2</div>
-      <h2 class="h2">Forged for <span class="acc">the field.</span></h2>
-      <p class="lead" style="margin-left:auto;margin-right:auto">Rebuilt from the ground up for sun, rain and long Florida summers.</p>
-    </div>
-    <div class="bento">
-      <div class="tile wide rv">
-        <div><span class="status">In development</span><h3 class="h3" style="margin-top:16px">Six sensors.<br>One sealed case.</h3></div>
-        <ul class="sensors">
-          <li><b>Brood temperature</b>Probes between frames</li>
-          <li><b>CO₂</b>Colony size and activity</li>
-          <li><b>Humidity</b>Inside the hive</li>
-          <li><b>Weather</b>Outside temperature and humidity</li>
-          <li><b>Weight</b>100 kg load cell</li>
-          <li><b>Sound</b>The colony's hum</li>
-        </ul>
-      </div>
-      <div class="tile rv"><div class="v">5.5<em>W</em></div><p>Solar panel with smart charging</p></div>
-      <div class="tile rv"><div class="v">10k<em>mAh</em></div><p>Battery for cloudy stretches</p></div>
-      <div class="tile rv"><div class="v">15<em>min</em></div><p>Between readings, all day and night</p></div>
-      <div class="tile rv"><div class="v">Wi‑Fi</div><p>Straight to your dashboard and phone</p></div>
-    </div>
-    <div class="actions" style="justify-content:center"><a href="/gen2" class="link">Explore Gen 2</a></div>
-  </div>
-</section>
-
-<!-- ================= CTA ================= -->
-<section class="section cta">
-  <div class="wrap rv">
-    <h2 class="h2">Help us build what<br><span class="acc">beekeepers need.</span></h2>
-    <p class="lead">Take the 4-minute beekeeper survey, or explore the live demo dashboard.</p>
-    <div class="actions"><a href="https://forms.gle/yDhAXinGf1WT7gVK9" target="_blank" rel="noopener" class="btn btn-gold">Take the survey</a><a href="/dashboard?demo=1" class="btn btn-ghost">See the live demo</a></div>
-    <p class="small" style="margin-top:26px">Questions? <a href="mailto:hello@combguard.com" style="text-decoration:underline">hello@combguard.com</a></p>
-  </div>
-</section>
-
 </main>
-<div class="modal" id="m-circuit" role="dialog" aria-modal="true" aria-label="The first circuit">
-  <div class="modal-card" style="position:relative">
-    <button class="modal-close" aria-label="Close">×</button>
-    <img src="images/breadboard.jpg" alt="">
-    <div class="modal-body"><p style="color:var(--gold);font-weight:600;margin:0 0 6px">Fall 2026 · Prototype</p><h3 class="h3">The first circuit</h3><p>Before any case or code was final, we had to prove the idea worked at all.</p><ul><li>An Arduino Nano read the sensors and wrote every reading to a microSD card.</li><li>A piezo sensor and a small amplifier circuit listened for the colony's sound.</li><li>Everything lived on a breadboard, so we could rewire and test quickly.</li></ul></div>
-  </div>
 </div>
-<div class="modal" id="m-cad" role="dialog" aria-modal="true" aria-label="Designing the case">
-  <div class="modal-card" style="position:relative">
-    <button class="modal-close" aria-label="Close">×</button>
-    <img src="images/cad.jpg" alt="">
-    <div class="modal-body"><p style="color:var(--gold);font-weight:600;margin:0 0 6px">CAD</p><h3 class="h3">Designing the case</h3><p>Next, we modeled an enclosure around the electronics.</p><ul><li>We sized the case around the board, battery and sensor connections.</li><li>Several rounds of measuring, printing and adjusting got the parts to fit.</li><li>Sealing and ventilation became the big questions we carried into Gen 2.</li></ul></div>
-  </div>
-</div>
-<div class="modal" id="m-pcb" role="dialog" aria-modal="true" aria-label="From breadboard to board">
-  <div class="modal-card" style="position:relative">
-    <button class="modal-close" aria-label="Close">×</button>
-    <img src="images/pcb.jpg" alt="">
-    <div class="modal-body"><p style="color:var(--gold);font-weight:600;margin:0 0 6px">Soldering</p><h3 class="h3">From breadboard to board</h3><p>Breadboard wires can shake loose, so the circuit moved onto a soldered board.</p><ul><li>Hand-soldered connections hold up better to heat, movement and handling.</li><li>It made the electronics small enough to fit inside the printed case.</li></ul></div>
-  </div>
-</div>
-<div class="modal" id="m-case" role="dialog" aria-modal="true" aria-label="The first enclosure">
-  <div class="modal-card" style="position:relative">
-    <button class="modal-close" aria-label="Close">×</button>
-    <img src="images/gen1-case.jpg" alt="">
-    <div class="modal-body"><p style="color:var(--gold);font-weight:600;margin:0 0 6px">Gen 1 · HiveMind</p><h3 class="h3">The first enclosure</h3><p>Our first 3D-printed case, made when the project was still called HiveMind.</p><ul><li>The name was embossed right into the print.</li><li>It taught us how to design parts that print cleanly and assemble easily.</li></ul></div>
-  </div>
-</div>
-<div class="modal" id="m-refined" role="dialog" aria-modal="true" aria-label="Refined and renamed">
-  <div class="modal-card" style="position:relative">
-    <button class="modal-close" aria-label="Close">×</button>
-    <img src="images/case-black.jpg" alt="">
-    <div class="modal-body"><p style="color:var(--gold);font-weight:600;margin:0 0 6px">Gen 1 · CombGuard</p><h3 class="h3">Refined and renamed</h3><p>A darker, cleaner print with the honeycomb mark, and a new name: CombGuard.</p><ul><li>Everything we learned here shaped Gen 2's priorities:</li><li>weatherproofing, solar power, and sending readings over Wi-Fi instead of only saving them to a card.</li></ul></div>
-  </div>
-</div>
-<footer>
+
+
+<footer class="foot">
   <div class="wrap">
-    <div class="foot">
-      <div>
-        <a href="/" class="brand" style="color:var(--text)"><svg><use href="#cg-logo"/></svg>CombGuard</a>
-        <p style="margin:14px 0 0;max-width:300px;color:var(--text-2)">Solar-powered hive monitoring that keeps watch between inspections.</p>
-      </div>
-      <div><h4>Explore</h4><a href="/">Home</a><a href="/about">About</a><a href="/gen1">Gen 1</a><a href="/gen2">Gen 2</a></div>
-      <div><h4>Dashboard</h4><a href="/dashboard?demo=1">Live demo</a><a href="/dashboard">Team log in</a></div>
-      <div><h4>Get involved</h4><a href="https://forms.gle/yDhAXinGf1WT7gVK9" target="_blank" rel="noopener">Beekeeper survey</a><a href="mailto:hello@combguard.com">Contact us</a></div>
+    <div class="foot-grid">
+      <div><a class="brand" href="index.html"><svg viewBox="0 0 644 964" aria-hidden="true" focusable="false"><use href="#helm"/></svg>CombGuard</a><p>The hive's first line of defense.</p></div>
+      <div><h4>Pages</h4><a href="index.html">Home</a><a href="product.html">Product</a><a href="dashboard.html">Live hive demo</a><a href="mission.html">Our mission</a><a href="team.html">Team</a></div>
+      <div><h4>On the home page</h4><a href="#hardware">Hardware</a><a href="#senses">What it senses</a><a href="#watch">The long night</a><a href="#progress">Where we are</a></div>
+      <div><h4>Get involved</h4><a href="#join">Join the Watch</a><a href="https://forms.gle/HvKqPn7JhiQj5WCf8" target="_blank" rel="noopener">Beekeeper survey &#8599;</a></div>
     </div>
-    <div class="foot-bottom"><span>© 2026 CombGuard · A student engineering project</span><span>Made for beekeepers, by students.</span></div>
+    <p class="fine">&copy; 2026 the CombGuard team. Product photos are concept renders and drawings are concept sketches. CombGuard Gen 2 is in development, and readings shown on this site are examples.</p>
   </div>
 </footer>
-<script src="/assets/site.js"></script>
-<script>
-(function () {
-  const CG = window.CG, clamp = CG.clamp, smooth = CG.smooth;
-
-  // Stars
-  const stars = document.getElementById("stars");
-  for (let i = 0; i < 60; i++) {
-    const s = document.createElement("i");
-    s.style.left = Math.random() * 100 + "%"; s.style.top = Math.random() * 100 + "%";
-    s.style.opacity = (0.2 + Math.random() * 0.6).toFixed(2); s.style.animationDelay = (Math.random() * 4).toFixed(2) + "s";
-    stars.appendChild(s);
-  }
-
-  // 01: 100 colonies, about 40 go dark, and the number follows (both directions)
-  const hexWrap = document.getElementById("hexes");
-  const order = [...Array(100).keys()];
-  let seed = 11; const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
-  for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
-  const lost = order.slice(0, 40);
-  const cells = []; for (let i = 0; i < 100; i++) { const c = document.createElement("i"); hexWrap.appendChild(c); cells.push(c); }
-  const num = document.getElementById("lossNum");
-  const evs = [...document.querySelectorAll(".ev")];
-  CG.onScene(document.getElementById("blind"), (p) => {
-    const t = smooth(0.2, 0.52, p);
-    num.textContent = (39.9 * t).toFixed(1);
-    const n = Math.round(40 * t);
-    lost.forEach((idx, k) => cells[idx].classList.toggle("lost", k < n));
-    evs.forEach((e) => e.classList.toggle("on", p > parseFloat(e.dataset.at)));
-  });
-
-  // 02: camera moves to each part as you scroll
-  const cam = document.getElementById("cam");
-  const steps = [...document.querySelectorAll(".step")];
-  const pins = [...document.querySelectorAll(".pin")];
-  const bars = [...document.querySelectorAll(".progress i")];
-  const focus = [ [45.8, 35, 2.1], [45.8, 55, 1.8], [45, 88, 2.2], [76, 32, 1.7] ];
-  let cur = -2;
-  CG.onScene(document.getElementById("watch"), (p) => {
-    const raw = p * 4;
-    const k = p < 0.04 ? -1 : Math.min(3, Math.floor(raw));
-    bars.forEach((b, i) => b.style.width = (clamp(raw - i) * 100).toFixed(1) + "%");
-    if (k === cur) return; cur = k;
-    steps.forEach((s, i) => s.classList.toggle("on", i === Math.max(0, k)));
-    pins.forEach((s, i) => s.classList.toggle("on", i === k));
-    if (k < 0) { cam.style.transform = "none"; return; }
-    const [fx, fy, z] = focus[k];
-    cam.style.transformOrigin = "50% 50%";
-    const inner = cam.firstElementChild;
-    const w = inner.offsetWidth, h = inner.offsetHeight;
-    const dx = (50 - fx) / 100 * w * z, dy = (50 - fy) / 100 * h * z;
-    cam.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(${z})`;
-  });
-
-  // 04: check-in counter follows the blue fill
-  const checks = document.getElementById("checks");
-  CG.onScene(document.getElementById("plan"), (p) => {
-    checks.textContent = Math.round(1344 * clamp((p - 0.2) * 2.6)).toLocaleString();
-  });
-
-  // 06: Apple-style arrows
-  const track = document.getElementById("track"), prev = document.getElementById("prev"), next = document.getElementById("next");
-  const step = () => (track.querySelector(".slide")?.offsetWidth || 380) + 18;
-  const navState = () => { prev.disabled = track.scrollLeft < 8; next.disabled = track.scrollLeft + track.clientWidth > track.scrollWidth - 8; };
-  prev.addEventListener("click", () => track.scrollBy({ left: -step(), behavior: "smooth" }));
-  next.addEventListener("click", () => track.scrollBy({ left: step(), behavior: "smooth" }));
-  track.addEventListener("scroll", navState, { passive: true }); navState();
-  track.querySelectorAll(".slide[data-modal]").forEach((s) => s.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); s.click(); } }));
-})();
-</script>
 </body>
 </html>

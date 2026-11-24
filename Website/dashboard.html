@@ -1,329 +1,151 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" data-page="dashboard">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CombGuard Dashboard</title>
-<meta name="robots" content="noindex">
-<meta name="description" content="Log in to the CombGuard team dashboard, or explore the live demo with sample hive data.">
-<link rel="canonical" href="https://combguard.com/dashboard">
-<meta name="theme-color" content="#000000">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="manifest" href="/site.webmanifest">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Live hive demo · CombGuard</title>
+<meta name="description" content="Try the CombGuard dashboard with example data: three hives, their readings, alerts and a log of the night.">
+<meta name="theme-color" content="#FFFAF0">
+<link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="CombGuard">
-<meta property="og:title" content="CombGuard Dashboard">
-<meta property="og:description" content="Log in to the CombGuard team dashboard, or explore the live demo with sample hive data.">
-<meta property="og:url" content="https://combguard.com/dashboard">
-<meta property="og:image" content="https://combguard.com/assets/og-image.png">
+<meta property="og:title" content="Live hive demo · CombGuard">
+<meta property="og:description" content="Try the CombGuard dashboard with example data: three hives, their readings, alerts and a log of the night.">
+<meta property="og:image" content="assets/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The CombGuard helm logo with the words: The hive's first line of defense.">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;700&family=Inter:wght@400;500;600&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/site.css">
-<style>
-main { padding: 96px 0 90px; min-height: 100vh; }
-.auth { max-width: 440px; margin: 40px auto 0; }
-.auth .tile { padding: 34px; }
-.tabs { display: grid; grid-template-columns: 1fr 1fr; background: var(--tile-2); border-radius: 999px; padding: 4px; margin: 26px 0 22px; }
-.tabs button { border: 0; background: none; color: var(--text-2); padding: 9px; border-radius: 999px; cursor: pointer; font-weight: 500; }
-.tabs button.on { background: #2c2c30; color: var(--text); }
-form { display: grid; gap: 12px; }
-label { font-size: 0.85rem; color: var(--text-2); display: grid; gap: 6px; }
-input { font: inherit; color: var(--text); background: #0f0f11; border: 1px solid #2c2c30; border-radius: 14px; padding: 13px 14px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(var(--gold-rgb), 0.2); }
-.err { color: #ff6b5e; font-size: 0.9rem; min-height: 1.2em; margin: 2px 0 0; }
-.demo-link { text-align: center; margin-top: 18px; font-size: 0.92rem; color: var(--text-2); }
-.demo-banner { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; background: rgba(var(--gold-rgb), 0.1); color: var(--gold-hi); border-radius: 18px; padding: 12px 18px; margin-bottom: 18px; font-size: 0.92rem; }
-.bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-.bar h1 { font-size: clamp(2rem, 4vw, 2.8rem); }
-.ctrl { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.ctrl button, .ctrl select { font: inherit; font-size: 0.86rem; color: var(--text); background: var(--tile); border: 0; border-radius: 999px; padding: 8px 14px; cursor: pointer; }
-.ctrl button.on { background: var(--gold); color: #140c00; }
-.status { display: flex; gap: 16px; align-items: center; background: var(--tile); border-radius: var(--radius); padding: 22px 26px; margin-bottom: 14px; }
-.dot { width: 16px; height: 16px; border-radius: 50%; flex: none; background: #555; }
-.s-green .dot { background: #34c759; box-shadow: 0 0 14px #34c759; }
-.s-yellow .dot { background: var(--gold); box-shadow: 0 0 14px var(--gold); }
-.s-red .dot { background: #ff453a; box-shadow: 0 0 14px #ff453a; }
-.status h2 { font-size: 1.5rem; letter-spacing: -0.03em; }
-.status ul { margin: 6px 0 0; padding-left: 18px; color: var(--text-2); }
-.status .when { color: var(--text-3); font-size: 0.88rem; margin-top: 4px; }
-.cards { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 14px; }
-.card { background: var(--tile); border-radius: 22px; padding: 18px; border-top: 3px solid transparent; }
-.card.green { border-top-color: #34c759; } .card.yellow { border-top-color: var(--gold); } .card.red { border-top-color: #ff453a; }
-.card small { color: var(--text-3); font-size: 0.8rem; }
-.card b { display: block; font-family: var(--head); font-size: 1.7rem; letter-spacing: -0.03em; margin-top: 2px; }
-.card b em { font-style: normal; font-size: 0.85rem; color: var(--text-3); font-weight: 500; margin-left: 3px; }
-.card span { color: var(--text-3); font-size: 0.78rem; }
-.charts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.chart { background: var(--tile); border-radius: var(--radius); padding: 20px 20px 12px; }
-.chart h3 { font-size: 1rem; letter-spacing: -0.01em; margin-bottom: 8px; }
-.chart .box { position: relative; height: 220px; }
-.empty { color: var(--text-3); text-align: center; padding: 80px 0; }
-@media (max-width: 1000px) { .cards { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 720px) { .cards { grid-template-columns: 1fr 1fr; } .charts { grid-template-columns: 1fr; } }
-[hidden] { display: none !important; }
-</style>
+<link rel="preload" href="assets/fonts/cg-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/site.css">
+<script>/* set the season and motion settings before the page paints */(function(){var r=document.documentElement,m,c,f;r.classList.add('js');try{m=localStorage.getItem('cg-season-mode');c=localStorage.getItem('cg-calm');f=localStorage.getItem('cg-fx');}catch(e){}var d=new Date().getMonth(),s=m&&m!=='auto'?m:d>=2&&d<=4?'spring':d>=5&&d<=7?'summer':d>=8&&d<=10?'fall':'winter';r.setAttribute('data-season',s);if(c==='1'||(c==null&&window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))r.classList.add('calm');if(f==='0')r.classList.add('nofx');})();</script>
+<script defer src="assets/js/shell.js"></script>
+<script defer src="assets/js/dashboard.js"></script>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-<symbol id="cg-logo" viewBox="0 0 64 64"><path d="M32 4 56 18v28L32 60 8 46V18z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><rect x="17" y="26" width="30" height="6.5" rx="3.25" fill="#e9a23b"/><path d="M32 32v15" stroke="#e9a23b" stroke-width="5" stroke-linecap="round"/></symbol>
-</defs></svg>
-<header class="nav">
-  <div class="wrap">
-    <a href="/" class="brand" aria-label="CombGuard home"><svg><use href="#cg-logo"/></svg>CombGuard</a>
-    <button class="menu-btn" aria-label="Menu" aria-expanded="false"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 7h14M3 13h14"/></svg></button>
-    <nav class="nav-links" aria-label="Main">
-      <a href="/about">About</a>
-      <a href="/gen1">Gen 1</a>
-      <a href="/gen2">Gen 2</a>
-      <a href="/dashboard?demo=1" aria-current="page">Live demo</a>
-      <a href="/dashboard" class="btn btn-gold btn-sm">Log in</a>
+<svg class="helm-sprite" aria-hidden="true" focusable="false"><symbol id="helm" viewBox="190 30 644 964"><path fill="#24180C" d="M511 41 L493 63 L465 85 L445 95 L372 125 L336 146 L312 165 L298 179 L281 202 L271 221 L263 243 L256 274 L253 303 L253 341 L251 343 L237 345 L225 352 L217 364 L214 376 L215 458 L218 466 L227 478 L235 483 L246 486 L249 490 L260 572 L262 609 L260 652 L254 677 L245 696 L230 716 L207 737 L203 743 L202 752 L207 764 L218 778 L240 800 L258 815 L310 849 L392 891 L430 913 L469 943 L512 990 L532 965 L550 946 L585 918 L632 890 L709 851 L740 832 L780 802 L814 766 L820 753 L820 744 L815 736 L792 716 L778 697 L767 672 L762 647 L762 570 L773 491 L776 486 L785 484 L794 479 L801 472 L807 460 L808 374 L802 358 L796 351 L783 344 L771 343 L769 341 L765 277 L758 245 L749 219 L740 202 L726 182 L711 166 L687 147 L638 119 L578 95 L558 85 L540 72Z"/><path fill="#EBA43C" fill-rule="evenodd" d="M554 598 L538 624 L542 634 L554 653 L582 653 L597 628 L598 624 L582 598ZM441 598 L426 623 L426 627 L441 653 L470 653 L485 627 L483 620 L472 601 L469 598ZM611 563 L609 564 L597 585 L595 592 L608 615 L611 618 L636 618 L649 597 L652 589 L637 563ZM496 565 L482 590 L482 592 L495 613 L495 615 L500 618 L526 618 L541 592 L540 587 L525 563 L501 563ZM387 563 L382 569 L371 591 L384 615 L387 618 L412 618 L416 614 L429 590 L414 564 L412 563ZM664 529 L654 545 L649 557 L664 583 L688 583 L703 555 L688 529ZM554 529 L551 532 L538 555 L539 559 L554 583 L565 583 L566 584 L583 583 L598 557 L597 553 L585 532 L582 529ZM441 529 L426 554 L426 558 L441 583 L449 584 L470 583 L485 557 L481 547 L470 529ZM358 528 L334 529 L320 554 L320 558 L335 583 L343 584 L359 583 L374 556 L362 533ZM723 495 L714 495 L712 497 L700 520 L713 546 L715 543 L720 519ZM497 495 L482 521 L486 530 L498 549 L526 549 L541 523 L539 516 L526 495ZM300 495 L299 500 L309 546 L314 539 L322 523 L322 519 L311 498 L308 495ZM610 495 L595 520 L595 523 L608 546 L611 549 L637 549 L652 521 L637 495 L627 495 L626 494ZM386 495 L371 520 L371 523 L386 549 L413 549 L428 523 L428 520 L413 495 L403 495 L402 494ZM664 460 L652 480 L649 488 L663 514 L665 515 L688 515 L702 489 L702 485 L688 460ZM554 460 L547 470 L538 488 L553 514 L580 515 L587 508 L598 486 L585 463 L582 460ZM441 460 L426 485 L426 489 L441 515 L457 515 L458 514 L469 515 L485 488 L482 480 L470 460ZM334 460 L320 486 L320 489 L334 514 L336 515 L359 514 L374 487 L359 460ZM713 430 L700 452 L700 455 L712 479 L714 481 L724 481 L725 480 L725 432 L720 430ZM302 430 L297 432 L297 480 L298 481 L308 481 L321 458 L322 452 L310 430ZM611 426 L597 448 L595 454 L610 480 L637 480 L652 455 L652 452 L637 426ZM498 426 L488 441 L482 454 L497 480 L526 480 L541 454 L541 451 L526 426ZM386 426 L377 440 L371 454 L386 480 L413 480 L427 457 L428 452 L413 426ZM659 404 L650 420 L663 444 L665 446 L688 446 L701 424 L697 415 L694 412 L684 410 L681 408ZM363 403 L328 412 L322 421 L322 425 L333 445 L335 446 L358 446 L360 444 L373 420ZM602 394 L603 398 L612 412 L638 412 L645 401 L630 397ZM421 394 L399 396 L378 401 L385 412 L412 412ZM553 390 L538 417 L541 425 L554 446 L582 446 L588 438 L599 419 L599 417 L583 391ZM440 391 L425 417 L426 422 L441 446 L469 446 L486 417 L480 404 L472 390ZM769 360 L768 361 L768 466 L769 467 L779 467 L786 462 L790 455 L791 449 L791 378 L789 371 L782 363 L778 361ZM252 360 L244 361 L240 363 L235 368 L232 375 L232 453 L235 460 L244 467 L254 466 L254 362ZM511 65 L506 72 L489 89 L477 98 L457 109 L400 132 L360 152 L336 168 L312 190 L296 212 L288 228 L280 251 L274 283 L272 327 L277 326 L290 317 L290 303 L293 274 L299 248 L304 234 L311 220 L322 204 L341 185 L369 166 L395 153 L455 129 L457 127 L460 127 L478 119 L491 111 L494 113 L494 291 L492 293 L462 293 L461 294 L444 294 L443 295 L430 295 L420 297 L401 298 L344 308 L315 317 L296 326 L280 336 L267 350 L267 382 L269 383 L279 376 L306 363 L333 354 L363 347 L394 342 L424 339 L437 339 L438 338 L492 337 L494 339 L494 356 L492 358 L458 358 L457 359 L426 360 L365 368 L325 377 L303 384 L281 393 L268 401 L268 490 L283 578 L309 599 L368 639 L464 699 L487 712 L494 718 L494 908 L492 910 L469 891 L434 867 L398 846 L333 811 L300 791 L273 772 L251 752 L269 731 L277 719 L287 697 L290 684 L293 653 L292 632 L288 609 L282 594 L281 594 L280 651 L277 668 L272 685 L257 714 L244 730 L224 748 L224 751 L243 774 L262 791 L285 808 L337 839 L339 839 L352 847 L356 848 L416 880 L449 901 L481 927 L512 961 L529 940 L553 917 L567 906 L605 881 L700 831 L742 805 L775 778 L791 761 L799 749 L773 724 L763 711 L763 709 L755 696 L749 681 L742 645 L742 631 L741 630 L742 594 L741 594 L739 597 L733 618 L730 640 L730 663 L733 687 L738 704 L744 717 L760 739 L769 748 L769 750 L760 760 L742 776 L711 798 L589 867 L558 888 L531 910 L529 909 L529 718 L536 712 L559 699 L655 639 L711 601 L740 578 L741 566 L755 486 L755 401 L751 398 L730 388 L708 380 L658 368 L594 360 L564 359 L563 358 L531 358 L529 356 L529 339 L531 337 L586 338 L587 339 L620 341 L661 347 L686 353 L714 362 L742 375 L752 382 L754 382 L754 349 L744 338 L733 330 L712 319 L686 310 L655 303 L622 298 L580 295 L579 294 L531 293 L529 291 L529 113 L532 111 L556 124 L593 138 L638 158 L663 172 L682 186 L696 200 L705 212 L714 228 L720 243 L724 257 L728 280 L730 299 L730 316 L731 318 L741 323 L746 327 L748 326 L747 293 L743 265 L738 245 L727 217 L709 190 L687 169 L655 148 L618 130 L566 109 L544 97 L527 83ZM286 411 L316 399 L369 385 L420 377 L468 374 L469 373 L492 373 L494 375 L494 403 L500 412 L525 412 L529 406 L529 375 L531 373 L570 374 L619 379 L672 389 L713 401 L736 411 L739 414 L739 487 L724 567 L710 579 L663 612 L531 696 L529 694 L529 682 L540 663 L541 658 L525 632 L498 632 L482 659 L482 661 L494 681 L494 694 L492 696 L372 620 L299 568 L289 521 L283 484 L283 414Z"/></symbol></svg>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="brand" href="index.html" aria-label="CombGuard home"><svg viewBox="0 0 644 964" aria-hidden="true" focusable="false"><use href="#helm"/></svg>CombGuard</a>
+    <nav class="nav-links" aria-label="Pages">
+      <a href="product.html" data-nav="product">Product</a>
+      <a href="dashboard.html" data-nav="dashboard">Live hive<span class="demo-tag">demo</span></a>
+      <a href="mission.html" data-nav="mission">Our mission</a>
+      <a href="team.html" data-nav="team">Team</a>
+      <a href="https://forms.gle/HvKqPn7JhiQj5WCf8" target="_blank" rel="noopener">Beekeeper survey <span aria-hidden="true">&#8599;</span></a>
     </nav>
+    <div class="nav-r">
+      <a class="cta" href="index.html#join">Join the Watch</a>
+      <button class="icon-btn" id="set-btn" type="button" aria-label="Settings" aria-expanded="false" aria-controls="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8Z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 13.5a7.7 7.7 0 0 0 0-3l2-1.6-2-3.4-2.4 1a7.6 7.6 0 0 0-2.6-1.5L14 2.5h-4l-.4 2.5A7.6 7.6 0 0 0 7 6.5l-2.4-1-2 3.4 2 1.6a7.7 7.7 0 0 0 0 3l-2 1.6 2 3.4 2.4-1a7.6 7.6 0 0 0 2.6 1.5l.4 2.5h4l.4-2.5a7.6 7.6 0 0 0 2.6-1.5l2.4 1 2-3.4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+      <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    </div>
+  </div>
+  <div class="panel settings" id="settings" hidden role="dialog" aria-label="Settings">
+    <div class="panel-in">
+      <p class="panel-t">Settings</p>
+      <p class="set-l" id="season-l">Season colors</p>
+      <div class="seg" role="radiogroup" aria-labelledby="season-l" id="season-seg">
+        <button type="button" role="radio" data-s="auto" aria-checked="true"><i class="sw auto"></i>Auto</button>
+        <button type="button" role="radio" data-s="spring" aria-checked="false"><i class="sw" style="background:#F8DCE3"></i>Spring</button>
+        <button type="button" role="radio" data-s="summer" aria-checked="false"><i class="sw" style="background:#D3EFEA"></i>Summer</button>
+        <button type="button" role="radio" data-s="fall" aria-checked="false"><i class="sw" style="background:#F6D6AE"></i>Fall</button>
+        <button type="button" role="radio" data-s="winter" aria-checked="false"><i class="sw" style="background:#E3EAF6"></i>Winter</button>
+      </div>
+      <p class="set-hint" id="auto-hint">Auto follows today's date.</p>
+      <label class="sw-row"><span><b>Season effects</b><small>Snow, petals, falling leaves and wind across the page</small></span><input type="checkbox" id="opt-fx" checked><i aria-hidden="true"></i></label>
+      <label class="sw-row"><span><b>Reduce motion</b><small>Calmer scrolling and no drawing animations</small></span><input type="checkbox" id="opt-calm"><i aria-hidden="true"></i></label>
+      <p class="set-hint">Saved on this device.</p>
+    </div>
+  </div>
+  <div class="panel menu" id="menu" hidden>
+    <div class="panel-in">
+      <a href="index.html">Home</a><a href="product.html">Product</a><a href="dashboard.html">Live hive demo</a><a href="mission.html">Our mission</a><a href="team.html">Team</a>
+      <a href="https://forms.gle/HvKqPn7JhiQj5WCf8" target="_blank" rel="noopener">Beekeeper survey &#8599;</a>
+      <a class="cta" href="index.html#join">Join the Watch</a>
+    </div>
   </div>
 </header>
-<main>
-<div class="wrap">
+<canvas id="pfx" aria-hidden="true"></canvas>
 
-  <!-- ===== Log in / sign up ===== -->
-  <section id="authView" hidden>
-    <div class="center" style="margin-top:30px">
-      <svg style="width:54px;height:54px;margin:0 auto 18px;color:var(--text)"><use href="#cg-logo"/></svg>
-      <h1 class="h2" style="font-size:clamp(2.2rem,5vw,3.2rem)">Team <span class="acc">dashboard.</span></h1>
-      <p class="lead">Log in to see your hives. New team members need an invite code to sign up.</p>
-    </div>
-    <div class="auth"><div class="tile">
-      <div class="tabs" role="tablist"><button class="on" data-tab="login" role="tab">Log in</button><button data-tab="signup" role="tab">Sign up</button></div>
-      <form id="loginForm">
-        <label>Email<input type="email" name="email" autocomplete="email" required></label>
-        <label>Password<input type="password" name="password" autocomplete="current-password" required></label>
-        <p class="err" id="loginErr"></p>
-        <button class="btn btn-gold" type="submit">Log in</button>
-      </form>
-      <form id="signupForm" hidden>
-        <label>Name<input type="text" name="name" autocomplete="name" required></label>
-        <label>Email<input type="email" name="email" autocomplete="email" required></label>
-        <label>Password <span class="small">(at least 10 characters)</span><input type="password" name="password" autocomplete="new-password" minlength="10" required></label>
-        <label>Invite code<input type="text" name="code" autocomplete="off" required></label>
-        <p class="err" id="signupErr"></p>
-        <button class="btn btn-gold" type="submit">Create account</button>
-      </form>
-    </div>
-    <p class="demo-link">Just looking? <a href="?demo=1" class="link">See the live demo</a></p></div>
-  </section>
-
-  <!-- ===== Dashboard ===== -->
-  <section id="dashView" hidden>
-    <div class="demo-banner" id="demoBanner" hidden><span>You're viewing a demo with sample data.</span><a href="/dashboard" class="link">Team log in</a></div>
-    <div class="bar">
-      <h1 id="hiveName">Hive</h1>
-      <div class="ctrl">
-        <select id="hiveSelect" aria-label="Choose hive" hidden></select>
-        <button data-hours="24" class="on">24h</button><button data-hours="168">7 days</button><button data-hours="720">30 days</button>
-        <button id="unitBtn" type="button">°F / lb</button>
-        <button id="logoutBtn" type="button" hidden>Log out</button>
-      </div>
-    </div>
-    <div class="status" id="status"><div class="dot"></div><div><h2 id="statusTitle">Loading…</h2><ul id="statusReasons"></ul><div class="when" id="statusWhen"></div></div></div>
-    <div class="cards" id="cards"></div>
-    <div class="charts">
-      <div class="chart"><h3>Temperature</h3><div class="box"><canvas id="cTemp"></canvas></div></div>
-      <div class="chart"><h3>Humidity</h3><div class="box"><canvas id="cRh"></canvas></div></div>
-      <div class="chart"><h3>CO₂</h3><div class="box"><canvas id="cCo2"></canvas></div></div>
-      <div class="chart"><h3>Hive weight</h3><div class="box"><canvas id="cW"></canvas></div></div>
-    </div>
-    <p class="small" style="margin-top:18px">Status ranges are early estimates and will be tuned with bee researchers.</p>
-  </section>
-
-</div>
-</main><footer>
-  <div class="wrap">
-    <div class="foot">
+<div class="page" data-page="dashboard" id="page-dashboard">
+<main id="main">
+<section class="sec paper d-hero">
+  <div class="wrap wide">
+    <div class="d-hero-in">
       <div>
-        <a href="/" class="brand" style="color:var(--text)"><svg><use href="#cg-logo"/></svg>CombGuard</a>
-        <p style="margin:14px 0 0;max-width:300px;color:var(--text-2)">Solar-powered hive monitoring that keeps watch between inspections.</p>
+        <p class="kicker" data-rv>Live hive <span class="demo-tag">demo</span></p>
+        <h1 class="big" data-words>Your hives, on one <em>screen.</em></h1>
+        <p class="lede" data-rv>This is a working demo with example data. Pick a hive, change the range, hover the charts and tap an alert. Your real dashboard will look like this once CombGuard is on your hives.</p>
       </div>
-      <div><h4>Explore</h4><a href="/">Home</a><a href="/about">About</a><a href="/gen1">Gen 1</a><a href="/gen2">Gen 2</a></div>
-      <div><h4>Dashboard</h4><a href="/dashboard?demo=1">Live demo</a><a href="/dashboard">Team log in</a></div>
-      <div><h4>Get involved</h4><a href="https://forms.gle/yDhAXinGf1WT7gVK9" target="_blank" rel="noopener">Beekeeper survey</a><a href="mailto:hello@combguard.com">Contact us</a></div>
+      <p class="d-note" data-rv><span aria-hidden="true">&#9888;</span> Example data, made up in your browser. No real hives are connected yet.</p>
     </div>
-    <div class="foot-bottom"><span>© 2026 CombGuard · A student engineering project</span><span>Made for beekeepers, by students.</span></div>
+  </div>
+</section>
+
+<section class="dash" id="dash" aria-label="Live hive dashboard demo">
+  <div class="wrap wide">
+    <div class="d-bar">
+      <div class="d-seg" id="d-hives" role="radiogroup" aria-label="Choose a hive"></div>
+      <div class="d-seg small" id="d-range" role="radiogroup" aria-label="Time range">
+        <button type="button" role="radio" data-r="1" aria-checked="true">24 h</button><button type="button" role="radio" data-r="7" aria-checked="false">7 days</button><button type="button" role="radio" data-r="30" aria-checked="false">30 days</button>
+      </div>
+      <p class="d-live"><i aria-hidden="true"></i><span id="d-upd">Live &middot; updated just now</span></p>
+    </div>
+
+    <div class="d-status" id="d-status" role="status"></div>
+
+    <div class="d-tiles" id="d-tiles" role="group" aria-label="Readings. Pick one to chart it."></div>
+
+    <div class="d-grid">
+      <div class="d-card d-main">
+        <div class="d-card-h">
+          <div><h2 id="d-ch-title">Weight</h2><p id="d-ch-sub" class="d-sub"></p></div>
+          <button type="button" class="d-tbl-btn" id="d-tbl-btn" aria-pressed="false">View as table</button>
+        </div>
+        <div class="d-legend" id="d-legend"></div>
+        <div class="d-chart" id="d-chart"></div>
+        <div class="d-table" id="d-table" hidden></div>
+      </div>
+      <div class="d-card d-alerts">
+        <div class="d-card-h"><div><h2>Alerts</h2><p class="d-sub">The emails CombGuard would send you</p></div></div>
+        <ul class="d-alert-list" id="d-alerts"></ul>
+      </div>
+      <div class="d-card d-compare">
+        <div class="d-card-h"><div><h2>All three hives</h2><p class="d-sub">Weight change over the last 7 days</p></div></div>
+        <div class="d-legend" id="d-cmp-legend"></div>
+        <div class="d-chart small" id="d-cmp"></div>
+      </div>
+      <div class="d-card d-night">
+        <div class="d-card-h"><div><h2>Last night at <span id="d-night-h">Hive 1</span></h2><p class="d-sub">What it watched while you slept</p></div></div>
+        <ol class="d-log" id="d-log"></ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec paper cta-band">
+  <div class="wrap center"><h2 class="mid" data-words>Want this for your <em>hives?</em></h2><p class="lede" data-rv>Join the Watch for build updates, or tell us what you'd want on this screen in the survey.</p>
+    <div class="btn-row" data-rv><a class="cta" href="index.html#join">Join the Watch</a><a class="cta ghost" href="https://forms.gle/HvKqPn7JhiQj5WCf8" target="_blank" rel="noopener">Beekeeper survey &#8599;</a></div></div>
+</section>
+</main>
+</div>
+
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div><a class="brand" href="index.html"><svg viewBox="0 0 644 964" aria-hidden="true" focusable="false"><use href="#helm"/></svg>CombGuard</a><p>The hive's first line of defense.</p></div>
+      <div><h4>Pages</h4><a href="index.html">Home</a><a href="product.html">Product</a><a href="dashboard.html">Live hive demo</a><a href="mission.html">Our mission</a><a href="team.html">Team</a></div>
+      <div><h4>On the home page</h4><a href="index.html#hardware">Hardware</a><a href="index.html#senses">What it senses</a><a href="index.html#watch">The long night</a><a href="index.html#progress">Where we are</a></div>
+      <div><h4>Get involved</h4><a href="index.html#join">Join the Watch</a><a href="https://forms.gle/HvKqPn7JhiQj5WCf8" target="_blank" rel="noopener">Beekeeper survey &#8599;</a></div>
+    </div>
+    <p class="fine">&copy; 2026 the CombGuard team. Product photos are concept renders and drawings are concept sketches. CombGuard Gen 2 is in development, and readings shown on this site are examples.</p>
   </div>
 </footer>
-<script src="/assets/site.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script>
-(function () {
-const API = "https://api.combguard.com";
-const T = {
-  brood: { green: [32, 36], yellow: [30, 37] },
-  rh: { green: [50, 70], yellow: [40, 80] },
-  co2: { green: [0, 6000], yellow: [0, 10000] },
-  battery: { green: [3.7, 5], yellow: [3.5, 5] },
-  weightDrop: { yellow: 1, red: 2 },
-  staleMin: { yellow: 45, red: 180 },
-};
-const $ = (id) => document.getElementById(id);
-const demo = new URLSearchParams(location.search).has("demo");
-let hours = 24, hiveId = null, imperial = true;
-try { imperial = localStorage.getItem("cg-imperial") !== "false"; } catch {}
-const charts = {};
-
-async function api(path, opts = {}) {
-  const res = await fetch(API + path, { credentials: "include", headers: { "Content-Type": "application/json" }, ...opts });
-  let data = null; try { data = await res.json(); } catch {}
-  return { ok: res.ok, status: res.status, data };
-}
-
-// ---------- views ----------
-function show(view) { $("authView").hidden = view !== "auth"; $("dashView").hidden = view !== "dash"; }
-
-document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => {
-  document.querySelectorAll(".tabs button").forEach((x) => x.classList.toggle("on", x === b));
-  $("loginForm").hidden = b.dataset.tab !== "login"; $("signupForm").hidden = b.dataset.tab !== "signup";
-}));
-
-function bindForm(form, path, errEl) {
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const btn = form.querySelector("button[type=submit]"); btn.disabled = true; errEl.textContent = "";
-    const body = Object.fromEntries(new FormData(form));
-    try {
-      const r = await api(path, { method: "POST", body: JSON.stringify(body) });
-      if (r.ok) { form.reset(); startDashboard(r.data.user); }
-      else errEl.textContent = (r.data && r.data.error) || "Something went wrong. Try again.";
-    } catch { errEl.textContent = "Can't reach CombGuard right now. Check your connection."; }
-    btn.disabled = false;
-  });
-}
-bindForm($("loginForm"), "/auth/login", $("loginErr"));
-bindForm($("signupForm"), "/auth/signup", $("signupErr"));
-
-$("logoutBtn").addEventListener("click", async () => { await api("/auth/logout", { method: "POST" }); location.href = "/dashboard"; });
-
-// ---------- demo data ----------
-function demoReadings(h) {
-  const out = [], now = Date.now(), n = Math.min(h * 4, 2880);
-  for (let i = n; i >= 0; i--) {
-    const t = now - i * 15 * 60000, day = Math.sin((t / 3600000 / 24) * Math.PI * 2);
-    out.push({ recorded_at: new Date(t).toISOString(), brood_temp_c: 34.8 + day * 0.4, outside_temp_c: 24 + day * 6,
-      inside_rh: 60 + day * 4, outside_rh: 72 - day * 12, co2_ppm: Math.round(2100 + day * 350),
-      weight_kg: 43.2 + (n - i) * 0.0006 + Math.max(0, day) * 0.15, battery_v: 3.96, wifi_rssi: -66 });
-  }
-  return out;
-}
-
-// ---------- helpers ----------
-const lvl = (v, r) => v == null ? "none" : (v >= r.green[0] && v <= r.green[1]) ? "green" : (v >= r.yellow[0] && v <= r.yellow[1]) ? "yellow" : "red";
-const rank = { none: 0, green: 1, yellow: 2, red: 3 };
-const tC = (c) => c == null ? null : imperial ? c * 9 / 5 + 32 : c;
-const wK = (k) => k == null ? null : imperial ? k * 2.20462 : k;
-const tu = () => imperial ? "°F" : "°C", wu = () => imperial ? "lb" : "kg";
-const f = (v, d = 1) => v == null ? "—" : Number(v).toFixed(d);
-const ago = (d) => { const m = Math.round((Date.now() - d) / 60000); return m < 1 ? "just now" : m < 60 ? m + " min ago" : m < 2880 ? Math.floor(m / 60) + " hr ago" : Math.floor(m / 1440) + " days ago"; };
-
-function render(latest, readings) {
-  if (!latest) { $("statusTitle").textContent = "No readings yet"; $("statusWhen").textContent = "Waiting for this hive's first reading."; $("cards").replaceChildren(); return; }
-  const when = new Date(latest.recorded_at), age = (Date.now() - when) / 60000;
-  const L = { brood: lvl(latest.brood_temp_c, T.brood), rh: lvl(latest.inside_rh, T.rh), co2: lvl(latest.co2_ppm, T.co2), bat: lvl(latest.battery_v, T.battery),
-    stale: age > T.staleMin.red ? "red" : age > T.staleMin.yellow ? "yellow" : "green", w: "green" };
-  const dayAgo = Date.now() - 864e5, ws = readings.filter((r) => r.weight_kg != null && new Date(r.recorded_at) >= dayAgo).map((r) => r.weight_kg);
-  const drop = ws.length > 1 && latest.weight_kg != null ? Math.max(...ws) - latest.weight_kg : null;
-  if (drop != null) L.w = drop >= T.weightDrop.red ? "red" : drop >= T.weightDrop.yellow ? "yellow" : "green";
-  const why = [];
-  if (!["green", "none"].includes(L.brood)) why.push(`Brood temperature is ${f(tC(latest.brood_temp_c))} ${tu()}`);
-  if (!["green", "none"].includes(L.rh)) why.push(`Inside humidity is ${f(latest.inside_rh, 0)}%`);
-  if (!["green", "none"].includes(L.co2)) why.push(`CO₂ is ${latest.co2_ppm} ppm`);
-  if (L.w !== "green") why.push(`Hive lost ${f(wK(drop))} ${wu()} in 24 hours (possible swarm or robbing)`);
-  if (!["green", "none"].includes(L.bat)) why.push(`Battery is low (${f(latest.battery_v, 2)} V)`);
-  if (L.stale !== "green") why.push(`No new reading for ${ago(when).replace(" ago", "")}`);
-  const all = Object.values(L).reduce((a, b) => rank[b] > rank[a] ? b : a, "green");
-  $("status").className = "status s-" + all;
-  $("statusTitle").textContent = all === "green" ? "Hive looks healthy" : all === "yellow" ? "Worth checking soon" : "Needs attention";
-  $("statusReasons").replaceChildren(...why.map((t) => Object.assign(document.createElement("li"), { textContent: t })));
-  $("statusWhen").textContent = `Last reading ${ago(when)} · ${when.toLocaleString()}`;
-  const cards = [
-    ["Brood", f(tC(latest.brood_temp_c)), tu(), L.brood, "Healthy 90–97 °F"],
-    ["Humidity", f(latest.inside_rh, 0), "%", L.rh, "Healthy 50–70%"],
-    ["CO₂", latest.co2_ppm ?? "—", "ppm", L.co2, "Colony activity"],
-    ["Weight", f(wK(latest.weight_kg)), wu(), L.w, drop == null ? "Honey stores" : `24 h: ${drop > 0 ? "−" : "+"}${f(wK(Math.abs(drop)))} ${wu()}`],
-    ["Outside", f(tC(latest.outside_temp_c)), tu(), "none", `Humidity ${f(latest.outside_rh, 0)}%`],
-    ["Battery", f(latest.battery_v, 2), "V", L.bat, latest.wifi_rssi != null ? `Wi-Fi ${latest.wifi_rssi} dBm` : ""],
-  ];
-  $("cards").replaceChildren(...cards.map(([l, v, u, c, n]) => {
-    const el = document.createElement("div"); el.className = "card " + c;
-    el.innerHTML = `<small></small><b></b><span></span>`;
-    el.querySelector("small").textContent = l; el.querySelector("b").textContent = v;
-    const em = document.createElement("em"); em.textContent = u; el.querySelector("b").append(em);
-    el.querySelector("span").textContent = n; return el;
-  }));
-}
-
-if (window.Chart) { Chart.defaults.color = "#86868b"; Chart.defaults.borderColor = "rgba(255,255,255,0.06)"; Chart.defaults.font.family = "Inter, system-ui, sans-serif"; }
-function draw(id, labels, sets, unit) {
-  if (!window.Chart) return;
-  if (charts[id]) charts[id].destroy();
-  charts[id] = new Chart($(id), { type: "line", data: { labels, datasets: sets.map((s) => ({ ...s, borderWidth: 2, pointRadius: 0, tension: 0.35, spanGaps: true })) },
-    options: { responsive: true, maintainAspectRatio: false, interaction: { mode: "index", intersect: false },
-      plugins: { legend: { display: sets.length > 1, labels: { boxWidth: 10 } }, tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${c.parsed.y.toFixed(1)} ${unit}` } } },
-      scales: { x: { ticks: { maxTicksLimit: 6, maxRotation: 0 } }, y: { ticks: { callback: (v) => v + " " + unit } } } } });
-}
-function charts4(rs) {
-  const lab = rs.map((r) => { const d = new Date(r.recorded_at); return hours <= 24 ? d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : d.toLocaleDateString([], { month: "short", day: "numeric" }); });
-  const col = (k, c = (v) => v) => rs.map((r) => r[k] == null ? null : c(r[k]));
-  const gold = "#e9a23b", blue = "#8fb0ff";
-  draw("cTemp", lab, [{ label: "Brood", data: col("brood_temp_c", tC), borderColor: gold }, { label: "Outside", data: col("outside_temp_c", tC), borderColor: blue }], tu());
-  draw("cRh", lab, [{ label: "Inside", data: col("inside_rh"), borderColor: gold }, { label: "Outside", data: col("outside_rh"), borderColor: blue }], "%");
-  draw("cCo2", lab, [{ label: "CO₂", data: col("co2_ppm"), borderColor: gold }], "ppm");
-  draw("cW", lab, [{ label: "Weight", data: col("weight_kg", wK), borderColor: gold }], wu());
-}
-
-async function refresh() {
-  if (demo) { const rs = demoReadings(Math.max(hours, 24)); render(rs[rs.length - 1], rs); charts4(rs.filter((r) => new Date(r.recorded_at) >= Date.now() - hours * 36e5)); return; }
-  const [l, h] = await Promise.all([api(`/latest?hive=${encodeURIComponent(hiveId)}`), api(`/history?hive=${encodeURIComponent(hiveId)}&hours=${Math.max(hours, 24)}`)]);
-  if (l.status === 401 || h.status === 401) { show("auth"); return; }
-  const rs = (h.data && h.data.readings) || [];
-  render(l.ok ? l.data : null, rs);
-  charts4(rs.filter((r) => new Date(r.recorded_at) >= Date.now() - hours * 36e5));
-}
-
-async function startDashboard(user) {
-  show("dash");
-  $("demoBanner").hidden = !demo; $("logoutBtn").hidden = demo;
-  if (demo) { $("hiveName").textContent = "Demo hive"; }
-  else {
-    const hv = await api("/hives");
-    if (hv.status === 401) { show("auth"); return; }
-    const hives = hv.data || [];
-    hiveId = hives[0] ? hives[0].id : null;
-    const sel = $("hiveSelect");
-    sel.replaceChildren(...hives.map((h) => Object.assign(document.createElement("option"), { value: h.id, textContent: h.name })));
-    sel.hidden = hives.length < 2;
-    $("hiveName").textContent = hives[0] ? hives[0].name : "No hives yet";
-    sel.onchange = () => { hiveId = sel.value; $("hiveName").textContent = sel.selectedOptions[0].textContent; refresh(); };
-  }
-  refresh();
-}
-
-document.querySelectorAll(".ctrl [data-hours]").forEach((b) => b.addEventListener("click", () => {
-  hours = +b.dataset.hours; document.querySelectorAll(".ctrl [data-hours]").forEach((x) => x.classList.toggle("on", x === b)); refresh();
-}));
-const unitLabel = () => $("unitBtn").textContent = imperial ? "Switch to °C / kg" : "Switch to °F / lb";
-$("unitBtn").addEventListener("click", () => { imperial = !imperial; try { localStorage.setItem("cg-imperial", imperial); } catch {} unitLabel(); refresh(); });
-unitLabel();
-setInterval(() => { if (!$("dashView").hidden) refresh(); }, 5 * 60 * 1000);
-
-// ---------- start ----------
-(async () => {
-  if (demo) { startDashboard(null); return; }
-  try {
-    const me = await api("/auth/me");
-    if (me.ok) startDashboard(me.data.user); else show("auth");
-  } catch { show("auth"); $("loginErr").textContent = "Can't reach CombGuard right now."; }
-})();
-})();
-</script>
 </body>
 </html>
