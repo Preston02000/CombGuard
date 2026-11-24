@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://combguard.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://combguard.com/about</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://combguard.com/gen1</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://combguard.com/gen2</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://combguard.com/</loc></url>
+  <url><loc>https://combguard.com/product</loc></url>
+  <url><loc>https://combguard.com/demo</loc></url>
+  <url><loc>https://combguard.com/mission</loc></url>
+  <url><loc>https://combguard.com/team</loc></url>
 </urlset>
